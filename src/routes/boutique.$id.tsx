@@ -1063,7 +1063,7 @@ export function ProductDetailPage() {
                 disabled={isSubmitting}
                 className="w-full h-12 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black text-sm shadow-xl"
               >
-                {isSubmitting ? "Traitement en cours..." : "Confirmer et Commander"}
+                {isSubmitting ? "Traitement en cours..." : "Valider ma commande"}
               </Button>
 
               <p className="text-[10px] text-center text-muted-foreground">
