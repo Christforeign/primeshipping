@@ -681,7 +681,7 @@ function AdminColis() {
                   onClick={addSubItem}
                   className="h-8 text-xs font-semibold gap-1.5 rounded-lg border-primary text-primary hover:bg-primary/10"
                 >
-                  <Plus className="h-3.5 w-3.5" /> Ajouter un autre colis
+                  <Plus className="h-3.5 w-3.5" /> Ajouter un autre colis au lot
                 </Button>
               </div>
 
