@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="shippingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c" />
+      <stop offset="50%" stop-color="#ea580c" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </linearGradient>
+    <linearGradient id="flameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#ea580c" />
+      <stop offset="50%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#fef08a" />
+    </linearGradient>
+  </defs>
+
+  <!-- Globe Outline & Latitudes -->
+  <g fill="none" stroke="url(#shippingGrad)" stroke-width="6" stroke-linecap="round">
+    <circle cx="260" cy="115" r="58" />
+    <ellipse cx="260" cy="115" rx="26" ry="58" />
+    <path d="M 205 115 H 315" />
+    <path d="M 215 90 Q 260 100 305 90" />
+    <path d="M 215 140 Q 260 130 305 140" />
+  </g>
+
+  <!-- Cargo Ship Lower Right -->
+  <g fill="url(#shippingGrad)">
+    <path d="M 270 148 L 340 148 L 345 138 L 338 138 L 338 132 L 342 132 L 342 126 L 335 126 L 335 138 L 290 138 L 285 148 Z" />
+    <!-- Containers on ship -->
+    <rect x="292" y="130" width="8" height="7" rx="1" fill="#fff" opacity="0.3" />
+    <rect x="302" y="130" width="8" height="7" rx="1" fill="#fff" opacity="0.3" />
+    <rect x="312" y="130" width="8" height="7" rx="1" fill="#fff" opacity="0.3" />
+    <rect x="297" y="122" width="8" height="7" rx="1" fill="#fff" opacity="0.3" />
+    <rect x="307" y="122" width="8" height="7" rx="1" fill="#fff" opacity="0.3" />
+  </g>
+
+  <!-- Speed Trails / Sonic Jets -->
+  <g fill="url(#shippingGrad)">
+    <polygon points="150,132 250,118 250,122 170,135" />
+    <polygon points="180,125 270,108 270,112 195,127" />
+    <polygon points="210,115 285,102 285,105 220,117" />
+    <polygon points="190,140 280,130 280,133 205,142" />
+  </g>
+
+  <!-- Cargo Airplane Ascending -->
+  <g fill="url(#shippingGrad)">
+    <path d="M 250 120 L 320 85 Q 345 72 355 76 Q 360 80 348 90 L 305 108 L 315 118 L 310 122 L 295 114 L 275 122 L 270 118 L 282 110 L 250 120 Z" />
+    <!-- Wing Top -->
+    <polygon points="310,90 340,65 348,67 325,92" />
+    <!-- Jet Engines -->
+    <rect x="312" y="96" width="10" height="4" rx="2" fill="#fff" opacity="0.4" />
+    <rect x="324" y="91" width="10" height="4" rx="2" fill="#fff" opacity="0.4" />
+  </g>
+
+  <!-- Flame Icon Above Airplane -->
+  <path d="M 272 78 C 265 65 275 50 270 38 C 278 48 285 58 282 68 C 285 64 286 58 285 53 C 290 60 292 70 288 78 C 285 84 278 86 272 78 Z" fill="url(#flameGrad)" />
+
+  <!-- Typography: PRIME -->
+  <text x="250" y="215" font-family="'Bricolage Grotesque', 'Arial Black', sans-serif" font-weight="900" font-size="62" fill="url(#shippingGrad)" text-anchor="middle" letter-spacing="4">PRIME</text>
+
+  <!-- Typography: EXPRESS SHIPPING -->
+  <text x="250" y="248" font-family="'Manrope', 'Arial Black', sans-serif" font-weight="800" font-size="22" fill="#c2410c" text-anchor="middle" letter-spacing="2.5">EXPRESS SHIPPING</text>
+
+  <!-- Subtitle: FAST • RELIABLE • GLOBAL -->
+  <text x="250" y="272" font-family="'Manrope', sans-serif" font-weight="700" font-size="12" fill="#ea580c" text-anchor="middle" letter-spacing="3.5">FAST • RELIABLE • GLOBAL</text>
+</svg>

@@ -1,0 +1,6 @@
+{
+  "name": "Prime Entreprise — Prime Shipping & Prime Store Haïti",
+  "description": "Expédition internationale de colis Miami vers Haïti avec Prime Shipping, boutique en ligne Prime Store et achats assistés.",
+  "requestFramePermissions": [],
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
