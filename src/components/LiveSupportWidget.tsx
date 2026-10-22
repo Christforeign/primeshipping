@@ -5,7 +5,7 @@ import { useWhatsAppContacts, whatsAppUrl } from "@/components/WhatsAppSupportBu
 
 type Faq = { q: string; a: string };
 
-function buildFaq(s: Record<string, any> | null): Faq[] {
+function buildFaq(s: any): Faq[] {
   const custom = Array.isArray(s?.support_faq) ? (s!.support_faq as Faq[]).filter((f) => f?.q && f?.a) : [];
   if (custom.length) return custom;
   const rate = s?.usd_to_htg;
@@ -41,7 +41,7 @@ function buildFaq(s: Record<string, any> | null): Faq[] {
 }
 
 export function LiveSupportWidget() {
-  const s = useSettings() as Record<string, any> | null;
+  const s = useSettings() as any;
   const contacts = useWhatsAppContacts();
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<Faq | null>(null);

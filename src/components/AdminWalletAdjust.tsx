@@ -41,8 +41,8 @@ export function AdminWalletAdjust() {
 
   const submit = async () => {
     const v = parseFloat(amount);
-    if (!client || !(v > 0)) return toast.error("Choisissez un client et un montant valide.");
-    if (!reason.trim()) return toast.error("Indiquez un motif.");
+    if (!client || !(v > 0)) return void toast.error("Choisissez un client et un montant valide.");
+    if (!reason.trim()) return void toast.error("Indiquez un motif.");
     setBusy(true);
     const { data, error } = await supabase.rpc("admin_adjust_wallet", {
       _user_id: client.id,
@@ -50,7 +50,7 @@ export function AdminWalletAdjust() {
       _reason: reason.trim(),
     });
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     toast.success(`Nouveau solde : ${Number(data).toFixed(2)} USD`);
     setAmount("");
     setReason("");

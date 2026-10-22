@@ -10,7 +10,7 @@ import { saveExtraSettings } from "@/lib/admin-settings";
 import type { WhatsAppSupportContact } from "@/lib/types-store";
 
 export function AdminWhatsAppContacts() {
-  const s = useSettings() as Record<string, any> | null;
+  const s = useSettings() as any;
   const qc = useQueryClient();
   const [list, setList] = useState<WhatsAppSupportContact[]>([]);
   const [hero, setHero] = useState("");
@@ -27,7 +27,7 @@ export function AdminWhatsAppContacts() {
 
   const save = async () => {
     const bad = list.find((c) => c.phone.replace(/\D/g, "").length < 8 || !c.name.trim());
-    if (bad) return toast.error("Chaque contact doit avoir un nom et un numéro international valide.");
+    if (bad) return void toast.error("Chaque contact doit avoir un nom et un numéro international valide.");
     setBusy(true);
     try {
       await saveExtraSettings({
