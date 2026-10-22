@@ -197,68 +197,41 @@ function AdminColis() {
         return toast.error("Veuillez renseigner au moins un colis avec son numéro et son poids.");
       }
 
-      const allTrackings = validItems
-        .map((it) => it.carrier_tracking.trim())
-        .filter(Boolean)
-        .join(" | ");
-
       const allMerchants =
         Array.from(new Set(validItems.map((it) => it.merchant.trim()).filter(Boolean))).join(
           ", ",
         ) || "Multi-marchands";
 
-      const groupDesc =
-        f.description?.trim() ||
-        `Paquet groupé (${validItems.length} colis : ${validItems
-          .map((it) => it.description || it.carrier_tracking)
-          .slice(0, 3)
-          .join(", ")})`;
-
-      const instructionsPayload = JSON.stringify({
-        is_consolidated: true,
-        sub_packages: validItems.map((it, i) => ({
-          num: i + 1,
-          carrier_tracking: it.carrier_tracking.trim(),
-          merchant: it.merchant.trim(),
-          description: it.description.trim() || `Colis #${i + 1}`,
-          weight_lb: parseFloat(it.weight_lb) || 0,
-          fee_usd: parseFloat(it.fee_usd) || (parseFloat(it.weight_lb) || 0) * ratePerLb,
-          customs_fee_usd: parseFloat(it.customs_fee_usd) || 0,
-        })),
-        note: f.note || "",
-      });
-
-      const { data, error } = await supabase
-        .from("packages")
-        .insert({
+      const rows = validItems.map((it, i) => {
+        const w = parseFloat(it.weight_lb) || 0;
+        const fee = parseFloat(it.fee_usd) || w * ratePerLb;
+        const customs = parseFloat(it.customs_fee_usd) || 0;
+        return {
           user_id: f.user_id,
-          merchant: allMerchants,
-          description: groupDesc,
-          carrier_tracking: allTrackings || null,
-          actual_weight_lb: Number(multiTotalWeight.toFixed(2)),
-          shipping_fee: Number(multiTotalFee.toFixed(2)),
+          merchant: it.merchant.trim() || "Non précisé",
+          description: it.description.trim() || `Colis #${i + 1}`,
+          carrier_tracking: it.carrier_tracking.trim() || null,
+          actual_weight_lb: w ? Number(w.toFixed(2)) : null,
+          shipping_fee: Number(fee.toFixed(2)),
+          extra_fees: customs ? Number(customs.toFixed(2)) : null,
           destination: f.destination || "Haïti",
-          extra_fees:
-            multiTotalCustoms > 0
-              ? Number(multiTotalCustoms.toFixed(2))
-              : f.extra
-                ? Number(f.extra)
-                : null,
-          declared_value: f.paid ? Number(f.paid) : null,
-          quantity: validItems.length,
-          instructions: instructionsPayload,
+          quantity: 1,
+          instructions: f.note || null,
           status: (f.status as PackageStatus) || "recu_entrepot",
           created_by: user!.id,
-        })
-        .select("tracking_number")
-        .single();
+        };
+      });
+
+      const { data: created, error } = await supabase
+        .from("packages")
+        .insert(rows)
+        .select("tracking_number");
 
       setBusy(false);
       if (error) return toast.error("Erreur : " + error.message);
+      const data = { tracking_number: (created || []).map((r: any) => r.tracking_number).join(", ") };
 
-      toast.success(
-        `Paquet groupé ${data.tracking_number} créé avec ${validItems.length} colis réunis sur 1 seule facture !`,
-      );
+      toast.success(`${validItems.length} colis enregistrés pour ce client : ${data.tracking_number}`);
 
       notifyNewPackage(data.tracking_number, {
         userId: f.user_id,
