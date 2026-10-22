@@ -41,7 +41,7 @@ const STEPS: Step[] = [
     icon: PackagePlus,
     actionText: "Enregistrer un colis",
     actionHref: "/compte/colis/nouveau",
-    tip: "Indiquez toujours votre identifiant client JUL sur la 2ème ligne d'adresse lors de vos commandes.",
+    tip: "Indiquez toujours votre identifiant client PS-XXXX sur la 2ème ligne d'adresse lors de vos commandes.",
   },
   {
     title: "Boutique & Demande d'achat assistée",
@@ -71,7 +71,7 @@ const STEPS: Step[] = [
     icon: Search,
     actionText: "Suivre un colis",
     actionHref: "/suivi",
-    tip: "Entrez votre code JUL pour consulter l'historique détaillé des événements de votre colis.",
+    tip: "Entrez votre code PS-XXXX pour consulter l'historique détaillé des événements de votre colis.",
   },
 ];
 
@@ -95,8 +95,8 @@ export function InteractiveTutorial() {
       setCurrentStep(0);
       setIsOpen(true);
     };
-    window.addEventListener("jul:start-tutorial", handleStartTutorial);
-    return () => window.removeEventListener("jul:start-tutorial", handleStartTutorial);
+    window.addEventListener("prime:start-tutorial", handleStartTutorial);
+    return () => window.removeEventListener("prime:start-tutorial", handleStartTutorial);
   }, []);
 
   const handleClose = (neverShowAgain = true) => {
@@ -210,6 +210,6 @@ export function InteractiveTutorial() {
 
 export function triggerTutorial() {
   if (typeof window !== "undefined") {
-    window.dispatchEvent(new CustomEvent("jul:start-tutorial"));
+    window.dispatchEvent(new CustomEvent("prime:start-tutorial"));
   }
 }

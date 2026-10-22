@@ -122,7 +122,7 @@ function Index() {
         {/* Hero Banner */}
         <div className="relative overflow-hidden rounded-xl border border-border shadow-xs">
           <img
-            src={hero}
+            src={(s as any)?.hero_image_url || hero}
             alt="Remise d'un colis Prime Express Shipping"
             width={1600}
             height={1104}
