@@ -19,6 +19,7 @@ import {
   Clock,
   Layers,
   ChevronRight,
+  ShoppingCart,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useSettings } from "@/lib/settings";
@@ -424,7 +425,7 @@ function BoutiquePage() {
                       className="rounded-full text-xs font-black bg-amber-500 hover:bg-amber-600 text-slate-950"
                     >
                       <Link to="/boutique/$id" params={{ id: prod.id }}>
-                        Voir l'article <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                        <ShoppingCart className="h-3.5 w-3.5 mr-1" /> Commander
                       </Link>
                     </Button>
                   </div>

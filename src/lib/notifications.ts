@@ -1,8 +1,8 @@
 // @ts-nocheck
 import type { AppNotification } from "./types-store";
 
-const NOTIF_STORAGE_KEY = "jul_app_notifications";
-const NOTIF_EVENT = "jul_notifications_updated";
+const NOTIF_STORAGE_KEY = "prime_app_notifications";
+const NOTIF_EVENT = "prime_notifications_updated";
 
 const DEFAULT_NOTIFICATIONS: AppNotification[] = [
   {

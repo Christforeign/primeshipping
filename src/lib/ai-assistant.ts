@@ -14,7 +14,7 @@ export async function generateAIChatResponse(req: AIChatRequest): Promise<string
   const settings = clientStore.getSettings();
 
   // Admin configurable AI Prompt and Persona
-  const agentName = settings.ai_assistant_name || "JUL Assistant IA";
+  const agentName = settings.ai_assistant_name || "Prime Assistant";
   const agentRole = settings.ai_assistant_role || "Conseiller Clientèle & Logistique";
   const customAdminPrompt =
     settings.ai_assistant_prompt ||

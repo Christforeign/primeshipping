@@ -10,7 +10,7 @@ export function PrimeShippingLogo({
 }) {
   return (
     <img
-      src="/assets/aistudio/WhatsApp_Image_2026-10-14_at_20.12.29_c1b1b367.jpeg"
+      src="/logos/prime-shipping-logo.svg"
       alt={alt}
       className={className}
       loading="eager"
@@ -37,7 +37,7 @@ export function PrimeEntrepriseLogo({
 }) {
   return (
     <img
-      src="/assets/aistudio/WhatsApp_Image_2026-10-14_at_20.12.29_c1b1b367.jpeg"
+      src="/logos/prime-entreprise-logo.svg"
       alt={alt}
       className={className}
       loading="eager"

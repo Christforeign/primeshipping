@@ -20,15 +20,15 @@ import { notificationService } from "./notifications";
 import { sendLocalPush } from "./push-notifications";
 
 const STORAGE_KEYS = {
-  SETTINGS: "jul_enriched_settings",
-  PRODUCTS: "jul_products_store",
-  ORDERS: "jul_orders_store",
-  WALLET_TX: "jul_wallet_tx_store",
-  WALLET_BALANCE: "jul_wallet_balance_store",
-  PACKAGE_PAYMENTS: "jul_package_payments_store",
-  ASSISTED_PURCHASES: "jul_assisted_purchases_store",
-  SUPPORT_THREADS: "jul_support_threads_store",
-  HAITI_PROFILES: "jul_user_haiti_profiles",
+  SETTINGS: "prime_enriched_settings",
+  PRODUCTS: "prime_products_store",
+  ORDERS: "prime_orders_store",
+  WALLET_TX: "prime_wallet_tx_store",
+  WALLET_BALANCE: "prime_wallet_balance_store",
+  PACKAGE_PAYMENTS: "prime_package_payments_store",
+  ASSISTED_PURCHASES: "prime_assisted_purchases_store",
+  SUPPORT_THREADS: "prime_support_threads_store",
+  HAITI_PROFILES: "prime_user_haiti_profiles",
   PAYMENT_CONFIGS: "prime_payment_configs_store",
   CUSTOMER_FIELDS: "prime_customer_fields_store",
   FORM_TEMPLATES: "prime_form_templates_store",
@@ -214,60 +214,10 @@ Signalement obligatoire dans les 48h en cas de casse ou de manquement.`,
     "🚀 Départs aériens hebdomadaires Miami ➔ Haïti (4.50$/lb) • Taux officiel : 1 USD = 132 HTG • MonCash & Natcash acceptés !",
   promo_banner_link: "/suivi",
   customer_fields_config: DEFAULT_CUSTOMER_FIELDS,
-  whatsapp_support_contacts: [
-    {
-      id: "wa-fret",
-      name: "Support Fret & Colis Miami",
-      department: "Fret & Colis",
-      phone: "+509 3700-1122",
-      prefilled_message: "Bonjour Prime Express Shipping, j'ai une question concernant le fret de mon colis.",
-      is_active: true,
-    },
-    {
-      id: "wa-boutique",
-      name: "Service Achats & Boutique",
-      department: "Achats & Boutique",
-      phone: "+509 4800-2233",
-      prefilled_message: "Bonjour Prime Store, je souhaite passer une commande ou poser une question.",
-      is_active: true,
-    },
-    {
-      id: "wa-general",
-      name: "Service Client Général & Réclamations",
-      department: "Service Client",
-      phone: "+509 3100-5566",
-      prefilled_message: "Bonjour, je contacte le service client Prime Express.",
-      is_active: true,
-    },
-  ],
+  whatsapp_support_contacts: [],
 };
 
-export const DEFAULT_WHATSAPP_CONTACTS: WhatsAppSupportContact[] = [
-  {
-    id: "wa-fret",
-    name: "Support Fret & Colis Miami",
-    department: "Fret & Colis",
-    phone: "+509 3700-1122",
-    prefilled_message: "Bonjour Prime Express Shipping, j'ai une question concernant le fret de mon colis.",
-    is_active: true,
-  },
-  {
-    id: "wa-boutique",
-    name: "Service Achats & Boutique",
-    department: "Achats & Boutique",
-    phone: "+509 4800-2233",
-    prefilled_message: "Bonjour Prime Store, je souhaite passer une commande ou poser une question.",
-    is_active: true,
-  },
-  {
-    id: "wa-general",
-    name: "Service Client Général & Réclamations",
-    department: "Service Client",
-    phone: "+509 3100-5566",
-    prefilled_message: "Bonjour, je contacte le service client Prime Express.",
-    is_active: true,
-  },
-];
+export const DEFAULT_WHATSAPP_CONTACTS: WhatsAppSupportContact[] = [];
 
 export const DEFAULT_PRODUCTS: ProductItem[] = [
   {
@@ -765,7 +715,7 @@ export const clientStore = {
     const merged = { ...current, ...updates, updated_at: new Date().toISOString() };
     if (typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(merged));
-      window.dispatchEvent(new Event("jul_settings_changed"));
+      window.dispatchEvent(new Event("prime_settings_changed"));
     }
     return merged;
   },
@@ -896,7 +846,7 @@ export const clientStore = {
   saveProducts(list: ProductItem[]) {
     if (typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(list));
-      window.dispatchEvent(new Event("jul_products_changed"));
+      window.dispatchEvent(new Event("prime_products_changed"));
     }
   },
   /** Create or update a product locally (keeps the given id). */
@@ -1063,7 +1013,7 @@ export const clientStore = {
     list.unshift(newOrder);
     if (typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(list));
-      window.dispatchEvent(new Event("jul_orders_changed"));
+      window.dispatchEvent(new Event("prime_orders_changed"));
     }
     return newOrder;
   },
@@ -1078,7 +1028,7 @@ export const clientStore = {
       };
       if (typeof window !== "undefined") {
         localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(list));
-        window.dispatchEvent(new Event("jul_orders_changed"));
+        window.dispatchEvent(new Event("prime_orders_changed"));
       }
     }
   },
@@ -1086,7 +1036,7 @@ export const clientStore = {
     const list = this.getOrders().filter((o) => o.id !== id);
     if (typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(list));
-      window.dispatchEvent(new Event("jul_orders_changed"));
+      window.dispatchEvent(new Event("prime_orders_changed"));
     }
   },
 
@@ -1104,7 +1054,7 @@ export const clientStore = {
   setWalletBalance(userId: string, amount: number) {
     if (typeof window !== "undefined") {
       localStorage.setItem(`${STORAGE_KEYS.WALLET_BALANCE}_${userId}`, amount.toFixed(2));
-      window.dispatchEvent(new Event("jul_wallet_changed"));
+      window.dispatchEvent(new Event("prime_wallet_changed"));
     }
   },
   getWalletTransactions(userId?: string): WalletTransaction[] {
@@ -1131,7 +1081,7 @@ export const clientStore = {
     all.unshift(newTx);
     if (typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEYS.WALLET_TX, JSON.stringify(all));
-      window.dispatchEvent(new Event("jul_wallet_changed"));
+      window.dispatchEvent(new Event("prime_wallet_changed"));
     }
     if (tx.status === "approved") {
       const current = this.getWalletBalance(tx.user_id);
@@ -1194,7 +1144,7 @@ export const clientStore = {
     list.unshift(newReq);
     if (typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEYS.ASSISTED_PURCHASES, JSON.stringify(list));
-      window.dispatchEvent(new Event("jul_assisted_purchases_changed"));
+      window.dispatchEvent(new Event("prime_assisted_purchases_changed"));
     }
     return newReq;
   },
@@ -1205,7 +1155,7 @@ export const clientStore = {
       list[idx] = { ...list[idx]!, ...updates, updated_at: new Date().toISOString() };
       if (typeof window !== "undefined") {
         localStorage.setItem(STORAGE_KEYS.ASSISTED_PURCHASES, JSON.stringify(list));
-        window.dispatchEvent(new Event("jul_assisted_purchases_changed"));
+        window.dispatchEvent(new Event("prime_assisted_purchases_changed"));
       }
     }
   },
@@ -1213,7 +1163,7 @@ export const clientStore = {
     const list = this.getAssistedPurchases().filter((a) => a.id !== id);
     if (typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEYS.ASSISTED_PURCHASES, JSON.stringify(list));
-      window.dispatchEvent(new Event("jul_assisted_purchases_changed"));
+      window.dispatchEvent(new Event("prime_assisted_purchases_changed"));
     }
   },
 
@@ -1292,7 +1242,7 @@ export const clientStore = {
       threads.unshift(thread);
       if (typeof window !== "undefined") {
         localStorage.setItem(STORAGE_KEYS.SUPPORT_THREADS, JSON.stringify(threads));
-        window.dispatchEvent(new Event("jul_support_threads_changed"));
+        window.dispatchEvent(new Event("prime_support_threads_changed"));
       }
     }
     return thread;
@@ -1347,7 +1297,7 @@ export const clientStore = {
 
     if (typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEYS.SUPPORT_THREADS, JSON.stringify(threads));
-      window.dispatchEvent(new Event("jul_support_threads_changed"));
+      window.dispatchEvent(new Event("prime_support_threads_changed"));
     }
 
     // Push Notifications & In-App Notifications

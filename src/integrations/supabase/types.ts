@@ -453,6 +453,87 @@ export type Database = {
         }
         Relationships: []
       }
+      wallet_transactions: {
+        Row: {
+          amount_htg: number
+          amount_usd: number
+          created_at: string
+          created_by: string | null
+          description: string
+          id: string
+          method: string
+          order_id: string | null
+          package_id: string | null
+          proof_url: string | null
+          reference: string | null
+          status: string
+          type: string
+          user_id: string
+          user_name: string | null
+          wallet_id: string | null
+        }
+        Insert: {
+          amount_htg?: number
+          amount_usd: number
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          id?: string
+          method?: string
+          order_id?: string | null
+          package_id?: string | null
+          proof_url?: string | null
+          reference?: string | null
+          status?: string
+          type: string
+          user_id: string
+          user_name?: string | null
+          wallet_id?: string | null
+        }
+        Update: {
+          amount_htg?: number
+          amount_usd?: number
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          id?: string
+          method?: string
+          order_id?: string | null
+          package_id?: string | null
+          proof_url?: string | null
+          reference?: string | null
+          status?: string
+          type?: string
+          user_id?: string
+          user_name?: string | null
+          wallet_id?: string | null
+        }
+        Relationships: []
+      }
+      wallets: {
+        Row: {
+          balance_usd: number
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance_usd?: number
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance_usd?: number
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -461,6 +542,10 @@ export type Database = {
       add_staff_by_email: {
         Args: { _email: string; _role: Database["public"]["Enums"]["app_role"] }
         Returns: string
+      }
+      admin_adjust_wallet: {
+        Args: { _amount_usd: number; _reason: string; _user_id: string }
+        Returns: number
       }
       admin_setup_available: { Args: never; Returns: boolean }
       can_manage_packages: { Args: { _user_id: string }; Returns: boolean }

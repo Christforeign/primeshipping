@@ -194,6 +194,7 @@ export interface WhatsAppSupportContact {
   department?: string;
   phone: string;
   prefilled_message?: string;
+  availability?: string;
   is_active: boolean;
 }
 

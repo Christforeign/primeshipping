@@ -799,7 +799,7 @@ export function AssistedPurchasePage() {
               className="w-full rounded-md font-bold bg-orange-600 hover:bg-orange-700 text-white"
               onClick={() => {
                 window.dispatchEvent(
-                  new CustomEvent("jul_open_chat", {
+                  new CustomEvent("prime_open_chat", {
                     detail: {
                       dossierId: "DOSSIER-ACHAT-ASSISTE",
                       dossierTitle: "Achat assisté sur-mesure",
@@ -888,7 +888,7 @@ export function AssistedPurchasePage() {
                       type="button"
                       onClick={() => {
                         window.dispatchEvent(
-                          new CustomEvent("jul_open_chat", {
+                          new CustomEvent("prime_open_chat", {
                             detail: {
                               dossierId: req.request_number,
                               dossierTitle: `Demande d'achat ${req.request_number}`,

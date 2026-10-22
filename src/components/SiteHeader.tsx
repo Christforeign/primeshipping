@@ -54,13 +54,11 @@ export function SiteHeader() {
           to="/"
           className="flex items-center gap-3 font-display text-lg font-black tracking-tight flex-shrink-0 group"
         >
-          <div className="h-11 rounded-xl bg-white p-1 border border-slate-700/60 shadow-sm flex items-center justify-center group-hover:scale-105 transition-transform overflow-hidden">
-            <img
-              src="/assets/aistudio/WhatsApp_Image_2026-10-14_at_20.12.29_c1b1b367.jpeg"
-              alt="Prime Express Shipping"
-              className="h-full w-auto max-w-[170px] object-contain"
-            />
-          </div>
+          <img
+            src="/logos/prime-shipping-logo.svg"
+            alt="Prime Express Shipping"
+            className="h-10 w-auto max-w-[150px] object-contain group-hover:scale-105 transition-transform"
+          />
           <div className="hidden sm:block">
             <span className="text-white text-base font-black block leading-tight tracking-tight">
               PRIME EXPRESS

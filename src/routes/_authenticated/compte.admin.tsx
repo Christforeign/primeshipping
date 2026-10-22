@@ -51,7 +51,9 @@ import { useSettings } from "@/lib/settings";
 import { useRoles, useUser } from "@/lib/session";
 import { clientStore } from "@/lib/store";
 import { PageHeader } from "@/components/PageHeader";
-import { AdminPosInvoicing } from "@/components/AdminPosInvoicing";
+import { AdminInvoiceBuilder } from "@/components/AdminInvoiceBuilder";
+import { AdminWalletAdjust } from "@/components/AdminWalletAdjust";
+import { AdminWhatsAppContacts } from "@/components/AdminWhatsAppContacts";
 import { broadcastPushNotification } from "@/lib/push-notifications";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -98,6 +100,7 @@ function AdminHubPage() {
     | "pos"
     | "achats"
     | "wallet_approvals"
+    | "contacts"
     | "orders"
     | "chats"
   >("settings");
@@ -795,7 +798,7 @@ function AdminHubPage() {
             },
             {
               key: "pos",
-              label: "5. Caisse & Facturation (POS)",
+              label: "5. Facturation",
               icon: Printer,
             },
             {
@@ -810,6 +813,7 @@ function AdminHubPage() {
             },
             { key: "orders", label: "8. Commandes Produits", icon: ShoppingBag },
             { key: "chats", label: "9. Chat Support & Dossiers", icon: MessageCircle },
+            { key: "contacts", label: "10. WhatsApp & Accueil", icon: MessageCircle },
           ] as const
         ).map((item) => {
           const Icon = item.icon;
@@ -2269,7 +2273,9 @@ function AdminHubPage() {
       {/* ================================================================= */}
       {/* TAB 5: POINT OF SALE (POS) & INVOICING */}
       {/* ================================================================= */}
-      {tab === "pos" && <AdminPosInvoicing />}
+      {tab === "pos" && <AdminInvoiceBuilder />}
+      {tab === "contacts" && <AdminWhatsAppContacts />}
+      {tab === "wallet_approvals" && <div className="mb-6"><AdminWalletAdjust /></div>}
 
       {/* ================================================================= */}
       {/* TAB 6: WALLET TOP-UPS APPROVALS */}
