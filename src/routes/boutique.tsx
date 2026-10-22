@@ -19,6 +19,7 @@ import {
   Clock,
   Layers,
   ChevronRight,
+  ShoppingCart,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useSettings } from "@/lib/settings";
