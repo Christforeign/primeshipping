@@ -214,60 +214,10 @@ Signalement obligatoire dans les 48h en cas de casse ou de manquement.`,
     "🚀 Départs aériens hebdomadaires Miami ➔ Haïti (4.50$/lb) • Taux officiel : 1 USD = 132 HTG • MonCash & Natcash acceptés !",
   promo_banner_link: "/suivi",
   customer_fields_config: DEFAULT_CUSTOMER_FIELDS,
-  whatsapp_support_contacts: [
-    {
-      id: "wa-fret",
-      name: "Support Fret & Colis Miami",
-      department: "Fret & Colis",
-      phone: "+509 3700-1122",
-      prefilled_message: "Bonjour Prime Express Shipping, j'ai une question concernant le fret de mon colis.",
-      is_active: true,
-    },
-    {
-      id: "wa-boutique",
-      name: "Service Achats & Boutique",
-      department: "Achats & Boutique",
-      phone: "+509 4800-2233",
-      prefilled_message: "Bonjour Prime Store, je souhaite passer une commande ou poser une question.",
-      is_active: true,
-    },
-    {
-      id: "wa-general",
-      name: "Service Client Général & Réclamations",
-      department: "Service Client",
-      phone: "+509 3100-5566",
-      prefilled_message: "Bonjour, je contacte le service client Prime Express.",
-      is_active: true,
-    },
-  ],
+  whatsapp_support_contacts: [],
 };
 
-export const DEFAULT_WHATSAPP_CONTACTS: WhatsAppSupportContact[] = [
-  {
-    id: "wa-fret",
-    name: "Support Fret & Colis Miami",
-    department: "Fret & Colis",
-    phone: "+509 3700-1122",
-    prefilled_message: "Bonjour Prime Express Shipping, j'ai une question concernant le fret de mon colis.",
-    is_active: true,
-  },
-  {
-    id: "wa-boutique",
-    name: "Service Achats & Boutique",
-    department: "Achats & Boutique",
-    phone: "+509 4800-2233",
-    prefilled_message: "Bonjour Prime Store, je souhaite passer une commande ou poser une question.",
-    is_active: true,
-  },
-  {
-    id: "wa-general",
-    name: "Service Client Général & Réclamations",
-    department: "Service Client",
-    phone: "+509 3100-5566",
-    prefilled_message: "Bonjour, je contacte le service client Prime Express.",
-    is_active: true,
-  },
-];
+export const DEFAULT_WHATSAPP_CONTACTS: WhatsAppSupportContact[] = [];
 
 export const DEFAULT_PRODUCTS: ProductItem[] = [
   {
