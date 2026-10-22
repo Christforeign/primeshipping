@@ -7,7 +7,7 @@ export function cleanWhatsAppNumber(phone: string) {
   return (phone || "").replace(/[^0-9]/g, "");
 }
 
-export function whatsAppUrl(contact: Pick<WhatsAppSupportContact, "phone" | "prefilled_message">) {
+export function whatsAppUrl(contact: { phone: string; prefilled_message?: string | undefined }) {
   const num = cleanWhatsAppNumber(contact.phone);
   const text =
     contact.prefilled_message ||

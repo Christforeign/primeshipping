@@ -12,14 +12,14 @@ type Row = { id: string; tracking: string; label: string; weight: string; custom
 const emptyRow = (): Row => ({ id: String(Date.now() + Math.random()), tracking: "", label: "", weight: "", customs: "", amount: "" });
 
 export function AdminInvoiceBuilder() {
-  const s = useSettings() as Record<string, any> | null;
+  const s = useSettings() as any;
   const rate = Number(s?.usd_to_htg) || 132;
   const [brand, setBrand] = useState<InvoiceBrand>("shipping");
   const [title, setTitle] = useState("Facture colis");
   const [mode, setMode] = useState<"member" | "walkin">("member");
   const [term, setTerm] = useState("");
   const [hits, setHits] = useState<ClientHit[]>([]);
-  const [client, setClient] = useState<{ name: string; phone: string; code?: string; email?: string }>({ name: "", phone: "" });
+  const [client, setClient] = useState<{ name: string; phone: string; code?: string | undefined; email?: string | undefined }>({ name: "", phone: "" });
   const [rows, setRows] = useState<Row[]>([emptyRow()]);
   const [paid, setPaid] = useState("");
   const [note, setNote] = useState("");
