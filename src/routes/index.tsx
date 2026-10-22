@@ -87,8 +87,8 @@ function Index() {
     const handleProductsChange = () => {
       setProducts(clientStore.getProducts().filter((p) => p.is_active !== false));
     };
-    window.addEventListener("jul_products_changed", handleProductsChange);
-    return () => window.removeEventListener("jul_products_changed", handleProductsChange);
+    window.addEventListener("prime_products_changed", handleProductsChange);
+    return () => window.removeEventListener("prime_products_changed", handleProductsChange);
   }, []);
 
   return (

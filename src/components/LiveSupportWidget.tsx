@@ -134,7 +134,7 @@ export function LiveSupportWidget() {
     const handleStorageChange = () => {
       refreshThread();
     };
-    window.addEventListener("jul_support_threads_changed", handleStorageChange);
+    window.addEventListener("prime_support_threads_changed", handleStorageChange);
 
     // Event to open chat pre-selected on a dossier
     const handleOpenChat = (e: Event) => {
@@ -151,11 +151,11 @@ export function LiveSupportWidget() {
         console.error(err);
       }
     };
-    window.addEventListener("jul_open_chat", handleOpenChat);
+    window.addEventListener("prime_open_chat", handleOpenChat);
 
     return () => {
-      window.removeEventListener("jul_support_threads_changed", handleStorageChange);
-      window.removeEventListener("jul_open_chat", handleOpenChat);
+      window.removeEventListener("prime_support_threads_changed", handleStorageChange);
+      window.removeEventListener("prime_open_chat", handleOpenChat);
     };
   }, [activeDossierId, user]);
 

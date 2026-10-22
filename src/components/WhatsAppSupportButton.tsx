@@ -26,10 +26,10 @@ export function WhatsAppSupportButton() {
     reloadContacts();
     const handleUpdate = () => reloadContacts();
     window.addEventListener("prime_whatsapp_contacts_changed", handleUpdate);
-    window.addEventListener("jul_settings_changed", handleUpdate);
+    window.addEventListener("prime_settings_changed", handleUpdate);
     return () => {
       window.removeEventListener("prime_whatsapp_contacts_changed", handleUpdate);
-      window.removeEventListener("jul_settings_changed", handleUpdate);
+      window.removeEventListener("prime_settings_changed", handleUpdate);
     };
   }, []);
 

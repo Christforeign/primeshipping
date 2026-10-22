@@ -81,7 +81,7 @@ export function InteractiveTutorial() {
 
   useEffect(() => {
     // Check if tutorial has been dismissed
-    const hasSeen = localStorage.getItem("jul_tutorial_seen");
+    const hasSeen = localStorage.getItem("prime_tutorial_seen");
     if (!hasSeen) {
       // Delay slightly so the page renders first
       const timer = setTimeout(() => setIsOpen(true), 1200);
@@ -102,7 +102,7 @@ export function InteractiveTutorial() {
   const handleClose = (neverShowAgain = true) => {
     setIsOpen(false);
     if (neverShowAgain) {
-      localStorage.setItem("jul_tutorial_seen", "true");
+      localStorage.setItem("prime_tutorial_seen", "true");
     }
   };
 

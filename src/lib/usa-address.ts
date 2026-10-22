@@ -11,7 +11,7 @@ export type UsaAddress = {
 };
 
 export const DEFAULT_USA_ADDRESS: UsaAddress = {
-  name_template: "{nom} JUL SHIPP {code}",
+  name_template: "{nom} Prime Shipping {code}",
   line1: "10049 NW 89TH AVE",
   line2: "UNIT 2PC-046344",
   city: "Medley",
