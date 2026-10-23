@@ -20,6 +20,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { formatDate } from "@/lib/labels";
 import { clientStore } from "@/lib/store";
 import { WalletTopupModal } from "@/components/WalletTopupModal";
+import { UsaAddressCard } from "@/components/UsaAddressCard";
 import { PushNotificationPrompt } from "@/components/PushNotificationPrompt";
 import type { OrderItem } from "@/lib/types-store";
 
@@ -91,18 +92,20 @@ function Dashboard() {
     <div className="space-y-6">
       <PushNotificationPrompt />
 
+      {profile?.client_code && <UsaAddressCard fullName={profile.full_name} code={profile.client_code} />}
+
       {/* Profile & Wallet Banner */}
-      <div className="rounded-3xl bg-forest p-7 text-forest-foreground flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-soft">
-        <div>
+      <div className="rounded-3xl bg-forest p-5 sm:p-7 text-forest-foreground flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-soft">
+        <div className="min-w-0 max-w-full">
           <p className="text-forest-foreground/70">Bienvenue,</p>
-          <h1 className="text-3xl font-bold">{profile?.full_name || user.email}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold break-words">{profile?.full_name || user.email}</h1>
           <p className="mt-3 inline-block rounded-lg bg-accent px-3 py-1 font-mono text-sm font-bold text-accent-foreground">
             Identifiant client : {profile?.client_code ?? "…"}
           </p>
         </div>
 
         {/* Wallet widget inside header */}
-        <div className="rounded-2xl bg-forest/40 border border-forest-foreground/20 p-4 min-w-[240px]">
+        <div className="rounded-2xl bg-forest/40 border border-forest-foreground/20 p-4 w-full md:w-auto md:min-w-[240px]">
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-semibold text-forest-foreground/80 flex items-center gap-1.5">
               <Wallet className="h-4 w-4 text-accent" /> Solde Portefeuille
