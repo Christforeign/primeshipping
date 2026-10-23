@@ -8,6 +8,13 @@
       "when": 1792709755112,
       "tag": "0000_wallets",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792716625354,
+      "tag": "0001_signup_trigger_support_chat",
+      "breakpoints": true
     }
   ]
 }
