@@ -28,3 +28,13 @@ export async function searchClients(term: string): Promise<ClientHit[]> {
   if (error) throw error;
   return (data || []) as ClientHit[];
 }
+
+export async function listClients(): Promise<ClientHit[]> {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, full_name, email, phone, client_code")
+    .order("created_at", { ascending: false })
+    .limit(1000);
+  if (error) throw error;
+  return (data || []) as ClientHit[];
+}

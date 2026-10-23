@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSettings } from "@/lib/settings";
 import { openInvoice, generateInvoiceWhatsAppText, invoiceTotals, type InvoiceData, type InvoiceBrand } from "@/lib/invoice";
-import { searchClients, type ClientHit } from "@/lib/admin-settings";
+import { ClientPicker } from "@/components/ClientPicker";
 
 type Row = { id: string; tracking: string; label: string; weight: string; customs: string; amount: string };
 const emptyRow = (): Row => ({ id: String(Date.now() + Math.random()), tracking: "", label: "", weight: "", customs: "", amount: "" });
@@ -17,8 +17,6 @@ export function AdminInvoiceBuilder() {
   const [brand, setBrand] = useState<InvoiceBrand>("shipping");
   const [title, setTitle] = useState("Facture colis");
   const [mode, setMode] = useState<"member" | "walkin">("member");
-  const [term, setTerm] = useState("");
-  const [hits, setHits] = useState<ClientHit[]>([]);
   const [client, setClient] = useState<{ name: string; phone: string; code?: string | undefined; email?: string | undefined }>({ name: "", phone: "" });
   const [rows, setRows] = useState<Row[]>([emptyRow()]);
   const [paid, setPaid] = useState("");
@@ -64,7 +62,8 @@ export function AdminInvoiceBuilder() {
   };
 
   const valid = () => {
-    if (!client.name.trim()) return toast.error("Indiquez le client."), false;
+    if (mode === "member" && !client.code) return toast.error("Sélectionnez un client inscrit dans la liste."), false;
+    if (!client.name.trim()) return toast.error("Saisissez le nom du client de passage."), false;
     if (!build().lines.length) return toast.error("Ajoutez au moins une ligne."), false;
     return true;
   };
@@ -114,17 +113,7 @@ export function AdminInvoiceBuilder() {
       </div>
 
       {mode === "member" && !client.code ? (
-        <div className="space-y-2">
-          <div className="flex gap-2">
-            <Input value={term} onChange={(e) => setTerm(e.target.value)} placeholder="Nom, e-mail ou PS-XXXX" onKeyDown={async (e) => { if (e.key === "Enter") { e.preventDefault(); setHits(await searchClients(term).catch(() => [])); } }} />
-            <Button type="button" variant="outline" onClick={async () => setHits(await searchClients(term).catch(() => []))}><Search className="h-4 w-4" /></Button>
-          </div>
-          {hits.map((h) => (
-            <button key={h.id} onClick={() => { setClient({ name: h.full_name, phone: h.phone || "", code: h.client_code, email: h.email || undefined }); setHits([]); }} className="w-full text-left text-sm p-2 rounded-lg border hover:bg-muted">
-              <span className="font-mono font-bold text-primary mr-2">{h.client_code}</span>{h.full_name}
-            </button>
-          ))}
-        </div>
+        <ClientPicker onPick={(h) => setClient({ name: h.full_name || h.email || h.client_code, phone: h.phone || "", code: h.client_code, email: h.email || undefined })} />
       ) : (
         <div className="grid sm:grid-cols-2 gap-3">
           <Input value={client.name} onChange={(e) => setClient({ ...client, name: e.target.value })} placeholder="Nom du client" />

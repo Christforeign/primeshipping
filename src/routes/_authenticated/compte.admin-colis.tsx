@@ -1077,7 +1077,7 @@ function AdminColis() {
           </p>
           <div className="flex flex-wrap gap-2">
             <Input
-              className="flex-1 min-w-[180px] h-9 text-xs rounded-lg"
+              className="flex-1 min-w-0 h-9 text-xs rounded-lg"
               type="email"
               placeholder="E-mail du collaborateur"
               value={staffEmail}

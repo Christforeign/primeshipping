@@ -1,20 +1,19 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Search, Wallet } from "lucide-react";
+import { Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useSettings } from "@/lib/settings";
-import { searchClients, type ClientHit } from "@/lib/admin-settings";
+import { type ClientHit } from "@/lib/admin-settings";
+import { ClientPicker } from "@/components/ClientPicker";
 
 export function AdminWalletAdjust() {
   const s = useSettings();
   const rate = Number(s?.usd_to_htg) || 132;
   const qc = useQueryClient();
-  const [term, setTerm] = useState("");
-  const [hits, setHits] = useState<ClientHit[]>([]);
   const [client, setClient] = useState<ClientHit | null>(null);
   const [op, setOp] = useState<"credit" | "debit">("credit");
   const [amount, setAmount] = useState("");
@@ -30,14 +29,6 @@ export function AdminWalletAdjust() {
       return Number(data?.balance_usd ?? 0);
     },
   });
-
-  const doSearch = async () => {
-    try {
-      setHits(await searchClients(term));
-    } catch (e: any) {
-      toast.error(e.message);
-    }
-  };
 
   const submit = async () => {
     const v = parseFloat(amount);
@@ -64,26 +55,11 @@ export function AdminWalletAdjust() {
       <h3 className="text-base font-bold text-forest flex items-center gap-2">
         <Wallet className="h-5 w-5 text-primary" /> Créditer / Débiter un portefeuille
       </h3>
-      <div className="flex gap-2">
-        <Input value={term} onChange={(e) => setTerm(e.target.value)} onKeyDown={(e) => e.key === "Enter" && doSearch()} placeholder="Nom, e-mail ou code PS-XXXX" />
-        <Button type="button" variant="outline" onClick={doSearch}>
-          <Search className="h-4 w-4" />
-        </Button>
-      </div>
-      {hits.length > 0 && !client && (
-        <div className="space-y-1">
-          {hits.map((h) => (
-            <button key={h.id} onClick={() => { setClient(h); setHits([]); }} className="w-full text-left text-sm p-2 rounded-lg border hover:bg-muted">
-              <span className="font-mono font-bold text-primary mr-2">{h.client_code}</span>
-              {h.full_name || "—"} <span className="text-muted-foreground">{h.email}</span>
-            </button>
-          ))}
-        </div>
-      )}
+      {!client && <ClientPicker onPick={setClient} />}
       {client && (
         <div className="space-y-4">
           <div className="rounded-2xl bg-muted/50 p-4 flex flex-wrap items-center justify-between gap-2">
-            <div>
+            <div className="min-w-0 break-words">
               <p className="font-bold">{client.full_name} <span className="font-mono text-primary">({client.client_code})</span></p>
               <p className="text-xs text-muted-foreground">{client.email}</p>
             </div>
