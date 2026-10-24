@@ -77,9 +77,6 @@ export function SiteFooter() {
           {s?.whatsapp && <p className="text-xs">WhatsApp : {s.whatsapp}</p>}
           {s?.email && <p className="text-xs">{s.email}</p>}
           {s?.opening_hours && <p className="text-xs whitespace-pre-line">{s.opening_hours}</p>}
-          {!s?.hq_address && !s?.phone && !s?.email && (
-            <p className="text-xs">Delmas 33 & Pétion-Ville, Haïti.</p>
-          )}
         </div>
 
         {/* Quick Links */}

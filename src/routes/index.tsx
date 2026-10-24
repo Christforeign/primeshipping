@@ -463,7 +463,7 @@ function Index() {
           <Warehouse className="h-8 w-8 text-primary" />
           <h3 className="mt-3 text-xl font-bold text-foreground">Retrait en Succursale</h3>
           <p className="mt-1.5 text-muted-foreground text-xs leading-relaxed">
-            {s?.pickup_address || "Succursale officielle à Delmas 33 & Pétion-Ville, Haïti."}
+            {s?.pickup_address || ""}
           </p>
           <div className="mt-4 flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
             <CheckCircle2 className="h-4 w-4" />
