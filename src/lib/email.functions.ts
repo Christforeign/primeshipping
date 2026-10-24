@@ -21,10 +21,10 @@ export const sendClientEmail = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: st } = await supabaseAdmin.from("company_settings").select("*").eq("id", 1).maybeSingle();
     const extra = ((st as { extra?: Record<string, unknown> } | null)?.extra || {}) as Record<string, unknown>;
-    const tpl = mergeTemplates(extra.email_templates)[data.kind];
+    const tpl = mergeTemplates(extra["email_templates"])[data.kind];
     if (!tpl.enabled && !data.test) return { sent: false, reason: "désactivé" };
-    const senderEmail = String(extra.email_sender || "");
-    const senderName = String(extra.email_sender_name || "Prime Express Shipping");
+    const senderEmail = String(extra["email_sender"] || "");
+    const senderName = String(extra["email_sender_name"] || "Prime Express Shipping");
     if (!senderEmail) return { sent: false, reason: "Adresse expéditeur non configurée" };
 
     let to = data.toEmail || "";
@@ -38,9 +38,9 @@ export const sendClientEmail = createServerFn({ method: "POST" })
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) throw new Error("Email invalide");
 
-    const key = process.env.BREVO_API_KEY;
+    const key = process.env["BREVO_API_KEY"];
     if (!key) throw new Error("Clé Brevo manquante");
-    const { subject, html } = renderEmail(tpl, vars, senderName, String(extra.email_logo_url || "") || undefined);
+    const { subject, html } = renderEmail(tpl, vars, senderName, String(extra["email_logo_url"] || "") || undefined);
     const res = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: { "api-key": key, "content-type": "application/json", accept: "application/json" },

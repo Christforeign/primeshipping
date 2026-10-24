@@ -28,9 +28,9 @@ export function AdminEmailTemplates() {
 
   useEffect(() => {
     if (!data) return;
-    setTpls(mergeTemplates(data.email_templates));
-    setSender(String(data.email_sender || ""));
-    setSenderName(String(data.email_sender_name || "Prime Express Shipping"));
+    setTpls(mergeTemplates(data["email_templates"]));
+    setSender(String(data["email_sender"] || ""));
+    setSenderName(String(data["email_sender_name"] || "Prime Express Shipping"));
   }, [data]);
 
   const t = tpls[kind];
@@ -46,7 +46,7 @@ export function AdminEmailTemplates() {
     } catch (e) { toast.error((e as Error).message); } finally { setBusy(false); }
   }
   async function test() {
-    if (!testTo) return toast.error("Saisis un email de test");
+    if (!testTo) { toast.error("Saisis un email de test"); return; }
     setBusy(true);
     try {
       await saveExtraSettings({ email_templates: tpls, email_sender: sender.trim(), email_sender_name: senderName.trim() });
