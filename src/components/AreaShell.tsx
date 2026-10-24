@@ -13,8 +13,8 @@ export function AreaShell({
   children: ReactNode;
 }) {
   return (
-    <div className="mx-auto grid w-full max-w-7xl gap-4 px-3 py-4 sm:px-4 sm:py-8 lg:gap-6 lg:grid-cols-[230px_1fr]">
-      <aside className="lg:sticky lg:top-24 lg:self-start">
+    <div className="mx-auto grid w-full max-w-7xl gap-4 px-3 py-4 sm:px-4 sm:py-8 grid-cols-[minmax(0,1fr)] lg:gap-6 lg:grid-cols-[230px_minmax(0,1fr)]">
+      <aside className="min-w-0 lg:sticky lg:top-24 lg:self-start">
         <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
           {title}
         </p>

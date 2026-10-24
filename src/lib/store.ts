@@ -170,7 +170,7 @@ export const DEFAULT_SETTINGS: EnrichedCompanySettings = {
   phone: "",
   whatsapp: "",
   email: "",
-  opening_hours: "Lundi - Samedi : 08h00 - 17h00\nDimanche : Fermé",
+  opening_hours: "",
   delivery_zones: "",
   currencies: "HTG, USD",
   usd_to_htg: 132,
