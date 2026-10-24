@@ -170,6 +170,9 @@ function AdminHubPage() {
     setHqAddress(s.hq_address || "");
     setCPhone(s.phone || "");
     setCEmail(s.email || "");
+    setCWhatsapp((s as any).whatsapp || "");
+    setCPickup((s as any).pickup_address || "");
+    setCHours((s as any).opening_hours || "");
     setMapLat(String((s as any).map_lat || ""));
     setMapLng(String((s as any).map_lng || ""));
     setRatePerLb(s.shipping_rate_per_lb != null ? String(s.shipping_rate_per_lb) : "");
@@ -182,6 +185,9 @@ function AdminHubPage() {
   }, [s, loadedFromDb]);
   const [cPhone, setCPhone] = useState<string>(s?.phone || "");
   const [cEmail, setCEmail] = useState<string>(s?.email || "");
+  const [cWhatsapp, setCWhatsapp] = useState<string>((s as any)?.whatsapp || "");
+  const [cPickup, setCPickup] = useState<string>((s as any)?.pickup_address || "");
+  const [cHours, setCHours] = useState<string>((s as any)?.opening_hours || "");
   const [mapLat, setMapLat] = useState<string>((s as any)?.map_lat || "");
   const [mapLng, setMapLng] = useState<string>((s as any)?.map_lng || "");
   const [invFooter, setInvFooter] = useState<string>((s as any)?.invoice_footer || "");
@@ -260,6 +266,9 @@ function AdminHubPage() {
           hq_address: hqAddress || null,
           phone: cPhone || null,
           email: cEmail || null,
+          whatsapp: cWhatsapp || null,
+          pickup_address: cPickup || null,
+          opening_hours: cHours.trim() || null,
         })
         .eq("id", 1);
       if (error) throw error;
@@ -1187,6 +1196,18 @@ function AdminHubPage() {
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold">E-mail</Label>
                 <Input value={cEmail} onChange={(e) => setCEmail(e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">WhatsApp entreprise</Label>
+                <Input value={cWhatsapp} onChange={(e) => setCWhatsapp(e.target.value)} placeholder="509XXXXXXXX" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold">Adresse de retrait (accueil)</Label>
+                <Input value={cPickup} onChange={(e) => setCPickup(e.target.value)} />
+              </div>
+              <div className="space-y-1.5 sm:col-span-2">
+                <Label className="text-xs font-semibold">Horaires d'ouverture (laisser vide pour masquer)</Label>
+                <Textarea rows={3} value={cHours} onChange={(e) => setCHours(e.target.value)} />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold">Latitude GPS (optionnel)</Label>
