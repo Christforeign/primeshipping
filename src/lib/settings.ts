@@ -2,7 +2,7 @@ import { queryOptions, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import type { EnrichedCompanySettings } from "./types-store";
-import { clientStore } from "./store";
+import { DEFAULT_SETTINGS } from "./store";
 
 export type CompanySettings = Database["public"]["Tables"]["company_settings"]["Row"] &
   EnrichedCompanySettings;
@@ -10,7 +10,7 @@ export type CompanySettings = Database["public"]["Tables"]["company_settings"]["
 export const settingsQuery = queryOptions({
   queryKey: ["company_settings"],
   queryFn: async () => {
-    const storeSettings = clientStore.getSettings();
+    const storeSettings = DEFAULT_SETTINGS;
     try {
       const { data, error } = await supabase
         .from("company_settings")

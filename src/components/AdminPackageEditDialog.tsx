@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { notifyPackageStatusChange } from "@/lib/push-notifications";
 import { statusLabel } from "@/lib/labels";
+import { useSettings } from "@/lib/settings";
 
 type Pkg = Record<string, any>;
 
@@ -24,6 +25,10 @@ export function AdminPackageEditDialog({
 }) {
   const [f, setF] = useState<Pkg>({});
   const [saving, setSaving] = useState(false);
+  const st = useSettings();
+  const ratePerLb = Number(st?.shipping_rate_per_lb) || 0;
+  const autoFee = ratePerLb && Number(f.actual_weight_lb) ? +(ratePerLb * Number(f.actual_weight_lb)).toFixed(2) : null;
+  const total = (Number(f.shipping_fee ?? autoFee) || 0) + (Number(f.extra_fees) || 0);
 
   useEffect(() => {
     if (pkg) setF({ ...pkg });
@@ -46,7 +51,7 @@ export function AdminPackageEditDialog({
         carrier_tracking: f.carrier_tracking || null,
         quantity: Number(f.quantity) || 1,
         actual_weight_lb: num(f.actual_weight_lb),
-        shipping_fee: num(f.shipping_fee),
+        shipping_fee: num(f.shipping_fee) ?? autoFee,
         extra_fees: num(f.extra_fees),
         declared_value: num(f.declared_value),
         internal_notes: f.internal_notes || null,
@@ -105,13 +110,14 @@ export function AdminPackageEditDialog({
             <Input type="number" value={f.quantity ?? 1} onChange={set("quantity")} />
           </div>
           <div className="space-y-1">
-            <Label className="text-xs">Frais de transport (USD)</Label>
-            <Input type="number" step="0.01" value={f.shipping_fee ?? ""} onChange={set("shipping_fee")} />
+            <Label className="text-xs">Frais de transport (USD) — {ratePerLb ? `${ratePerLb} $/lb` : "tarif non défini"}</Label>
+            <Input type="number" step="0.01" value={f.shipping_fee ?? ""} placeholder={autoFee != null ? `Auto : ${autoFee}` : ""} onChange={set("shipping_fee")} />
           </div>
           <div className="space-y-1">
-            <Label className="text-xs">Frais douane / extra (USD)</Label>
+            <Label className="text-xs">Frais spéciaux (haut de gamme, douane…) USD</Label>
             <Input type="number" step="0.01" value={f.extra_fees ?? ""} onChange={set("extra_fees")} />
           </div>
+          <div className="sm:col-span-2 rounded-lg bg-muted px-3 py-2 text-sm font-semibold">Total à payer : {total.toFixed(2)} USD</div>
           <div className="space-y-1">
             <Label className="text-xs">Valeur déclarée (USD)</Label>
             <Input type="number" step="0.01" value={f.declared_value ?? ""} onChange={set("declared_value")} />

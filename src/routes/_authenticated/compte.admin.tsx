@@ -106,6 +106,7 @@ function AdminHubPage() {
     | "contacts"
     | "orders"
     | "chats"
+    | "emails"
   >("settings");
 
   // -------------------------------------------------------------
@@ -824,6 +825,7 @@ function AdminHubPage() {
             { key: "orders", label: "8. Commandes Produits", icon: ShoppingBag },
             { key: "chats", label: "9. Chat Support & Dossiers", icon: MessageCircle },
             { key: "contacts", label: "10. WhatsApp, réseaux & zones", icon: MessageCircle },
+            { key: "emails", label: "11. E-mails Brevo", icon: MessageCircle },
           ] as const
         ).map((item) => {
           const Icon = item.icon;
@@ -2315,6 +2317,7 @@ function AdminHubPage() {
       {/* TAB 5: POINT OF SALE (POS) & INVOICING */}
       {/* ================================================================= */}
       {tab === "pos" && <AdminInvoiceBuilder />}
+      {tab === "emails" && <AdminEmailTemplates />}
       {tab === "contacts" && (<div className="space-y-8"><AdminWhatsAppContacts /><AdminSiteLinks /></div>)}
       {tab === "wallet_approvals" && <div className="mb-6"><AdminWalletAdjust /></div>}
 
@@ -2811,7 +2814,6 @@ function AdminHubPage() {
       {tab === "chats" && (
         <div className="space-y-6">
           <AdminSupportInbox />
-          <AdminEmailTemplates />
           <div>
             <h3 className="text-base font-bold text-forest">
               Chat Support en direct & Dossiers clients

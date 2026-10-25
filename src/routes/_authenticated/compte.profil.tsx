@@ -31,8 +31,8 @@ const FIELDS: [keyof z.infer<typeof schema>, string][] = [
   ["country", "Pays"],
   ["region", "Département ou région"],
   ["city", "Ville"],
-  ["address_line", "Adresse"],
-  ["address_line2", "Adresse complémentaire"],
+  ["address_line", "Adresse de réception en Haïti (quartier, rue, n°)"],
+  ["address_line2", "Repère / téléphone secondaire"],
 ];
 
 function Profile() {
