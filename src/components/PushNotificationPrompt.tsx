@@ -13,14 +13,16 @@ export function PushNotificationPrompt({ className = "" }: { className?: string 
   const [status, setStatus] = useState<PushPermissionState>("default");
   const [dismissed, setDismissed] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [supported, setSupported] = useState(false);
 
   useEffect(() => {
+    setSupported(isPushSupported());
     setStatus(getPushPermissionStatus());
     const isDismissed = localStorage.getItem("prime_push_prompt_dismissed") === "true";
     if (isDismissed) setDismissed(true);
   }, []);
 
-  if (!isPushSupported() || status === "granted" || dismissed) {
+  if (!supported || status === "granted" || dismissed) {
     return null;
   }
 
@@ -46,23 +48,23 @@ export function PushNotificationPrompt({ className = "" }: { className?: string 
 
   return (
     <div
-      className={`rounded-2xl border border-sun/40 bg-gradient-to-r from-forest/90 via-forest to-emerald/80 p-3.5 text-forest-foreground shadow-sm flex items-center justify-between gap-3 text-xs ${className}`}
+      className={`rounded-2xl border border-sun/40 bg-gradient-to-r from-forest/90 via-forest to-emerald/80 p-3.5 text-forest-foreground shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs w-full max-w-full overflow-hidden ${className}`}
     >
-      <div className="flex items-center gap-2.5 min-w-0">
+      <div className="flex items-center gap-2.5 min-w-0 w-full">
         <div className="grid h-8 w-8 place-items-center rounded-xl bg-sun text-forest font-bold shrink-0 shadow-xs">
           <BellRing className="h-4 w-4 animate-pulse" />
         </div>
-        <div className="min-w-0">
-          <p className="font-bold text-white text-[13px] leading-tight truncate">
+        <div className="min-w-0 flex-1">
+          <p className="font-bold text-white text-[13px] leading-tight">
             Alertes Colis & Suivi en direct sur mobile
           </p>
-          <p className="text-[11px] text-forest-foreground/80 truncate">
+          <p className="text-[11px] text-forest-foreground/80">
             Soyez notifié dès qu'un colis arrive à Miami ou est prêt en Haïti.
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-1.5 shrink-0">
+      <div className="flex items-center justify-end gap-1.5 shrink-0 self-end sm:self-auto">
         <Button
           type="button"
           size="sm"
@@ -89,11 +91,13 @@ export function PushNotificationButton({ className = "" }: { className?: string 
   const [status, setStatus] = useState<PushPermissionState>("default");
   const [loading, setLoading] = useState(false);
 
+  const [supported, setSupported] = useState(false);
   useEffect(() => {
+    setSupported(isPushSupported());
     setStatus(getPushPermissionStatus());
   }, []);
 
-  if (!isPushSupported()) return null;
+  if (!supported) return null;
 
   const handleToggle = async () => {
     if (status === "granted") {
