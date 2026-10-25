@@ -13,11 +13,12 @@ import logoImg from "@/assets/logo.png";
 export function SiteFooter() {
   const s = useSettings();
   const name = s?.company_name ?? "Prime Shipping";
-  const socials = [
-    ["Facebook", s?.facebook_url],
-    ["Instagram", s?.instagram_url],
-    ["TikTok", s?.tiktok_url],
-  ].filter(([, u]) => !!u) as [string, string][];
+  const links = (s as unknown as { social_links?: { label: string; url: string; enabled: boolean }[] })?.social_links;
+  const socials = (
+    Array.isArray(links)
+      ? links.filter((l) => l.enabled && l.url).map((l) => [l.label, l.url])
+      : [["Facebook", s?.facebook_url], ["Instagram", s?.instagram_url], ["TikTok", s?.tiktok_url]].filter(([, u]) => !!u)
+  ) as [string, string][];
 
   return (
     <footer className="mt-24 bg-forest text-forest-foreground">

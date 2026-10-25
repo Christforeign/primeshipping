@@ -473,8 +473,7 @@ function Index() {
           <Truck className="h-8 w-8 text-primary" />
           <h3 className="mt-3 text-xl font-bold text-foreground">Livraison à Domicile en Haïti</h3>
           <p className="mt-1.5 text-muted-foreground text-xs leading-relaxed">
-            {s?.delivery_zones ||
-              "Zones desservies : Port-au-Prince, Delmas, Pétion-Ville, Tabarre, Cap-Haïtien."}
+            {s?.delivery_zones ? `Zones desservies : ${s.delivery_zones.split(/\n|,/).map((z) => z.trim()).filter(Boolean).join(", ")}` : ""}
           </p>
           <div className="mt-4 flex items-center gap-2 text-xs text-primary font-semibold">
             <CheckCircle2 className="h-4 w-4" />

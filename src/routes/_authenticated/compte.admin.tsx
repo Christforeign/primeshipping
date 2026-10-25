@@ -56,6 +56,7 @@ import { AdminWalletAdjust } from "@/components/AdminWalletAdjust";
 import { AdminSupportInbox } from "@/components/AdminSupportInbox";
 import { AdminEmailTemplates } from "@/components/AdminEmailTemplates";
 import { AdminWhatsAppContacts } from "@/components/AdminWhatsAppContacts";
+import { AdminSiteLinks } from "@/components/AdminSiteLinks";
 import { broadcastPushNotification } from "@/lib/push-notifications";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -814,7 +815,7 @@ function AdminHubPage() {
             },
             { key: "orders", label: "8. Commandes Produits", icon: ShoppingBag },
             { key: "chats", label: "9. Chat Support & Dossiers", icon: MessageCircle },
-            { key: "contacts", label: "10. WhatsApp & Accueil", icon: MessageCircle },
+            { key: "contacts", label: "10. WhatsApp, réseaux & zones", icon: MessageCircle },
           ] as const
         ).map((item) => {
           const Icon = item.icon;
@@ -2287,7 +2288,7 @@ function AdminHubPage() {
       {/* TAB 5: POINT OF SALE (POS) & INVOICING */}
       {/* ================================================================= */}
       {tab === "pos" && <AdminInvoiceBuilder />}
-      {tab === "contacts" && <AdminWhatsAppContacts />}
+      {tab === "contacts" && (<div className="space-y-8"><AdminWhatsAppContacts /><AdminSiteLinks /></div>)}
       {tab === "wallet_approvals" && <div className="mb-6"><AdminWalletAdjust /></div>}
 
       {/* ================================================================= */}
