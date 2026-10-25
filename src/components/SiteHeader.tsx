@@ -22,7 +22,8 @@ import { PushNotificationButton } from "@/components/PushNotificationPrompt";
 
 const NAV = [
   { to: "/", label: "Accueil" },
-  { to: "/suivi", label: "Prime Shipping", highlight: "orange" },
+  { to: "/compte/colis", label: "Prime Shipping", highlight: "orange" },
+  { to: "/suivi", label: "Suivi" },
   { to: "/boutique", label: "Prime Store", highlight: "gold" },
   { to: "/achat", label: "Achetez pour moi" },
   { to: "/services", label: "Services & Tarifs" },
