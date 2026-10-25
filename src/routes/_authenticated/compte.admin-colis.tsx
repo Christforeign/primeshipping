@@ -12,6 +12,7 @@ import { useRoles, useUser } from "@/lib/session";
 import { useSettings } from "@/lib/settings";
 import { openInvoice } from "@/lib/invoice";
 import { AdminPackageEditDialog } from "@/components/AdminPackageEditDialog";
+import { sendClientEmail } from "@/lib/email.functions";
 import { notifyNewPackage, notifyPackageStatusChange } from "@/lib/push-notifications";
 import {
   Package,
@@ -323,6 +324,27 @@ function AdminColis() {
         userId: targetPkg.user_id,
         description: targetPkg.description,
       });
+    }
+    if (targetPkg) {
+      const kind =
+        status === "recu_entrepot"
+          ? "colis_recu"
+          : status === "expedie" || status === "en_transit"
+            ? "transit"
+            : status === "arrive_haiti" || status === "disponible_retrait"
+              ? "arrivee"
+              : null;
+      if (kind) {
+        sendClientEmail({
+          data: {
+            kind,
+            userId: targetPkg.user_id,
+            vars: { tracking: targetPkg.tracking_number, details: targetPkg.description },
+          },
+        })
+          .then((r: any) => !r?.sent && r?.reason && toast.info(`E-mail non envoyé : ${r.reason}`))
+          .catch((e: any) => toast.error(e?.message ?? "E-mail non envoyé"));
+      }
     }
     toast.success("Statut mis à jour — client notifié");
     qc.invalidateQueries({ queryKey: ["admin-packages"] });
