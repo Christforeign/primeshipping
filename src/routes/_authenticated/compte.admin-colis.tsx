@@ -11,6 +11,7 @@ import { PACKAGE_STATUSES, statusLabel, type PackageStatus } from "@/lib/labels"
 import { useRoles, useUser } from "@/lib/session";
 import { useSettings } from "@/lib/settings";
 import { openInvoice } from "@/lib/invoice";
+import { AdminPackageEditDialog } from "@/components/AdminPackageEditDialog";
 import { notifyNewPackage, notifyPackageStatusChange } from "@/lib/push-notifications";
 import {
   Package,
@@ -58,6 +59,7 @@ function AdminColis() {
 
   const [f, setF] = useState<any>({ status: "recu_entrepot" });
   const [search, setSearch] = useState("");
+  const [editPkg, setEditPkg] = useState<any>(null);
   const [pkgSearch, setPkgSearch] = useState("");
   const [busy, setBusy] = useState(false);
   const [staffEmail, setStaffEmail] = useState("");
@@ -159,7 +161,7 @@ function AdminColis() {
       const { data, error } = await supabase
         .from("packages")
         .select(
-          "id, tracking_number, description, status, user_id, shipping_fee, extra_fees, declared_value, quantity, actual_weight_lb, instructions, merchant, carrier_tracking, created_at, destination",
+          "id, tracking_number, description, status, user_id, shipping_fee, extra_fees, declared_value, quantity, actual_weight_lb, estimated_weight_lb, internal_notes, instructions, merchant, carrier_tracking, created_at, destination",
         )
         .order("created_at", { ascending: false })
         .limit(150);
@@ -169,6 +171,14 @@ function AdminColis() {
   });
 
   if (!isAdmin) return <p className="text-sm text-muted-foreground">Accès refusé.</p>;
+  const editDialog = (
+    <AdminPackageEditDialog
+      pkg={editPkg}
+      userId={user?.id ?? ""}
+      onClose={() => setEditPkg(null)}
+      onSaved={() => qc.invalidateQueries({ queryKey: ["admin-packages"] })}
+    />
+  );
 
   const list = (clients.data ?? []).filter((c) =>
     `${c.full_name} ${c.email} ${c.client_code} ${c.phone}`
@@ -982,6 +992,15 @@ function AdminColis() {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 shrink-0">
+                  <Button
+                    size="sm"
+                    type="button"
+                    onClick={() => setEditPkg(p)}
+                    className={`h-8 text-xs rounded-lg gap-1 font-bold ${p.status === "declare" ? "bg-sun text-forest hover:bg-sun/90" : ""}`}
+                    variant={p.status === "declare" ? "default" : "outline"}
+                  >
+                    <CheckCircle2 className="h-3.5 w-3.5" /> {p.status === "declare" ? "Valider / Modifier" : "Modifier"}
+                  </Button>
                   <select
                     value={p.status}
                     onChange={(e) => changeStatus(p.id, e.target.value as PackageStatus)}
