@@ -417,7 +417,7 @@ export function renderInvoiceHtml(d: InvoiceData): string {
       <div class="label">Détails Logistiques</div>
       <div>Nombre de colis : <b>${d.shipping_details.package_count || d.lines.length}</b></div>
       <div>Poids total : <b>${d.shipping_details.total_weight_lbs || 0} lbs</b></div>
-      <div>Taux fret : <b>${d.shipping_details.rate_per_lb || 4.5} $/lb</b></div>
+      <div>Taux fret : <b>${d.shipping_details.rate_per_lb ?? "—"} $/lb</b></div>
       <div>Taux de change : <b>1 USD = ${totals.rate} HTG</b></div>
     </div>`
         : `
@@ -879,7 +879,7 @@ export function renderInvoiceHtml(d: InvoiceData): string {
         </div>
         <div style="display: flex; justify-content: space-between; padding: 2px 0;">
           <span>Taux au lb :</span>
-          <b>${d.shipping_details?.rate_per_lb != null ? `$${d.shipping_details.rate_per_lb} / lb` : "$4.50 / lb"}</b>
+          <b>${d.shipping_details?.rate_per_lb != null ? `$${d.shipping_details.rate_per_lb} / lb` : "—"}</b>
         </div>
         <div style="display: flex; justify-content: space-between; padding: 2px 0;">
           <span>Taux de change appliqué :</span>

@@ -190,7 +190,7 @@ function Index() {
                   </span>
                 ) : (
                   <span className="rounded-md bg-orange-500 text-slate-950 px-2.5 py-1 text-xs font-black uppercase tracking-wider">
-                    4.50$ / lb
+                    Tarif sur demande
                   </span>
                 )}
               </div>
