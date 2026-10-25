@@ -12,7 +12,7 @@ import logoImg from "@/assets/logo.png";
 
 export function SiteFooter() {
   const s = useSettings();
-  const name = s?.company_name ?? "Prime Entreprise";
+  const name = s?.company_name ?? "Prime Shipping";
   const socials = [
     ["Facebook", s?.facebook_url],
     ["Instagram", s?.instagram_url],

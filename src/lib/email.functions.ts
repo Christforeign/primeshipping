@@ -18,8 +18,7 @@ export const sendClientEmail = createServerFn({ method: "POST" })
     const target = data.userId || userId;
     if (!staff && (target !== userId || data.toEmail)) throw new Error("Non autorisé");
 
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: st } = await supabaseAdmin.from("company_settings").select("*").eq("id", 1).maybeSingle();
+    const { data: st } = await supabase.from("company_settings").select("*").eq("id", 1).maybeSingle();
     const extra = ((st as { extra?: Record<string, unknown> } | null)?.extra || {}) as Record<string, unknown>;
     const tpl = mergeTemplates(extra["email_templates"])[data.kind];
     if (!tpl.enabled && !data.test) return { sent: false, reason: "désactivé" };
@@ -30,7 +29,7 @@ export const sendClientEmail = createServerFn({ method: "POST" })
     let to = data.toEmail || "";
     const vars = { ...data.vars };
     if (!to) {
-      const { data: p } = await supabaseAdmin.from("profiles").select("email, full_name, client_code").eq("id", target).maybeSingle();
+      const { data: p } = await supabase.from("profiles").select("email, full_name, client_code").eq("id", target).maybeSingle();
       if (!p?.email) return { sent: false, reason: "Client sans email" };
       to = p.email;
       vars.nom ||= p.full_name || "";

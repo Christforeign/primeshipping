@@ -7,7 +7,7 @@ const NOTIF_EVENT = "prime_notifications_updated";
 const DEFAULT_NOTIFICATIONS: AppNotification[] = [
   {
     id: "notif-1",
-    title: "Bienvenue sur Prime Entreprise",
+    title: "Bienvenue sur Prime Shipping",
     message:
       "Votre compte est prêt. Vous pouvez expédier vos colis et faire des achats assistés dès aujourd'hui.",
     type: "info",

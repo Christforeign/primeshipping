@@ -37,13 +37,13 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/boutique")({
   head: () => ({
     meta: [
-      { title: "Boutique & Demande d'achat — Prime Entreprise" },
+      { title: "Boutique & Demande d'achat — Prime Shipping" },
       {
         name: "description",
         content:
           "Commandez directement ou demandez un achat assisté sur Amazon, Shein, eBay vers Haïti.",
       },
-      { property: "og:title", content: "Boutique & Demande d'achat — Prime Entreprise" },
+      { property: "og:title", content: "Boutique & Demande d'achat — Prime Shipping" },
     ],
   }),
   component: BoutiquePage,

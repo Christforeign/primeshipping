@@ -4,7 +4,7 @@ import { useRoles, useUser } from "@/lib/session";
 
 export const Route = createFileRoute("/_authenticated/compte")({
   head: () => ({
-    meta: [{ title: "Mon espace — Prime Entreprise" }, { name: "robots", content: "noindex" }],
+    meta: [{ title: "Mon espace — Prime Shipping" }, { name: "robots", content: "noindex" }],
   }),
   component: CompteLayout,
 });

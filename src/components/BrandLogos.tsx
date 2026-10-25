@@ -30,7 +30,7 @@ export function PrimeStoreLogo({
 
 export function PrimeEntrepriseLogo({
   className = "h-10 w-auto",
-  alt = "Prime Entreprise",
+  alt = "Prime Shipping",
 }: {
   className?: string;
   alt?: string;

@@ -159,7 +159,7 @@ export const DEFAULT_PAYMENTS: AdminPaymentConfig[] = [
 
 export const DEFAULT_SETTINGS: EnrichedCompanySettings = {
   id: 1,
-  company_name: "Prime Entreprise",
+  company_name: "Prime Shipping",
   slogan: "Plateforme Internationale de Fret, Achats Assistés et E-Commerce vers Haïti.",
   description:
     "Expédition aérienne & maritime (Prime Shipping), boutique & recharges numériques (Prime Store), achats assistés sur tous sites mondiaux et distribution dans toute la république d'Haïti.",
@@ -186,7 +186,7 @@ export const DEFAULT_SETTINGS: EnrichedCompanySettings = {
   instagram_url: null,
   tiktok_url: null,
   terms:
-    "L'utilisation des services de Prime Entreprise implique l'acceptation de nos conditions générales.",
+    "L'utilisation des services de Prime Shipping implique l'acceptation de nos conditions générales.",
   privacy:
     "Vos données sont protégées et strictement destinées au suivi de vos colis et commandes.",
   refund_policy: "Toute réclamation doit être signalée dans les 48 heures suivant la remise.",
@@ -202,8 +202,8 @@ Départs aériens réguliers chaque semaine avec délai moyen de 3 à 5 jours ou
 Signalement obligatoire dans les 48h en cas de casse ou de manquement.`,
   ai_assistant_enabled: true,
   ai_assistant_name: "Prime Assistant IA",
-  ai_assistant_role: "Conseiller Clientèle Prime Entreprise",
-  ai_assistant_prompt: `Tu es le conseiller officiel de Prime Entreprise en Haïti (Prime Shipping pour les colis & Prime Store pour la boutique). Ton rôle est d'aider les clients pour le suivi de colis, les devis (4.50 USD / lb), le taux de change (1 USD = 132 HTG) et les modes de règlement.`,
+  ai_assistant_role: "Conseiller Clientèle Prime Shipping",
+  ai_assistant_prompt: `Tu es le conseiller officiel de Prime Shipping en Haïti (Prime Shipping pour les colis & Prime Store pour la boutique). Ton rôle est d'aider les clients pour le suivi de colis, les devis, le taux de change et les modes de règlement.`,
   updated_at: "2026-01-01T00:00:00.000Z",
   tax_rate: 10,
   tax_enabled: true,
@@ -211,7 +211,7 @@ Signalement obligatoire dans les 48h en cas de casse ou de manquement.`,
   bg_value: "",
   promo_banner_active: false,
   promo_banner_text:
-    "🚀 Départs aériens hebdomadaires Miami ➔ Haïti (4.50$/lb) • Taux officiel : 1 USD = 132 HTG • MonCash & Natcash acceptés !",
+    "",
   promo_banner_link: "/suivi",
   customer_fields_config: DEFAULT_CUSTOMER_FIELDS,
   whatsapp_support_contacts: [],
@@ -679,7 +679,7 @@ export const DEFAULT_SUPPORT_THREADS: SupportThread[] = [
     customer_id: "user-current",
     customer_name: "Client",
     agent_name: "Prime Assistant IA",
-    agent_role: "Conseiller Clientèle Prime Entreprise",
+    agent_role: "Conseiller Clientèle Prime Shipping",
     agent_avatar:
       "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
     status: "open",

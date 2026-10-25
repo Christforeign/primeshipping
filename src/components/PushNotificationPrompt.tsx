@@ -101,7 +101,7 @@ export function PushNotificationButton({ className = "" }: { className?: string 
 
   const handleToggle = async () => {
     if (status === "granted") {
-      toast.info("Notifications déjà activées pour Prime Entreprise sur cet appareil.");
+      toast.info("Notifications déjà activées pour Prime Shipping sur cet appareil.");
       return;
     }
     setLoading(true);

@@ -18,7 +18,7 @@ export async function generateAIChatResponse(req: AIChatRequest): Promise<string
   const agentRole = settings.ai_assistant_role || "Conseiller Clientèle & Logistique";
   const customAdminPrompt =
     settings.ai_assistant_prompt ||
-    `Tu es le conseiller et assistant officiel de Prime Entreprise en Haïti.
+    `Tu es le conseiller et assistant officiel de Prime Shipping en Haïti.
 Ton travail est d'assister avec courtoisie, réactivité et précision les clients pour :
 - Le suivi de leurs colis internationaux en provenance des États-Unis et d'ailleurs.
 - Les demandes d'achats assistés (« Achetez pour moi ») sur Amazon, Shein, eBay, AliExpress, etc.
@@ -40,8 +40,8 @@ Reste toujours professionnel, bienveillant, et donne des réponses concrètes ad
 
   const fullSystemInstruction = `${customAdminPrompt}
 
-INFORMATIONS TEMPS RÉEL DU SYSTÈME Prime Entreprise :
-- Entreprise : ${settings.company_name || "Prime Entreprise"}
+INFORMATIONS TEMPS RÉEL DU SYSTÈME Prime Shipping :
+- Entreprise : ${settings.company_name || "Prime Shipping"}
 - Taux de change : 1 USD = ${settings.usd_to_htg || 132} HTG
 - Téléphone / WhatsApp : ${settings.whatsapp || "+509 3700-0000"}
 - Heures d'ouverture : ${settings.opening_hours || "Lun - Sam : 8h30 - 17h00"}
@@ -51,7 +51,7 @@ INFORMATIONS TEMPS RÉEL DU SYSTÈME Prime Entreprise :
 ${productSummary}
 
 RÈGLES IMPORTANTES :
-- Ne mentionne jamais que tu es un modèle d'IA généraliste. Tu es ${agentName}, ${agentRole} de Prime Entreprise.
+- Ne mentionne jamais que tu es un modèle d'IA généraliste. Tu es ${agentName}, ${agentRole} de Prime Shipping.
 - Réponds en français (ou en créole haïtien si l'utilisateur s'adresse à toi en créole).
 - Donne des conseils directs et rassurants sur la commande, le solde portefeuille, le calcul en Gourdes ou en Dollars.`;
 
@@ -114,7 +114,7 @@ function generateIntelligentLocalResponse(
     msg.includes("ebay") ||
     msg.includes("aliexpress")
   ) {
-    return `Absolument ! Avec notre service « Achetez pour moi » sur Prime Entreprise, vous pouvez soumettre n'importe quel article avec une photo ou un lien. Vous renseignez vos informations, le prix approximatif (ou laissez l'admin évaluer), et vous validez. Si vous avez du solde dans votre portefeuille, le montant sera débité après vérification du produit par notre équipe.`;
+    return `Absolument ! Avec notre service « Achetez pour moi » sur Prime Shipping, vous pouvez soumettre n'importe quel article avec une photo ou un lien. Vous renseignez vos informations, le prix approximatif (ou laissez l'admin évaluer), et vous validez. Si vous avez du solde dans votre portefeuille, le montant sera débité après vérification du produit par notre équipe.`;
   }
 
   if (
@@ -134,7 +134,7 @@ function generateIntelligentLocalResponse(
     msg.includes("natcash") ||
     msg.includes("recharge")
   ) {
-    return `Pour recharger votre portefeuille Prime Entreprise, vous pouvez effectuer un transfert MonCash (${settings.moncash_phone || "3700-1122"}) ou Natcash (${settings.natcash_phone || "4200-3344"}), puis soumettre la référence de transaction dans la rubrique Portefeuille. La validation s'effectue en quelques minutes par l'administration.`;
+    return `Pour recharger votre portefeuille Prime Shipping, vous pouvez effectuer un transfert MonCash (${settings.moncash_phone || "3700-1122"}) ou Natcash (${settings.natcash_phone || "4200-3344"}), puis soumettre la référence de transaction dans la rubrique Portefeuille. La validation s'effectue en quelques minutes par l'administration.`;
   }
 
   if (
@@ -156,7 +156,7 @@ function generateIntelligentLocalResponse(
     msg.includes("bonsoir") ||
     msg.includes("kote")
   ) {
-    return `Bonjour ${clientName} ! Je suis l'assistant officiel de Prime Entreprise. Comment puis-je vous aider aujourd'hui ? Je peux vous renseigner sur vos colis, vos demandes d'achats assistés, les livraisons en Haïti ou le solde de votre portefeuille.`;
+    return `Bonjour ${clientName} ! Je suis l'assistant officiel de Prime Shipping. Comment puis-je vous aider aujourd'hui ? Je peux vous renseigner sur vos colis, vos demandes d'achats assistés, les livraisons en Haïti ou le solde de votre portefeuille.`;
   }
 
   // Grounded context response referencing dossier

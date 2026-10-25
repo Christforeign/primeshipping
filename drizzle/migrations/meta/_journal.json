@@ -15,6 +15,13 @@
       "when": 1792716625354,
       "tag": "0001_signup_trigger_support_chat",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792965326977,
+      "tag": "0002_wallet_topup_rpcs",
+      "breakpoints": true
     }
   ]
 }

@@ -100,7 +100,7 @@ function PackageDetail() {
   } catch {}
 
   const handleDownloadInvoice = () => {
-    const ratePerLb = Number(s?.shipping_rate_per_lb) || 4.5;
+    const ratePerLb = Number(s?.shipping_rate_per_lb) || 0;
     const lines =
       subPackages.length > 0
         ? subPackages.map((sub: any, idx: number) => ({

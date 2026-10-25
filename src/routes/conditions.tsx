@@ -5,13 +5,13 @@ import { FileText, ShieldCheck, Truck, RefreshCw } from "lucide-react";
 export const Route = createFileRoute("/conditions")({
   head: () => ({
     meta: [
-      { title: "Conditions Générales & Politiques — Prime Entreprise" },
+      { title: "Conditions Générales & Politiques — Prime Shipping" },
       {
         name: "description",
         content:
           "Conditions générales d'utilisation, expéditions en Haïti, politique de confidentialité et de réclamation.",
       },
-      { property: "og:title", content: "Conditions Générales & Politiques — Prime Entreprise" },
+      { property: "og:title", content: "Conditions Générales & Politiques — Prime Shipping" },
     ],
   }),
   component: Conditions,
@@ -28,7 +28,7 @@ export function Conditions() {
         s?.terms_and_conditions ||
         s?.terms ||
         `1. OBJET DU SERVICE
-Prime Entreprise fournit aux particuliers et entreprises en Haïti des solutions d'expédition de colis depuis l'international (États-Unis et autres zones), ainsi qu'un service d'achat assisté (« Achetez pour moi ») permettant de commander sur n'importe quel site internet étranger (Amazon, Shein, eBay, AliExpress, etc.).
+Prime Shipping fournit aux particuliers et entreprises en Haïti des solutions d'expédition de colis depuis l'international (États-Unis et autres zones), ainsi qu'un service d'achat assisté (« Achetez pour moi ») permettant de commander sur n'importe quel site internet étranger (Amazon, Shein, eBay, AliExpress, etc.).
 
 2. TARIFICATION & PAIEMENT
 Les expéditions sont facturées au tarif en vigueur par livre (lb), avec un taux de change officiel mis à jour régulièrement. Les clients peuvent approvisionner leur portefeuille électronique via MonCash, Natcash ou virement bancaire. Pour les demandes d'achat assisté, le montant vérifié avec taxes est déduit du solde après approbation par l'administration.
@@ -71,7 +71,7 @@ Tous les paquets transitant par nos entrepôts font l'objet d'un contrôle de co
           Conditions Générales & Politiques
         </h1>
         <p className="text-sm text-muted-foreground">
-          Ces conditions régissent l'utilisation des services de Prime Entreprise, les expéditions
+          Ces conditions régissent l'utilisation des services de Prime Shipping, les expéditions
           de colis, les achats assistés et les livraisons en Haïti. Modifiables à tout moment depuis
           le tableau de bord administrateur.
         </p>

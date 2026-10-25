@@ -14,13 +14,13 @@ import { useSettings } from "@/lib/settings";
 export const Route = createFileRoute("/services")({
   head: () => ({
     meta: [
-      { title: "Nos Services & Tarifs — Prime Entreprise" },
+      { title: "Nos Services & Tarifs — Prime Shipping" },
       {
         name: "description",
         content:
           "Expéditions vers Haïti, service Achetez pour moi sans prix imposé, tarifs transparents au poids.",
       },
-      { property: "og:title", content: "Nos Services & Tarifs — Prime Entreprise" },
+      { property: "og:title", content: "Nos Services & Tarifs — Prime Shipping" },
     ],
   }),
   component: Services,

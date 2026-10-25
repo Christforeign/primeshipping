@@ -10,7 +10,6 @@ import {
   Truck,
   Warehouse,
   Wallet,
-  Sparkles,
   ArrowRight,
   ShieldCheck,
   CheckCircle2,
@@ -190,7 +189,7 @@ function Index() {
                   </span>
                 ) : (
                   <span className="rounded-md bg-orange-500 text-slate-950 px-2.5 py-1 text-xs font-black uppercase tracking-wider">
-                    4.50$ / lb
+                    Tarif sur demande
                   </span>
                 )}
               </div>
@@ -263,7 +262,7 @@ function Index() {
                   <Wallet className="h-3 w-3" /> MonCash & Natcash
                 </span>
                 <span className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1 rounded-md border border-white/10">
-                  <Sparkles className="h-3 w-3" /> Sans carte US requise
+                  Sans carte US requise
                 </span>
               </div>
             </div>
@@ -297,7 +296,7 @@ function Index() {
           <div>
             <div className="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded-md mb-2">
               <ShoppingBag className="h-3.5 w-3.5" />
-              Catalogue Prime Entreprise
+              Catalogue Prime Shipping
             </div>
             <h2 className="text-2xl font-extrabold text-foreground md:text-3xl">
               Articles & Produits Disponibles
@@ -402,7 +401,7 @@ function Index() {
         <div className="mt-8 rounded-xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border border-slate-800 text-white p-6 md:p-8 shadow-xs relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="max-w-xl z-10">
             <span className="inline-flex items-center gap-1.5 rounded-md bg-primary/20 text-orange-400 border border-primary/30 px-2.5 py-0.5 text-xs font-extrabold mb-2.5">
-              <Sparkles className="h-3.5 w-3.5" /> Service Achetez Pour Moi
+              Service Achetez Pour Moi
             </span>
             <h3 className="text-xl md:text-2xl font-extrabold text-white">
               Vous avez vu un article sur Amazon, Shein, eBay ou AliExpress ?

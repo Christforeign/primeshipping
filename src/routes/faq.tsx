@@ -9,15 +9,15 @@ import {
 export const Route = createFileRoute("/faq")({
   head: () => ({
     meta: [
-      { title: "Questions fréquentes — Prime Entreprise" },
+      { title: "Questions fréquentes — Prime Shipping" },
       {
         name: "description",
         content: "Réponses aux questions sur l'envoi de colis, le suivi et la livraison en Haïti.",
       },
-      { property: "og:title", content: "Questions fréquentes — Prime Entreprise" },
+      { property: "og:title", content: "Questions fréquentes — Prime Shipping" },
       {
         property: "og:description",
-        content: "Tout savoir sur l'envoi de colis vers Haïti avec Prime Entreprise.",
+        content: "Tout savoir sur l'envoi de colis vers Haïti avec Prime Shipping.",
       },
     ],
   }),

@@ -10,7 +10,6 @@ import {
   ShieldAlert,
   Plane,
   ShoppingBag,
-  Sparkles,
   ArrowRight,
 } from "lucide-react";
 import { useState } from "react";
@@ -39,7 +38,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const qc = useQueryClient();
   const navigate = useNavigate();
-  const name = s?.company_name ?? "Prime Entreprise";
+  const name = s?.company_name ?? "Prime Shipping";
 
   const logout = async () => {
     await signOut(() => qc.clear());

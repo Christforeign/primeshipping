@@ -5,12 +5,12 @@ import { useSettings } from "@/lib/settings";
 export const Route = createFileRoute("/support")({
   head: () => ({
     meta: [
-      { title: "Support — Prime Entreprise" },
+      { title: "Support — Prime Shipping" },
       {
         name: "description",
-        content: "Contactez l'équipe Prime Entreprise par téléphone, WhatsApp ou e-mail.",
+        content: "Contactez l'équipe Prime Shipping par téléphone, WhatsApp ou e-mail.",
       },
-      { property: "og:title", content: "Support — Prime Entreprise" },
+      { property: "og:title", content: "Support — Prime Shipping" },
       {
         property: "og:description",
         content: "Besoin d'aide ou d'un achat assisté ? Contactez-nous.",
