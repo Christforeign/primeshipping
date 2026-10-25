@@ -583,6 +583,20 @@ export type Database = {
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      request_wallet_topup: {
+        Args: {
+          _amount_htg: number
+          _amount_usd: number
+          _method: string
+          _proof_url: string
+          _reference: string
+        }
+        Returns: string
+      }
+      review_wallet_topup: {
+        Args: { _approve: boolean; _tx_id: string }
+        Returns: string
+      }
       track_package: { Args: { _tracking: string }; Returns: Json }
     }
     Enums: {
