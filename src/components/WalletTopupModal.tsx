@@ -103,11 +103,11 @@ export function WalletTopupModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg rounded-3xl bg-card border shadow-2xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200">
+    <div role="dialog" aria-modal="true" className="fixed inset-0 z-[60] bg-background overflow-y-auto">
+      <div className="relative mx-auto w-full max-w-lg px-4 pt-16 pb-10 sm:pt-20">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          aria-label="Fermer" className="fixed top-3 right-3 z-10 p-2.5 rounded-full border bg-card text-foreground shadow-md hover:bg-muted transition-colors"
         >
           <X className="h-5 w-5" />
         </button>

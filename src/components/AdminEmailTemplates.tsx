@@ -6,8 +6,49 @@ import { supabase } from "@/integrations/supabase/client";
 import { saveExtraSettings } from "@/lib/admin-settings";
 import { EMAIL_KINDS, mergeTemplates, renderEmail, type EmailKind, type EmailTemplate } from "@/lib/email-templates";
 import { sendClientEmail } from "@/lib/email.functions";
+import { ClientPicker } from "@/components/ClientPicker";
+import type { ClientHit } from "@/lib/admin-settings";
 
 const SAMPLE = { nom: "Jean Exemple", code: "PS-0001", tracking: "1Z999AA10123456784", reference: "F-0042", montant: "45.00 USD", details: "Poids : 6 lbs" };
+
+function ManualSend() {
+  const send = useServerFn(sendClientEmail);
+  const [client, setClient] = useState<ClientHit | null>(null);
+  const [kind, setKind] = useState<EmailKind>("support");
+  const [details, setDetails] = useState("");
+  const [busy, setBusy] = useState(false);
+  const go = async () => {
+    if (!client) { toast.error("Choisis un client"); return; }
+    if (!details.trim()) { toast.error("Écris un message"); return; }
+    setBusy(true);
+    try {
+      const r = await send({ data: { kind, userId: client.id, vars: { details: details.trim() }, test: true } });
+      if (r.sent) { toast.success(`E-mail envoyé à ${client.full_name || client.email}`); setDetails(""); }
+      else toast.error(r.reason || "Non envoyé");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur d'envoi");
+    } finally { setBusy(false); }
+  };
+  const inp = "w-full rounded-md border border-border bg-background px-3 py-2 text-sm";
+  return (
+    <div className="rounded-lg border border-border bg-card p-4 space-y-3">
+      <h3 className="font-bold">Envoyer un e-mail à un client</h3>
+      {client ? (
+        <div className="flex items-center justify-between gap-2 rounded-md bg-muted px-3 py-2 text-sm">
+          <span className="min-w-0 truncate">{client.full_name} — {client.client_code} — {client.email}</span>
+          <button onClick={() => setClient(null)} className="text-xs text-primary">Changer</button>
+        </div>
+      ) : (
+        <ClientPicker onPick={setClient} />
+      )}
+      <select className={inp} value={kind} onChange={(e) => setKind(e.target.value as EmailKind)}>
+        {EMAIL_KINDS.map((k) => <option key={k.kind} value={k.kind}>{k.label}</option>)}
+      </select>
+      <textarea className={inp} rows={4} placeholder="Message (remplace {{details}} dans le modèle)" value={details} onChange={(e) => setDetails(e.target.value)} />
+      <button disabled={busy} onClick={go} className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground">{busy ? "Envoi..." : "Envoyer"}</button>
+    </div>
+  );
+}
 
 export function AdminEmailTemplates() {
   const qc = useQueryClient();
@@ -88,6 +129,7 @@ export function AdminEmailTemplates() {
           <button disabled={busy} onClick={test} className="rounded-md border border-border px-4 py-2 text-sm">Envoyer un test</button>
         </div>
       </div>
+      <ManualSend />
     </div>
   );
 }
