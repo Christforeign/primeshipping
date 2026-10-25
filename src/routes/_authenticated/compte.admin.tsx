@@ -54,6 +54,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { AdminInvoiceBuilder } from "@/components/AdminInvoiceBuilder";
 import { AdminWalletAdjust } from "@/components/AdminWalletAdjust";
 import { AdminSupportInbox } from "@/components/AdminSupportInbox";
+import { AdminEmailTemplates } from "@/components/AdminEmailTemplates";
 import { AdminWhatsAppContacts } from "@/components/AdminWhatsAppContacts";
 import { broadcastPushNotification } from "@/lib/push-notifications";
 import { Button } from "@/components/ui/button";
@@ -2792,6 +2793,7 @@ function AdminHubPage() {
       {tab === "chats" && (
         <div className="space-y-6">
           <AdminSupportInbox />
+          <AdminEmailTemplates />
           <div>
             <h3 className="text-base font-bold text-forest">
               Chat Support en direct & Dossiers clients
