@@ -10,7 +10,6 @@ import {
   ShieldAlert,
   Plane,
   ShoppingBag,
-  Sparkles,
   ArrowRight,
 } from "lucide-react";
 import { useState } from "react";

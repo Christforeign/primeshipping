@@ -13,7 +13,6 @@ import {
   Wallet,
   Play,
   Share2,
-  Sparkles,
   Phone,
   Clock,
   ArrowRight,
@@ -674,7 +673,6 @@ export function ProductDetailPage() {
               {product.custom_fields && product.custom_fields.length > 0 && (
                 <div className="pt-4 border-t space-y-4">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-amber-500" />
                     <h3 className="text-xs font-black uppercase tracking-wider text-foreground">
                       Informations nécessaires pour cet article
                     </h3>
