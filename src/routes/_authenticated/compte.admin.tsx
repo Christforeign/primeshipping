@@ -523,7 +523,7 @@ function AdminHubPage() {
         variants: payload.variants as never,
       });
       if (error) throw new Error("Enregistrement impossible : " + error.message);
-      clientStore.saveProduct({ ...payload, id });
+      try { clientStore.saveProduct({ ...payload, id }); } catch { /* cache local plein : ignoré */ }
       toast.success(
         editingProduct
           ? "Produit, variantes et formulaire mis à jour !"
