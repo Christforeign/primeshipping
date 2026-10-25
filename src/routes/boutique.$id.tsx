@@ -68,13 +68,29 @@ export function ProductDetailPage() {
   const defaultTaxRate = s?.tax_enabled ? s?.tax_rate || 10 : 0;
 
   // Load product from clientStore or Supabase
-  const [product, setProduct] = useState<ProductItem | null>(() => {
-    return clientStore.getProduct(id) || DEFAULT_PRODUCTS.find((p) => p.id === id) || null;
-  });
+  const [product, setProduct] = useState<ProductItem | null>(null);
+  const [productLoading, setProductLoading] = useState(true);
 
   useEffect(() => {
-    const p = clientStore.getProduct(id) || DEFAULT_PRODUCTS.find((item) => item.id === id);
-    if (p) setProduct(p);
+    let alive = true;
+    setProductLoading(true);
+    (async () => {
+      let p: ProductItem | null = null;
+      try {
+        const { data } = await supabase.from("products").select("*").eq("id", id).maybeSingle();
+        if (data) p = data as unknown as ProductItem;
+      } catch {
+        // ignore
+      }
+      if (!p) p = clientStore.getProduct(id) || DEFAULT_PRODUCTS.find((item) => item.id === id) || null;
+      if (alive) {
+        setProduct(p);
+        setProductLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
   }, [id]);
 
   // Gallery Active Media
@@ -129,6 +145,10 @@ export function ProductDetailPage() {
       setSelectedVariant(null);
     }
   }, [product]);
+
+  if (productLoading) {
+    return <div className="mx-auto max-w-4xl px-4 py-24 text-center text-muted-foreground">Chargement…</div>;
+  }
 
   if (!product) {
     return (
@@ -562,6 +582,24 @@ export function ProductDetailPage() {
           {/* RIGHT COLUMN: Dedicated Checkout, Form Builder & Payment */}
           {/* ======================================================== */}
           <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
+            {product.extra?.order_mode && product.extra.order_mode !== "site" && product.extra.order_link ? (
+              <div className="rounded-3xl border bg-card p-6 sm:p-8 shadow-xl space-y-4">
+                <h2 className="text-lg font-bold">Commander cet article</h2>
+                <Button asChild size="lg" className="w-full h-12 rounded-2xl font-black">
+                  <a
+                    href={
+                      product.extra.order_mode === "whatsapp"
+                        ? `https://wa.me/${product.extra.order_link.replace(/\D/g, "")}?text=${encodeURIComponent(`Bonjour, je souhaite commander : ${product.title}`)}`
+                        : product.extra.order_link
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {product.extra.order_label || (product.extra.order_mode === "whatsapp" ? "Commander sur WhatsApp" : "Commander")}
+                  </a>
+                </Button>
+              </div>
+            ) : (
             <form
               onSubmit={handleOrderSubmit}
               className="rounded-3xl border bg-card p-6 sm:p-8 shadow-xl space-y-6 border-slate-200"
@@ -1066,9 +1104,10 @@ export function ProductDetailPage() {
 
               <p className="text-[10px] text-center text-muted-foreground">
                 En confirmant cette commande, vous acceptez les conditions de service de Prime
-                Entreprise.
+                Shipping.
               </p>
             </form>
+            )}
           </div>
         </div>
       </div>

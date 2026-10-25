@@ -45,7 +45,7 @@ const ITEMS = [
   {
     icon: Truck,
     t: "Retrait en succursale ou livraison locale",
-    d: "Récupérez votre colis dans nos agences de Delmas 33 ou Pétion-Ville, ou faites-vous livrer partout en Haïti.",
+    d: "Récupérez votre colis dans nos agences ou faites-vous livrer chez vous en Haïti.",
   },
 ];
 

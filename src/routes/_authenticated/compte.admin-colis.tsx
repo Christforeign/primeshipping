@@ -458,7 +458,7 @@ function AdminColis() {
         phone: st?.company_phone || st?.phone || "+509 3700-1122",
         whatsapp: st?.company_whatsapp || st?.whatsapp || "+509 3700-1122",
         email: st?.company_email || st?.email || "contact@prime-entreprise.com",
-        address: st?.company_address || st?.hq_address || "Delmas 33 & Pétion-Ville, Haïti",
+        address: st?.company_address || st?.hq_address || "",
         footer: st?.invoice_footer || "Prime Express Shipping • Fast, Reliable, Global",
         logo: "/assets/aistudio/WhatsApp_Image_2026-10-14_at_20.12.29_c1b1b367.jpeg",
       },
