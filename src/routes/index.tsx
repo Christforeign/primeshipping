@@ -297,7 +297,7 @@ function Index() {
           <div>
             <div className="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-primary/10 border border-primary/20 px-2.5 py-0.5 rounded-md mb-2">
               <ShoppingBag className="h-3.5 w-3.5" />
-              Catalogue Prime Entreprise
+              Catalogue Prime Shipping
             </div>
             <h2 className="text-2xl font-extrabold text-foreground md:text-3xl">
               Articles & Produits Disponibles

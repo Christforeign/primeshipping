@@ -147,7 +147,7 @@ function AdminHubPage() {
   );
   const [aiPrompt, setAiPrompt] = useState<string>(
     s?.ai_assistant_prompt ||
-      `Tu es le conseiller officiel de Prime Entreprise en Haïti. Ton travail est d'assister les clients pour le suivi de leurs colis internationaux, leurs demandes d'achats assistés (« Achetez pour moi »), les tarifs (4.50 USD / lb), les recharges MonCash/Natcash et les livraisons en Haïti. Sois précis, chaleureux et professionnel.`,
+      `Tu es le conseiller officiel de Prime Shipping en Haïti. Ton travail est d'assister les clients pour le suivi de leurs colis internationaux, leurs demandes d'achats assistés (« Achetez pour moi »), les tarifs (4.50 USD / lb), les recharges MonCash/Natcash et les livraisons en Haïti. Sois précis, chaleureux et professionnel.`,
   );
 
   // Conditions d'utilisation & Politiques
@@ -563,13 +563,11 @@ function AdminHubPage() {
           .from("wallet_transactions")
           .select("*")
           .order("created_at", { ascending: false });
-        if (!error && data && data.length > 0) {
-          return data as unknown as WalletTransaction[];
-        }
+        if (!error && data) return data as unknown as WalletTransaction[];
       } catch {
-        // fallback
+        // ignore
       }
-      return clientStore.getWalletTransactions();
+      return [];
     },
   });
 
@@ -577,12 +575,8 @@ function AdminHubPage() {
 
   const handleApproveTx = async (tx: WalletTransaction) => {
     try {
-      clientStore.updateWalletTxStatus(tx.id, "approved");
-      try {
-        await supabase.from("wallet_transactions").update({ status: "approved" }).eq("id", tx.id);
-      } catch (e) {
-        console.warn("Supabase tx update fallback:", e);
-      }
+      const { error } = await supabase.rpc("review_wallet_topup", { _tx_id: tx.id, _approve: true });
+      if (error) throw new Error(error.message);
       qc.invalidateQueries({ queryKey: ["admin-wallet-approvals"] });
       qc.invalidateQueries({ queryKey: ["my-wallet"] });
       qc.invalidateQueries({ queryKey: ["wallet-balance"] });
@@ -594,12 +588,8 @@ function AdminHubPage() {
 
   const handleRejectTx = async (tx: WalletTransaction) => {
     try {
-      clientStore.updateWalletTxStatus(tx.id, "rejected");
-      try {
-        await supabase.from("wallet_transactions").update({ status: "rejected" }).eq("id", tx.id);
-      } catch (e) {
-        console.warn("Supabase tx update fallback:", e);
-      }
+      const { error } = await supabase.rpc("review_wallet_topup", { _tx_id: tx.id, _approve: false });
+      if (error) throw new Error(error.message);
       qc.invalidateQueries({ queryKey: ["admin-wallet-approvals"] });
       toast.error(`Recharge de ${tx.amount_usd} USD rejetée.`);
     } catch (err: unknown) {

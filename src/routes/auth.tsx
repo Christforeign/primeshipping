@@ -16,13 +16,13 @@ export const Route = createFileRoute("/auth")({
   validateSearch: z.object({ mode: z.enum(["login", "signup", "forgot"]).optional() }),
   head: () => ({
     meta: [
-      { title: "Inscription & Connexion — Prime Entreprise" },
+      { title: "Inscription & Connexion — Prime Shipping" },
       {
         name: "description",
         content:
           "Créez votre compte, choisissez votre ville en Haïti et votre adresse de livraison.",
       },
-      { property: "og:title", content: "Inscription & Connexion — Prime Entreprise" },
+      { property: "og:title", content: "Inscription & Connexion — Prime Shipping" },
     ],
   }),
   component: AuthPage,
@@ -150,7 +150,7 @@ function AuthPage() {
           const { error: e2 } = await supabase.auth.signInWithPassword({ email, password });
           if (e2) throw new Error("Compte créé. Connectez-vous avec votre e-mail.");
         }
-        toast.success("Bienvenue chez Prime Entreprise !");
+        toast.success("Bienvenue chez Prime Shipping !");
         navigate({ to: "/compte" });
       }
     } catch (err) {
@@ -223,7 +223,7 @@ function AuthPage() {
       <div className="rounded-3xl border bg-card p-6 shadow-xl md:p-10">
         <div className="mb-6">
           <span className="text-xs font-extrabold uppercase tracking-wider text-accent bg-forest px-3 py-1 rounded-full">
-            Prime Entreprise
+            Prime Shipping
           </span>
           <h1 className="text-3xl font-black text-forest mt-3">
             {mode === "signup"
@@ -362,7 +362,7 @@ function AuthPage() {
                 <Link to="/conditions" className="text-primary font-bold underline">
                   conditions générales d'utilisation & la politique de confidentialité
                 </Link>{" "}
-                de Prime Entreprise.
+                de Prime Shipping.
               </span>
             </label>
           )}

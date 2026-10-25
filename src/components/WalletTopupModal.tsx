@@ -81,15 +81,14 @@ export function WalletTopupModal({
         description: `Demande de recharge par ${method.toUpperCase()} (${numericUsd} USD)`,
       };
 
-      // 1. Local store
-      clientStore.addWalletTransaction(txPayload);
-
-      // 2. Supabase store
-      try {
-        await supabase.from("wallet_transactions").insert(txPayload);
-      } catch (e) {
-        console.warn("Supabase wallet_transactions insert fallback:", e);
-      }
+      const { error: rpcErr } = await supabase.rpc("request_wallet_topup", {
+        _amount_usd: txPayload.amount_usd,
+        _amount_htg: txPayload.amount_htg,
+        _method: txPayload.method,
+        _reference: txPayload.reference ?? "",
+        _proof_url: txPayload.proof_url ?? "",
+      });
+      if (rpcErr) throw new Error(rpcErr.message);
 
       toast.success(
         "Demande de recharge soumise avec succès ! Notre équipe validera votre solde sous peu.",

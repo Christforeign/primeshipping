@@ -1,4 +1,4 @@
-// Native Browser Push Notifications & In-App Alerts for Prime Entreprise (Prime Shipping & Prime Store)
+// Native Browser Push Notifications & In-App Alerts for Prime Shipping (Prime Shipping & Prime Store)
 import { notificationService } from "./notifications";
 import { supabase } from "@/integrations/supabase/client";
 

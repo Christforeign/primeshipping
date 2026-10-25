@@ -26,7 +26,7 @@ interface Step {
 
 const STEPS: Step[] = [
   {
-    title: "Bienvenue sur Prime Entreprise",
+    title: "Bienvenue sur Prime Shipping",
     badge: "Étape 1 sur 5",
     description:
       "Votre plateforme intégrée pour recevoir vos achats depuis l'étranger (USA, Europe, Chine) et vous faire livrer partout en Haïti en toute sérénité.",

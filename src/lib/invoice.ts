@@ -1,4 +1,4 @@
-// Printable multi-style invoices for Prime Entreprise (Browser "Save as PDF" & Print)
+// Printable multi-style invoices for Prime Shipping (Browser "Save as PDF" & Print)
 
 export type InvoiceTemplate =
   "global-express" | "minimalist" | "pos-receipt" | "store-retail" | "corporate-b2b" | "custom";
@@ -342,7 +342,7 @@ export function renderInvoiceHtml(d: InvoiceData): string {
   <div class="text-center" style="font-size: 9px;">
     <div>${esc(warningText)}</div>
     <div style="margin-top: 6px;" class="bold">*** MERCI DE VOTRE VISITE ***</div>
-    <div>${esc(c.footer || "Prime Entreprise - Haïti")}</div>
+    <div>${esc(c.footer || "Prime Shipping - Haïti")}</div>
   </div>
 </body>
 </html>`;
@@ -491,7 +491,7 @@ export function renderInvoiceHtml(d: InvoiceData): string {
 
   <div class="footer">
     <div>${esc(warningText)}</div>
-    <div style="margin-top: 4px;">${esc(c.footer || "Prime Entreprise - Haïti - Page 1/1")}</div>
+    <div style="margin-top: 4px;">${esc(c.footer || "Prime Shipping - Haïti - Page 1/1")}</div>
   </div>
 </body>
 </html>`;
@@ -518,7 +518,7 @@ export function renderInvoiceHtml(d: InvoiceData): string {
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Facture ${esc(d.number)} - ${esc(c.name || "Prime Entreprise")}</title>
+  <title>Facture ${esc(d.number)} - ${esc(c.name || "Prime Shipping")}</title>
   <style>
     @page {
       size: A4;
@@ -1025,7 +1025,7 @@ export function renderInvoiceHtml(d: InvoiceData): string {
 
   <!-- FOOTER -->
   <footer class="footer">
-    <div>${esc(c.footer || "Prime Entreprise · Delmas 33 & Pétion-Ville, Haïti · Tous droits réservés.")}</div>
+    <div>${esc(c.footer || "Prime Shipping · Delmas 33 & Pétion-Ville, Haïti · Tous droits réservés.")}</div>
     <div>Page 1/1</div>
   </footer>
 </body>
@@ -1055,7 +1055,7 @@ export function generateInvoiceWhatsAppText(d: InvoiceData): string {
       ? "Prime Express Shipping"
       : d.brand === "store"
         ? "Prime Store"
-        : "Prime Entreprise";
+        : "Prime Shipping";
 
   const linesList = d.lines
     .slice(0, 8)
