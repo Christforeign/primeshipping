@@ -171,7 +171,7 @@ export function AssistedPurchasePage() {
   const [customerName, setCustomerName] = useState(user?.email ? user.email.split("@")[0] : "");
   const [customerPhone, setCustomerPhone] = useState("+509 ");
   const [customerEmail, setCustomerEmail] = useState(user?.email || "");
-  const [deliveryCity, setDeliveryCity] = useState("Delmas");
+  const [deliveryCity, setDeliveryCity] = useState("");
   const [deliveryAddress, setDeliveryAddress] = useState("");
 
   // Option: Déduire du solde dès vérification admin

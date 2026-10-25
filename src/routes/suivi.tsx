@@ -315,7 +315,7 @@ function Suivi() {
             </div>
             <h3 className="font-bold text-base text-foreground">Retrait & Livraison Haïti</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Succursales à Delmas, Pétion-Ville, Carrefour, Cap-Haïtien et Cayes, ou livraison
+              Retrait en succursale ou livraison
               directe sécurisée à votre domicile.
             </p>
           </div>

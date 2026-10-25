@@ -30,9 +30,9 @@ export function AdminSiteLinks() {
 
   useEffect(() => {
     if (!s || loaded) return;
-    setSocials(Array.isArray(s.social_links) && s.social_links.length ? (s.social_links as SocialLink[]) : DEFAULT_SOCIALS);
-    setCorridors(Array.isArray(s.corridors) ? (s.corridors as Corridor[]) : []);
-    setZones(String(s.delivery_zones || ""));
+    setSocials(Array.isArray(s["social_links"]) && s["social_links"].length ? (s["social_links"] as SocialLink[]) : DEFAULT_SOCIALS);
+    setCorridors(Array.isArray(s["corridors"]) ? (s["corridors"] as Corridor[]) : []);
+    setZones(String(s["delivery_zones"] || ""));
     setLoaded(true);
   }, [s, loaded]);
 

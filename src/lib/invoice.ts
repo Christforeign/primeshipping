@@ -1025,7 +1025,7 @@ export function renderInvoiceHtml(d: InvoiceData): string {
 
   <!-- FOOTER -->
   <footer class="footer">
-    <div>${esc(c.footer || "Prime Shipping · Delmas 33 & Pétion-Ville, Haïti · Tous droits réservés.")}</div>
+    <div>${esc(c.footer || "Prime Shipping · Tous droits réservés.")}</div>
     <div>Page 1/1</div>
   </footer>
 </body>

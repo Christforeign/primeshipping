@@ -58,7 +58,7 @@ function Profile() {
       full_name: f.full_name || "",
       email: user.email || "",
       phone: f.phone || "",
-      city: f.city || "Delmas",
+      city: f.city || "",
       department: f.region || "Ouest",
       delivery_address: f.address_line || "",
       delivery_preference: "home",

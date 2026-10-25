@@ -153,7 +153,7 @@ function PackageDetail() {
         phone: s?.company_phone || s?.phone || "+509 3700-1122",
         whatsapp: s?.company_whatsapp || s?.whatsapp || "+509 3700-1122",
         email: s?.company_email || s?.email || "contact@prime-entreprise.com",
-        address: s?.company_address || s?.hq_address || "Delmas 33 & Pétion-Ville, Haïti",
+        address: s?.company_address || s?.hq_address || "",
         footer: s?.invoice_footer || "Prime Express Shipping • Fast, Reliable, Global",
         logo: "/assets/aistudio/WhatsApp_Image_2026-10-14_at_20.12.29_c1b1b367.jpeg",
       },
