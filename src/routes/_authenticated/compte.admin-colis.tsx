@@ -472,6 +472,7 @@ function AdminColis() {
 
   return (
     <div className="space-y-8">
+      {editDialog}
       {/* HEADER / NAVIGATION BAR */}
       <div className="rounded-xl border border-border bg-card p-5 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
