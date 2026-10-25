@@ -18,8 +18,8 @@ function ManualSend() {
   const [details, setDetails] = useState("");
   const [busy, setBusy] = useState(false);
   const go = async () => {
-    if (!client) return toast.error("Choisis un client");
-    if (!details.trim()) return toast.error("Écris un message");
+    if (!client) { toast.error("Choisis un client"); return; }
+    if (!details.trim()) { toast.error("Écris un message"); return; }
     setBusy(true);
     try {
       const r = await send({ data: { kind, userId: client.id, vars: { details: details.trim() }, test: true } });

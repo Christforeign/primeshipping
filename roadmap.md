@@ -13,7 +13,7 @@
 - [x] Frais spéciaux + total auto, espace Prime Shipping client, onglet e-mails, cloche mobile
 - [x] Cause principale des plantages (réglages différents serveur/navigateur) corrigée
 
+- [x] Envoi manuel d'e-mail, paiement/recharge en pleine page avec X
+
 ## À faire
-- [ ] Envoi manuel d'e-mail à un client
-- [ ] Remplacer fenêtres paiement/recharge par pages dédiées
 - [ ] Chasse aux erreurs « Cette page n'a pas pu s'afficher »
