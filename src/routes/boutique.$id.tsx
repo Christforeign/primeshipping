@@ -68,13 +68,29 @@ export function ProductDetailPage() {
   const defaultTaxRate = s?.tax_enabled ? s?.tax_rate || 10 : 0;
 
   // Load product from clientStore or Supabase
-  const [product, setProduct] = useState<ProductItem | null>(() => {
-    return clientStore.getProduct(id) || DEFAULT_PRODUCTS.find((p) => p.id === id) || null;
-  });
+  const [product, setProduct] = useState<ProductItem | null>(null);
+  const [productLoading, setProductLoading] = useState(true);
 
   useEffect(() => {
-    const p = clientStore.getProduct(id) || DEFAULT_PRODUCTS.find((item) => item.id === id);
-    if (p) setProduct(p);
+    let alive = true;
+    setProductLoading(true);
+    (async () => {
+      let p: ProductItem | null = null;
+      try {
+        const { data } = await supabase.from("products").select("*").eq("id", id).maybeSingle();
+        if (data) p = data as unknown as ProductItem;
+      } catch {
+        // ignore
+      }
+      if (!p) p = clientStore.getProduct(id) || DEFAULT_PRODUCTS.find((item) => item.id === id) || null;
+      if (alive) {
+        setProduct(p);
+        setProductLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
   }, [id]);
 
   // Gallery Active Media
@@ -129,6 +145,10 @@ export function ProductDetailPage() {
       setSelectedVariant(null);
     }
   }, [product]);
+
+  if (productLoading) {
+    return <div className="mx-auto max-w-4xl px-4 py-24 text-center text-muted-foreground">Chargement…</div>;
+  }
 
   if (!product) {
     return (
