@@ -10,9 +10,10 @@
 - [x] Réseaux sociaux on/off, corridors, zones modifiables (admin onglet 10)
 - [x] Mode de commande par produit + page produit lit la base
 
+- [x] Frais spéciaux + total auto, espace Prime Shipping client, onglet e-mails, cloche mobile
+- [x] Cause principale des plantages (réglages différents serveur/navigateur) corrigée
+
 ## À faire
-- [ ] Frais spéciaux par colis + calcul poids × tarif admin
-- [ ] Hub Prime Shipping client (colis, déclarer, adresse USA) + adresse Haïti profil
-- [ ] Onglet Emails Brevo dédié + envoi manuel
-- [ ] Remplacer superpositions par pages, responsive cloche notifications
+- [ ] Envoi manuel d'e-mail à un client
+- [ ] Remplacer fenêtres paiement/recharge par pages dédiées
 - [ ] Chasse aux erreurs « Cette page n'a pas pu s'afficher »
