@@ -343,6 +343,8 @@ function AdminHubPage() {
   );
   const [prodMediaUrls, setProdMediaUrls] = useState<string>("");
   const [prodVideoUrl, setProdVideoUrl] = useState<string>("");
+  const [prodOrderMode, setProdOrderMode] = useState<"site" | "link" | "whatsapp">("site");
+  const [prodOrderLink, setProdOrderLink] = useState("");
   const [prodVariants, setProdVariants] = useState<ProductVariant[]>([]);
   const [prodCustomFields, setProdCustomFields] = useState<CustomFormField[]>([]);
 
@@ -386,6 +388,8 @@ function AdminHubPage() {
     setProdDeliveryOptions("both");
     setProdMediaUrls("");
     setProdVideoUrl("");
+    setProdOrderMode("site");
+    setProdOrderLink("");
     setProdVariants([
       { id: `v-${Date.now()}-1`, name: "Option Standard", price_usd: 15, stock: 100 },
     ]);
@@ -433,6 +437,8 @@ function AdminHubPage() {
     setProdDeliveryOptions(prod.delivery_options ?? "both");
     setProdMediaUrls((prod.media_urls || []).join("\n"));
     setProdVideoUrl(prod.video_url || "");
+    setProdOrderMode(prod.extra?.order_mode ?? "site");
+    setProdOrderLink(prod.extra?.order_link ?? "");
     setProdVariants(prod.variants || []);
     setProdCustomFields(prod.custom_fields || []);
   };
@@ -513,6 +519,7 @@ function AdminHubPage() {
       video_url: prodVideoUrl.trim() || null,
       custom_fields: prodCustomFields,
       is_active: true,
+      extra: { ...(editingProduct?.extra || {}), order_mode: prodOrderMode, order_link: prodOrderLink.trim() },
     };
 
     try {
@@ -522,6 +529,7 @@ function AdminHubPage() {
         id,
         custom_fields: payload.custom_fields as never,
         variants: payload.variants as never,
+        extra: payload.extra as never,
       });
       if (error) throw new Error("Enregistrement impossible : " + error.message);
       try { clientStore.saveProduct({ ...payload, id }); } catch { /* cache local plein : ignoré */ }
@@ -1751,6 +1759,25 @@ function AdminHubPage() {
                         {prodRequiresShipping ? "Livraison requise" : "Non requise (Digital)"}
                       </span>
                     </label>
+                  </div>
+                  <div className="mt-3 space-y-1.5">
+                    <Label className="text-xs font-bold text-foreground">Mode de commande</Label>
+                    <select
+                      value={prodOrderMode}
+                      onChange={(e) => setProdOrderMode(e.target.value as "site" | "link" | "whatsapp")}
+                      className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    >
+                      <option value="site">Paiement / commande sur le site</option>
+                      <option value="link">Lien externe (boutique officielle, etc.)</option>
+                      <option value="whatsapp">Commande par WhatsApp</option>
+                    </select>
+                    {prodOrderMode !== "site" && (
+                      <Input
+                        value={prodOrderLink}
+                        onChange={(e) => setProdOrderLink(e.target.value)}
+                        placeholder={prodOrderMode === "whatsapp" ? "Numéro WhatsApp (ex: 50937000000)" : "https://..."}
+                      />
+                    )}
                   </div>
                   {prodRequiresShipping && (
                     <div className="mt-3 space-y-1.5">

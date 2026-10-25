@@ -42,6 +42,7 @@ export interface ProductVariant {
 
 export interface ProductItem {
   id: string;
+  extra?: { order_mode?: "site" | "link" | "whatsapp"; order_link?: string; order_label?: string } | null;
   title: string;
   short_description?: string;
   description: string;

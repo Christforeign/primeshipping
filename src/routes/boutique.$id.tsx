@@ -562,6 +562,24 @@ export function ProductDetailPage() {
           {/* RIGHT COLUMN: Dedicated Checkout, Form Builder & Payment */}
           {/* ======================================================== */}
           <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
+            {product.extra?.order_mode && product.extra.order_mode !== "site" && product.extra.order_link ? (
+              <div className="rounded-3xl border bg-card p-6 sm:p-8 shadow-xl space-y-4">
+                <h2 className="text-lg font-bold">Commander cet article</h2>
+                <Button asChild size="lg" className="w-full h-12 rounded-2xl font-black">
+                  <a
+                    href={
+                      product.extra.order_mode === "whatsapp"
+                        ? `https://wa.me/${product.extra.order_link.replace(/\D/g, "")}?text=${encodeURIComponent(`Bonjour, je souhaite commander : ${product.title}`)}`
+                        : product.extra.order_link
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {product.extra.order_label || (product.extra.order_mode === "whatsapp" ? "Commander sur WhatsApp" : "Commander")}
+                  </a>
+                </Button>
+              </div>
+            ) : (
             <form
               onSubmit={handleOrderSubmit}
               className="rounded-3xl border bg-card p-6 sm:p-8 shadow-xl space-y-6 border-slate-200"
@@ -1066,9 +1084,10 @@ export function ProductDetailPage() {
 
               <p className="text-[10px] text-center text-muted-foreground">
                 En confirmant cette commande, vous acceptez les conditions de service de Prime
-                Entreprise.
+                Shipping.
               </p>
             </form>
+            )}
           </div>
         </div>
       </div>
