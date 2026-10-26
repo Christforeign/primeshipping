@@ -624,14 +624,14 @@ export function ProductDetailPage() {
                 <div className="flex justify-between items-baseline text-sm font-black text-foreground">
                   <span>Sous-total ({quantity}) :</span>
                   <div className="text-right">
-                    <span className="text-xl text-amber-500 block">{subtotalUsd.toFixed(2)} USD</span>
-                    <span className="text-xs font-semibold text-muted-foreground font-mono">≈ {formatNumber(Math.round(subtotalUsd * rate))} HTG</span>
+                    <span className="text-xl text-amber-500 block">{subtotalUsd.toFixed(2)} {productCurrency(product.extra)}</span>
+                    {productCurrency(product.extra) === "USD" && <span className="text-xs font-semibold text-muted-foreground font-mono">≈ {formatNumber(Math.round(subtotalUsd * rate))} GDS</span>}
                   </div>
                 </div>
               </div>}
               <div className="text-sm text-muted-foreground space-y-2">
                 {!freeAmount && minQty > 1 && <p>Quantité minimum : {minQty}</p>}
-                {Number(product.extra?.minimum_order_usd) > 0 && <p>Montant minimum : {Number(product.extra.minimum_order_usd).toFixed(2)} USD{!freeAmount && " (hors frais)"}</p>}
+                {Number(product.extra?.minimum_order_usd) > 0 && <p>Montant minimum : {Number(product.extra.minimum_order_usd).toFixed(2)} {productCurrency(product.extra)}{!freeAmount && " (hors frais)"}</p>}
                 <p className="whitespace-pre-line">{product.extra?.order_notice ?? DEFAULT_ORDER_NOTICE}</p>
               </div>
               <Button type="submit" name="action" value="cart" size="lg" variant="outline" className="w-full h-12">
