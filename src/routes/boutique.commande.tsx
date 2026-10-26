@@ -219,7 +219,7 @@ function CheckoutPage() {
       try {
         const result = await sendEmail({ data: { kind: "commande", orderId: order.id } });
         void result;
-      } catch (error) { toast.warning(error instanceof Error ? error.message : "Commande enregistrée, e-mail non envoyé"); }
+      } catch { /* journalisé côté serveur */ }
       setDone({ order_number: order.order_number, total });
       window.scrollTo({ top: 0 });
     } catch (e: any) {
