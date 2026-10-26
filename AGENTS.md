@@ -31,3 +31,4 @@
 - Cart reminders are staff-triggered only: signed-in carts sync to customer_carts so admins can bulk-remind; customers no longer email their own cart.
 - Customer and package deletion use authenticated database RPCs with server-enforced administrator checks and atomic cleanup; this avoids private deployment keys and prevents partial deletions.
 - Product minimums and purchase notices live in product extra settings; shared frontend validation and an order-insert database trigger enforce minimums even for stale carts or direct requests.
+- Checkout display helpers select the payment currency and deduplicate payment options/coordinates without changing the database's authoritative pricing calculation.
