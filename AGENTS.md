@@ -20,3 +20,4 @@
 - International platform marks use static vector assets in the shared BrandLogos module rather than approximate hand-drawn logos, preserving sharpness at small sizes.
 - Cart selections persist on the current device; checkout re-reads active products and removes only the paid cart line after a successful order, preserving the remaining selections.
 - Cart emails are explicitly requested by the signed-in customer, use Brevo, and derive item names from active database products rather than browser-supplied copy.
+- Support and footer share the same enabled social links and configurable icon selection; official payment and messaging logo assets are reused from the shared brand modules.

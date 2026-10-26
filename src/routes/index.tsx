@@ -24,7 +24,6 @@ import { formatNumber } from "@/lib/utils";
 import {
   PrimeShippingLogo,
   PrimeStoreLogo,
-  PaymentMethodsBar,
   PartnerBrandsBar,
 } from "@/components/BrandLogos";
 import hero from "@/assets/hero.jpg";
@@ -169,11 +168,6 @@ function Index() {
 
       {/* Marques Partenaires */}
       <LocationMap />
-      <section className="mx-auto max-w-7xl px-4">
-        <div className="bg-forest px-4 py-4 sm:px-6">
-          <PartnerBrandsBar />
-        </div>
-      </section>
 
       {/* MODULES MAJEURS — PRIME SHIPPING & PRIME STORE */}
       <section className="mx-auto max-w-7xl px-4">
@@ -484,13 +478,9 @@ function Index() {
         </div>
       </section>
 
-      {/* Marques Partenaires & Moyens de paiement */}
+      {/* Marques internationales */}
       <section className="mx-auto max-w-7xl px-4">
-        <div className="rounded-xl bg-card border border-border p-6 shadow-xs space-y-6">
-          <div>
-            <PaymentMethodsBar />
-          </div>
-        </div>
+        <PartnerBrandsBar className="bg-card rounded-lg px-4 py-5" />
       </section>
 
       {/* Inscription CTA if not logged in */}

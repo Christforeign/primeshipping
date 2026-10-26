@@ -18,7 +18,6 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Toaster } from "@/components/ui/sonner";
 import { PromoBanner } from "@/components/PromoBanner";
-import { LiveSupportWidget } from "@/components/LiveSupportWidget";
 import { WhatsAppSupportButton } from "@/components/WhatsAppSupportButton";
 import { InteractiveTutorial } from "@/components/InteractiveTutorial";
 import { useSettings } from "@/lib/settings";
@@ -221,7 +220,6 @@ function AppShellContent() {
       <MobileBottomNav />
       <InteractiveTutorial />
       <WhatsAppSupportButton />
-      <LiveSupportWidget />
     </div>
   );
 }

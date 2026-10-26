@@ -2,6 +2,8 @@ import { useState } from "react";
 import { MessageCircle, ExternalLink, X } from "lucide-react";
 import { useSettings } from "@/lib/settings";
 import type { WhatsAppSupportContact } from "@/lib/types-store";
+import { WhatsAppLogo } from "@/components/SocialIcon";
+import { Button } from "@/components/ui/button";
 
 export function cleanWhatsAppNumber(phone: string) {
   return (phone || "").replace(/[^0-9]/g, "");
@@ -17,20 +19,23 @@ export function whatsAppUrl(contact: { phone: string; prefilled_message?: string
 
 export function useWhatsAppContacts(): WhatsAppSupportContact[] {
   const s = useSettings() as { whatsapp_support_contacts?: WhatsAppSupportContact[] } | null;
-  const list = Array.isArray(s?.whatsapp_support_contacts) ? s!.whatsapp_support_contacts! : [];
+  const list = Array.isArray(s?.whatsapp_support_contacts) ? s.whatsapp_support_contacts : [];
   return list.filter((c) => c.is_active !== false && cleanWhatsAppNumber(c.phone).length >= 8);
 }
 
 export function WhatsAppSupportButton() {
   const activeContacts = useWhatsAppContacts();
+  const settings = useSettings();
+  const defaultNumber = cleanWhatsAppNumber(settings?.whatsapp || "");
+  const contacts = activeContacts.length ? activeContacts : defaultNumber.length >= 8 ? [{ id: "main", name: "Prime Shipping", phone: defaultNumber, is_active: true }] : [];
   const [isOpen, setIsOpen] = useState(false);
 
   // No number configured by admin: stay hidden, never invent a number.
-  if (activeContacts.length === 0) return null;
+  if (contacts.length === 0) return null;
 
   const handleButtonClick = () => {
-    const primary = activeContacts[0];
-    if (activeContacts.length === 1 && primary) {
+    const primary = contacts[0];
+    if (contacts.length === 1 && primary) {
       window.open(whatsAppUrl(primary), "_blank", "noopener,noreferrer");
     } else {
       setIsOpen(!isOpen);
@@ -38,7 +43,7 @@ export function WhatsAppSupportButton() {
   };
 
   return (
-    <div className="fixed bottom-20 left-3 lg:bottom-5 lg:left-5 z-40 select-none">
+    <div className="fixed bottom-20 right-3 lg:bottom-5 lg:right-5 z-40 select-none">
       {isOpen && (
         <div className="mb-3 w-[calc(100vw-1.5rem)] max-w-[340px] rounded-xl border border-border bg-card p-4 shadow-2xl">
           <div className="flex items-center justify-between pb-3 border-b border-border mb-3">
@@ -55,7 +60,7 @@ export function WhatsAppSupportButton() {
             </button>
           </div>
           <div className="space-y-2 max-h-[300px] overflow-y-auto">
-            {activeContacts.map((c) => (
+            {contacts.map((c) => (
               <a
                 key={c.id}
                 href={whatsAppUrl(c)}
@@ -79,14 +84,15 @@ export function WhatsAppSupportButton() {
           </div>
         </div>
       )}
-      <button
+      <Button
         onClick={handleButtonClick}
-        className="flex items-center gap-2 rounded-lg bg-[#25D366] hover:bg-[#20bd5a] text-white px-3.5 py-2.5 shadow-lg"
+        variant="outline"
+        className="h-14 w-14 rounded-full bg-card p-2 shadow-lg"
         title="Support WhatsApp"
+        aria-label="Support WhatsApp"
       >
-        <MessageCircle className="h-5 w-5 fill-current" />
-        <span className="text-xs font-black hidden sm:block">WhatsApp</span>
-      </button>
+        <WhatsAppLogo className="h-10 w-10" />
+      </Button>
     </div>
   );
 }
