@@ -14,7 +14,7 @@ export function fixedProductTotals(amount: number, quantity: number, extra: Extr
   const htg = productCurrency(extra) === "GDS";
   const line = round(amount * quantity);
   const subtotalHtg = htg ? line : round(line * rate);
-  const subtotalUsd = htg ? round(line / rate) : line;
+  const subtotalUsd = htg ? htgToUsd(line, rate) : line;
   const delivery = deliveryPricing(extra, home);
   // Gourde prices stay exact; USD conversion is only for the USD wallet.
   const taxHtg = htg ? round(subtotalHtg * taxRate / 100) : round(round(subtotalUsd * taxRate / 100) * rate);
