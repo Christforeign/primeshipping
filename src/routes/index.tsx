@@ -192,11 +192,11 @@ function Index() {
                   <PrimeShippingLogo className="h-full w-auto object-contain" />
                 </div>
                 {s?.shipping_rate_per_lb ? (
-                  <span className="rounded-md bg-orange-500 text-slate-950 px-2.5 py-1 text-xs font-black uppercase tracking-wider">
+                  <span className="rounded-md bg-orange-500 text-[#1F150C] px-2.5 py-1 text-xs font-black uppercase tracking-wider">
                     {Number(s.shipping_rate_per_lb).toFixed(2)}$ / lb
                   </span>
                 ) : (
-                  <span className="rounded-md bg-orange-500 text-slate-950 px-2.5 py-1 text-xs font-black uppercase tracking-wider">
+                  <span className="rounded-md bg-orange-500 text-[#1F150C] px-2.5 py-1 text-xs font-black uppercase tracking-wider">
                     Tarif sur demande
                   </span>
                 )}
@@ -205,7 +205,7 @@ function Index() {
               <h3 className="text-2xl font-black text-white tracking-tight">
                 Prime Express Shipping
               </h3>
-              <p className="mt-2 text-slate-300 text-sm leading-relaxed max-w-md">
+              <p className="mt-2 text-orange-100/80 text-sm leading-relaxed max-w-md">
                 Expédition internationale de colis depuis Miami vers Haïti. Consolidation de
                 plusieurs colis et poids dans un seul paquet pour une facture unique.
               </p>
@@ -227,7 +227,7 @@ function Index() {
               <Button
                 asChild
                 size="default"
-                className="rounded-lg font-bold bg-orange-500 hover:bg-orange-600 text-slate-950 shadow-xs"
+                className="rounded-lg font-bold bg-orange-500 hover:bg-orange-600 text-[#1F150C] shadow-xs"
               >
                 <Link to="/suivi">
                   Suivre un colis <ArrowRight className="h-4 w-4 ml-1.5" />
@@ -251,13 +251,13 @@ function Index() {
                 <div className="h-24 w-28 sm:w-36 flex-shrink-0">
                   <PrimeStoreLogo className="h-full w-auto object-contain" />
                 </div>
-                <span className="rounded-md bg-amber-500 text-slate-950 px-2.5 py-1 text-xs font-black uppercase tracking-wider">
+                <span className="rounded-md bg-amber-500 text-[#1F150C] px-2.5 py-1 text-xs font-black uppercase tracking-wider">
                   BOUTIQUE OFFICIELLE
                 </span>
               </div>
 
               <h3 className="text-2xl font-black text-white tracking-tight">Prime Store</h3>
-              <p className="mt-2 text-slate-200 text-sm leading-relaxed max-w-md">
+              <p className="mt-2 text-amber-100/80 text-sm leading-relaxed max-w-md">
                 Boutique en ligne intégrée : téléphones, ordinateurs, accessoires et cartes cadeaux
                 numériques disponibles immédiatement en Haïti.
               </p>
@@ -279,7 +279,7 @@ function Index() {
               <Button
                 asChild
                 size="default"
-                className="rounded-lg font-bold bg-amber-400 hover:bg-amber-500 text-slate-950 shadow-xs"
+                className="rounded-lg font-bold bg-amber-400 hover:bg-amber-500 text-[#1F150C] shadow-xs"
               >
                 <Link to="/boutique">
                   Visiter la boutique <ArrowRight className="h-4 w-4 ml-1.5" />
@@ -339,7 +339,7 @@ function Index() {
                   <Link
                     to="/boutique/$id"
                     params={{ id: p.id }}
-                    className="block relative aspect-[4/3] bg-slate-900 overflow-hidden"
+                    className="block relative aspect-[4/3] bg-[#1A1008] overflow-hidden"
                   >
                     {p.media_urls?.[0] ? (
                       <img
@@ -348,7 +348,7 @@ function Index() {
                         className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
-                      <div className="grid h-full w-full place-items-center bg-slate-900 text-slate-500">
+                      <div className="grid h-full w-full place-items-center bg-[#1A1008] text-muted-foreground">
                         <ShoppingBag className="h-10 w-10 opacity-40" />
                       </div>
                     )}
@@ -359,7 +359,7 @@ function Index() {
                           Numérique
                         </span>
                       ) : (
-                        <span className="rounded-md bg-orange-500 text-slate-950 text-[10px] font-black px-2 py-0.5 backdrop-blur shadow-xs">
+                        <span className="rounded-md bg-orange-500 text-[#1F150C] text-[10px] font-black px-2 py-0.5 backdrop-blur shadow-xs">
                           En stock Haïti
                         </span>
                       )}
@@ -414,7 +414,7 @@ function Index() {
             <h3 className="text-xl md:text-2xl font-extrabold text-white">
               Vous avez vu un article sur Amazon, Shein, eBay ou AliExpress ?
             </h3>
-            <p className="mt-2 text-slate-300 text-sm leading-relaxed">
+            <p className="mt-2 text-orange-100/80 text-sm leading-relaxed">
               Ne vous souciez pas des cartes de crédit internationales : collez le lien de votre
               article ou envoyez la photo. Nous achetons pour vous et vous livrons directement en
               Haïti.
