@@ -57,6 +57,7 @@ import { AdminInvoiceBuilder } from "@/components/AdminInvoiceBuilder";
 import { AdminWalletAdjust } from "@/components/AdminWalletAdjust";
 import { AdminSupportInbox } from "@/components/AdminSupportInbox";
 import { AdminEmailTemplates } from "@/components/AdminEmailTemplates";
+import { AdminErrorLogs } from "@/components/AdminErrorLogs";
 import { AdminWhatsAppContacts } from "@/components/AdminWhatsAppContacts";
 import { AdminSiteLinks } from "@/components/AdminSiteLinks";
 import { broadcastPushNotification } from "@/lib/push-notifications";
@@ -117,6 +118,7 @@ function AdminHubPage() {
     | "orders"
     | "chats"
     | "emails"
+    | "logs"
   >("settings");
 
   // -------------------------------------------------------------
@@ -847,6 +849,7 @@ function AdminHubPage() {
             { key: "chats", label: "9. Chat Support & Dossiers", icon: MessageCircle },
             { key: "contacts", label: "10. WhatsApp, réseaux & zones", icon: MessageCircle },
             { key: "emails", label: "11. E-mails Brevo", icon: MessageCircle },
+            { key: "logs", label: "12. Journal des erreurs", icon: MessageCircle },
           ] as const
         ).map((item) => {
           const Icon = item.icon;
@@ -2344,6 +2347,7 @@ function AdminHubPage() {
       {/* ================================================================= */}
       {tab === "pos" && <AdminInvoiceBuilder />}
       {tab === "emails" && <AdminEmailTemplates />}
+      {tab === "logs" && <AdminErrorLogs />}
       {tab === "contacts" && (<div className="space-y-8"><AdminWhatsAppContacts /><AdminSiteLinks /></div>)}
       {tab === "wallet_approvals" && <div className="mb-6"><AdminWalletAdjust /></div>}
 
