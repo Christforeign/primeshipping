@@ -100,6 +100,8 @@ function AccountDeleter() {
       toast.success("Compte supprimé");
       setClient(null);
       qc.invalidateQueries({ queryKey: ["admin-client-list"] });
+      qc.invalidateQueries({ queryKey: ["admin-clients"] });
+      qc.invalidateQueries({ queryKey: ["admin-packages"] });
     }
     catch (e) { toast.error(e instanceof Error ? e.message : "Suppression impossible"); }
     finally { setBusy(false); }
