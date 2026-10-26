@@ -24,7 +24,7 @@ export type PackageInput = z.infer<typeof packageSchema>;
 export function usePackageFields() {
   const settings = useSettings();
   const [f, setF] = useState<Record<string, string>>({ quantity: "1", currency: "USD" });
-  const estimate = estimatePackageShipping(f.estimated_weight_lb, settings?.shipping_rate_per_lb);
+  const estimate = estimatePackageShipping(f["estimated_weight_lb"], settings?.shipping_rate_per_lb);
   const parse = () => {
     const clean = Object.fromEntries(Object.entries(f).filter(([, v]) => v !== ""));
     const r = packageSchema.safeParse(clean);
@@ -68,10 +68,10 @@ export function usePackageFields() {
       </div>
       {input("quantity", "Quantité", "number", true)}
       {input("estimated_weight_lb", "Poids estimé (lb)", "number")}
-      {f.estimated_weight_lb && (
+      {f["estimated_weight_lb"] && (
         <div className="sm:col-span-2 border-l-2 border-primary pl-4 py-2" aria-live="polite">
           <p className="font-semibold">Transport estimé : {estimate == null ? "Tarif indisponible" : `${estimate.toFixed(2)} USD`}</p>
-          {estimate != null && <p className="text-sm text-muted-foreground">{f.estimated_weight_lb} lb × {settings?.shipping_rate_per_lb} USD/lb</p>}
+          {estimate != null && <p className="text-sm text-muted-foreground">{f["estimated_weight_lb"]} lb × {settings?.shipping_rate_per_lb} USD/lb</p>}
           <p className="text-sm text-muted-foreground">Montant provisoire, ajustable après vérification du poids. Les frais spéciaux éventuels sont ajoutés séparément.</p>
         </div>
       )}

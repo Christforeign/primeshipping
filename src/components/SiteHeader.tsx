@@ -1,6 +1,5 @@
 // @ts-nocheck
 import { Link, useNavigate } from "@tanstack/react-router";
-import logoImg from "@/assets/logo.png";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Menu,
@@ -57,7 +56,7 @@ export function SiteHeader() {
           <img
             src="/logos/prime-shipping-logo.svg"
             alt="Prime Express Shipping"
-            className="h-10 w-auto max-w-[150px] object-contain group-hover:scale-105 transition-transform"
+            className="h-14 w-auto max-w-[150px] object-contain group-hover:scale-105 transition-transform"
           />
           <div className="hidden sm:block">
             <span className="text-white text-base font-black block leading-tight tracking-tight">

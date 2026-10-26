@@ -60,13 +60,10 @@ function BoutiquePage() {
     <div className="mx-auto max-w-7xl px-4 py-12">
       {/* Header Banner with Prime Store Visual Identity */}
       <div className="rounded-3xl bg-gradient-to-br from-[#090d16] via-[#1e293b] to-[#ca8a04]/40 p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden mb-8 border border-amber-500/30">
-        <div className="absolute right-6 -bottom-10 opacity-15 pointer-events-none hidden lg:block w-72">
-          <PrimeStoreLogo className="w-full h-auto" />
-        </div>
 
         <div className="max-w-2xl relative z-10">
           <div className="flex items-center gap-3 mb-4">
-            <div className="h-14 w-14 rounded-2xl bg-amber-400/20 border border-amber-400/30 p-2 shadow-inner flex-shrink-0 grid place-items-center">
+            <div className="h-24 w-28 flex-shrink-0 grid place-items-center">
               <PrimeStoreLogo className="h-full w-auto" />
             </div>
             <div>
