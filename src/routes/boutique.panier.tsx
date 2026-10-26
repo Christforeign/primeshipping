@@ -1,15 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
-import { Mail, ShoppingBag, Trash2, X } from "lucide-react";
-import { toast } from "sonner";
+import { ShoppingBag, Trash2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSettings } from "@/lib/settings";
 import { topupPrice } from "@/lib/product-pricing";
 import { useCart, type CartSelection } from "@/lib/cart";
-import { useUser } from "@/lib/session";
-import { sendClientEmail } from "@/lib/email.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { ProductItem } from "@/lib/types-store";
