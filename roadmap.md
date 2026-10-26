@@ -16,9 +16,9 @@
 - [x] Envoi manuel d'e-mail, paiement/recharge en pleine page avec X
 
 ## À faire
-- [ ] Remplacer le bandeau supérieur de paiements par les marques en couleur
-- [ ] Logos authentiques MonCash, Natcash, PayPal et WhatsApp ; bouton WhatsApp unique
-- [ ] Réseaux et e-mail du support administrables avec icônes
+- [x] Bandeau supérieur de paiements remplacé par un seul bandeau de marques ; paiements du pied de page conservés
+- [x] Logos authentiques MonCash, Natcash, PayPal et WhatsApp ; bouton WhatsApp unique (images chargées, mobile sans débordement)
+- [x] Réseaux et e-mail du support affichés depuis les réglages existants ; sélection d’icône ajoutée dans l’administration (sauvegarde connectée non testée)
 - [x] Choix livraison/retrait conforme au produit ; retrait visible même sans adresse, mais validation bloquée jusqu'à configuration (3 tests réussis)
 - [x] Panier persistant avec quantités, suppression et accès au paiement article par article (parcours public ordinateur/téléphone vérifié)
 - [x] Rappel demandé par le client via Brevo et modèle administrable ajoutés
