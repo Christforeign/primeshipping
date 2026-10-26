@@ -781,7 +781,7 @@ function AdminHubPage() {
     <div className="space-y-6">
       <PageHeader
         title="Administration & Configuration Globale"
-        subtitle="Gestion en marque blanche absolue : taux, taxes, vitrine, formulaires, achats assistés, recharges portefeuille et support en direct."
+        subtitle="Gestion en marque blanche absolue : taux, taxes, vitrine, formulaires, achats assistés, recharges portefeuille."
       />
 
       {/* Tabs selector */}
