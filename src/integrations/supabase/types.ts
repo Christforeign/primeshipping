@@ -463,11 +463,15 @@ export type Database = {
           customer_name: string | null
           customer_phone: string | null
           delivery_address: string | null
+          delivery_fee_htg: number
+          delivery_mode: string | null
+          delivery_quote_pending: boolean
           id: string
           order_number: string
           payment_method: string
           payment_proof_url: string | null
           payment_reference: string | null
+          price_currency: string
           product_id: string | null
           product_image_url: string | null
           product_kind: string | null
@@ -497,11 +501,15 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           delivery_address?: string | null
+          delivery_fee_htg?: number
+          delivery_mode?: string | null
+          delivery_quote_pending?: boolean
           id?: string
           order_number?: string
           payment_method: string
           payment_proof_url?: string | null
           payment_reference?: string | null
+          price_currency?: string
           product_id?: string | null
           product_image_url?: string | null
           product_kind?: string | null
@@ -531,11 +539,15 @@ export type Database = {
           customer_name?: string | null
           customer_phone?: string | null
           delivery_address?: string | null
+          delivery_fee_htg?: number
+          delivery_mode?: string | null
+          delivery_quote_pending?: boolean
           id?: string
           order_number?: string
           payment_method?: string
           payment_proof_url?: string | null
           payment_reference?: string | null
+          price_currency?: string
           product_id?: string | null
           product_image_url?: string | null
           product_kind?: string | null
