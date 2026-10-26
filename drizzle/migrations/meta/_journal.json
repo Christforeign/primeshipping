@@ -71,6 +71,13 @@
       "when": 1793022593109,
       "tag": "0009_admin_alert_recipients",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793027204416,
+      "tag": "0010_notifications_auto_cleanup",
+      "breakpoints": true
     }
   ]
 }
