@@ -83,7 +83,7 @@ async function run(data: Input & { vars: EmailVars }, context: { supabase: any; 
     const { data: st } = await supabase.from("company_settings").select("*").eq("id", 1).maybeSingle();
     const extra = ((st as { extra?: Record<string, unknown> } | null)?.extra || {}) as Record<string, unknown>;
     const tpl = mergeTemplates(extra["email_templates"])[kind];
-    if (!tpl.enabled && !data.test) return { sent: false, reason: "Modèle désactivé dans E-mails" };
+    let clientReason = !tpl.enabled && !data.test ? "Modèle désactivé dans E-mails" : "";
     const senderEmail = String(extra["email_sender"] || "");
     const senderName = String(extra["email_sender_name"] || "Prime Shipping");
     if (!senderEmail) return { sent: false, reason: "Adresse expéditeur non configurée" };
@@ -93,7 +93,7 @@ async function run(data: Input & { vars: EmailVars }, context: { supabase: any; 
     if (!to) {
       const { data: p } = await supabase.from("profiles").select("email, full_name, client_code").eq("id", target).maybeSingle();
       const accountEmail = target === userId ? String(context.claims.email || "") : "";
-      if (!p?.email && !accountEmail) return { sent: false, reason: "Client sans email" };
+      if (!p?.email && !accountEmail) clientReason ||= "Client sans email";
       to = p?.email || accountEmail;
       vars.nom ||= p?.full_name || "";
       vars.code ||= p?.client_code || "";
@@ -132,6 +132,8 @@ async function run(data: Input & { vars: EmailVars }, context: { supabase: any; 
     if (connectionGateway && !gatewayKey) throw new Error("Connexion Brevo indisponible");
     const endpoint = connectionGateway ? "https://connector-gateway.lovable.dev/brevo/smtp/email" : "https://api.brevo.com/v3/smtp/email";
     const authHeaders = connectionGateway ? { Authorization: `Bearer ${gatewayKey}`, "X-Connection-Api-Key": key } : { "api-key": key };
+    let receipt: { messageId?: string } = {};
+    if (!clientReason) {
     const res = await fetch(endpoint, {
       method: "POST",
       headers: { ...authHeaders, "content-type": "application/json", accept: "application/json" },
@@ -140,15 +142,19 @@ async function run(data: Input & { vars: EmailVars }, context: { supabase: any; 
     if (!res.ok) {
       const t = await res.text();
       console.error(`Brevo [${res.status}]: ${t}`);
-      throw new Error(`Brevo a refusé l'envoi (${res.status}) : ${t.slice(0, 200)}`);
+      clientReason = `Brevo a refusé l'envoi client (${res.status}) : ${t.slice(0, 200)}`;
+    } else {
+      receipt = await res.json() as { messageId?: string };
+      console.info("Email accepted", { kind, eventId, messageId: receipt.messageId });
     }
-    const receipt = await res.json() as { messageId?: string };
-    console.info("Email accepted", { kind, eventId, messageId: receipt.messageId });
+    }
     let adminWarning = "";
-    if (!data.test && kind !== "panier" && extra["email_admin_alerts_enabled"] === true) {
+    if (!data.test && !data.toEmail && kind !== "panier" && kind !== "alerte_admin" && extra["email_admin_alerts_enabled"] !== false) {
       const recipients = [...new Set(String(extra["email_admin_recipients"] || "").split(/[\s,;]+/).filter((email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)))].slice(0, 10);
       const adminTemplate = mergeTemplates(extra["email_templates"]).alerte_admin;
-      if (recipients.length && adminTemplate.enabled) {
+      if (!recipients.length) adminWarning = "Aucune adresse administrateur enregistrée";
+      else if (!adminTemplate.enabled) adminWarning = "Modèle alerte administrateur désactivé";
+      else {
         const adminVars = { ...vars, lien: `${siteUrl}${adminLink}`, details: `Client : ${vars.nom || ""} (${vars.code || ""})\n${vars.produit || ""}\n${vars.details || ""}`, produit: "" };
         const rendered = renderEmail(adminTemplate, adminVars, senderName, logoUrl || undefined, siteUrl);
         for (const email of recipients) {
@@ -157,5 +163,5 @@ async function run(data: Input & { vars: EmailVars }, context: { supabase: any; 
         }
       }
     }
-    return { sent: true, reason: adminWarning, messageId: receipt.messageId };
+    return { sent: !clientReason, reason: [clientReason, adminWarning].filter(Boolean).join(" · "), messageId: receipt.messageId };
   }
