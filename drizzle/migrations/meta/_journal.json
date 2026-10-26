@@ -106,6 +106,13 @@
       "when": 1793041184440,
       "tag": "0014_enforce_product_order_minimums",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1793056358682,
+      "tag": "0015_product_currency_delivery",
+      "breakpoints": true
     }
   ]
 }

@@ -346,6 +346,9 @@ function AdminHubPage() {
   const [prodSubcategory, setProdSubcategory] = useState("");
   const [prodKind, setProdKind] = useState<ProductKind>("physique");
   const [prodPriceUsd, setProdPriceUsd] = useState("15");
+  const [prodCurrency, setProdCurrency] = useState<"USD" | "HTG">("USD");
+  const [prodDeliveryPricing, setProdDeliveryPricing] = useState<"fixed" | "quote">("quote");
+  const [prodDeliveryFee, setProdDeliveryFee] = useState("0");
   const [prodPromoPriceUsd, setProdPromoPriceUsd] = useState("");
   const [prodApplyTax, setProdApplyTax] = useState(false);
   const [prodTaxRateOverride, setProdTaxRateOverride] = useState("");
@@ -400,6 +403,7 @@ function AdminHubPage() {
     setProdSubcategory("");
     setProdKind("physique");
     setProdPriceUsd("15");
+    setProdCurrency("USD"); setProdDeliveryPricing("quote"); setProdDeliveryFee("0");
     setProdPromoPriceUsd("");
     setProdApplyTax(false);
     setProdTaxRateOverride("");
@@ -454,6 +458,9 @@ function AdminHubPage() {
     setProdSubcategory(prod.subcategory || "");
     setProdKind(prod.kind || "physique");
     setProdPriceUsd(String(prod.price_usd));
+    setProdCurrency(prod.extra?.price_currency === "HTG" ? "HTG" : "USD");
+    setProdDeliveryPricing(prod.extra?.delivery_pricing === "fixed" ? "fixed" : "quote");
+    setProdDeliveryFee(String(prod.extra?.delivery_fee_htg || 0));
     setProdPromoPriceUsd(prod.promo_price_usd ? String(prod.promo_price_usd) : "");
     setProdApplyTax(prod.apply_tax);
     setProdTaxRateOverride(prod.tax_rate_override ? String(prod.tax_rate_override) : "");
@@ -531,6 +538,7 @@ function AdminHubPage() {
       .filter((u) => u.length > 0);
 
     if (prodAmountMode && !(Number(prodSpecificRate) > 0)) return toast.error("Indiquez le taux spécifique du produit.");
+    if (!Number.isFinite(Number(prodDeliveryFee)) || Number(prodDeliveryFee) < 0) return toast.error("Indiquez un tarif de livraison positif ou nul.");
     const minimumQty = Number(prodMinimumQuantity);
     const minimumUsd = Number(prodMinimumOrderUsd);
     if (!Number.isInteger(minimumQty) || minimumQty < 1 || minimumQty > 999 || !Number.isFinite(minimumUsd) || minimumUsd < 0 || Math.abs(minimumUsd * 100 - Math.round(minimumUsd * 100)) > 0.000001) return toast.error("Indiquez une quantité minimum de 1 à 999 et un montant positif à deux décimales maximum.");
@@ -552,7 +560,7 @@ function AdminHubPage() {
       video_url: prodVideoUrl.trim() || null,
       custom_fields: prodCustomFields,
       is_active: true,
-      extra: { ...(editingProduct?.extra || {}), order_mode: prodOrderMode, order_link: prodOrderLink.trim(), amount_mode: prodAmountMode ? "custom_usd" : "fixed", product_rate_htg: prodAmountMode ? Number(prodSpecificRate) : null, minimum_quantity: prodAmountMode ? 1 : minimumQty, minimum_order_usd: minimumUsd, order_notice: prodOrderNotice.trim() },
+      extra: { ...(editingProduct?.extra || {}), price_currency: prodAmountMode ? "USD" : prodCurrency, delivery_pricing: prodDeliveryPricing, delivery_fee_htg: Number(prodDeliveryFee), order_mode: prodOrderMode, order_link: prodOrderLink.trim(), amount_mode: prodAmountMode ? "custom_usd" : "fixed", product_rate_htg: prodAmountMode ? Number(prodSpecificRate) : null, minimum_quantity: prodAmountMode ? 1 : minimumQty, minimum_order_usd: minimumUsd, order_notice: prodOrderNotice.trim() },
     };
 
     try {
@@ -1446,7 +1454,7 @@ function AdminHubPage() {
                           {prod.category}
                         </span>
                         <span className="font-extrabold text-sm text-forest">
-                          ${prod.price_usd} USD
+                          {prod.price_usd} {prod.extra?.price_currency === "HTG" ? "GDS" : "USD"}
                         </span>
                       </div>
                       <h4 className="font-bold text-sm text-foreground line-clamp-1">
@@ -1573,7 +1581,8 @@ function AdminHubPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Prix de base en USD {prodAmountMode ? "(non utilisé en montant libre)" : "*"}</Label>
+                  <Label className="text-xs font-semibold">Prix de base en {prodCurrency === "HTG" ? "GDS" : "USD"} {prodAmountMode ? "(non utilisé en montant libre)" : "*"}</Label>
+                  <select aria-label="Devise du produit" value={prodAmountMode ? "USD" : prodCurrency} disabled={prodAmountMode} onChange={(e) => setProdCurrency(e.target.value as "USD" | "HTG")} className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="USD">USD — Dollar américain</option><option value="HTG">GDS — Gourde haïtienne</option></select>
                   <div className="relative">
                     <Input
                       type="number"
@@ -1585,21 +1594,21 @@ function AdminHubPage() {
                       className="font-bold pr-16"
                     />
                     <span className="absolute right-4 top-2 text-xs font-bold text-muted-foreground">
-                      USD
+                      {prodCurrency === "HTG" ? "GDS" : "USD"}
                     </span>
                   </div>
-                  <p className="text-[11px] text-muted-foreground">
+                  {prodCurrency === "USD" && !prodAmountMode && <p className="text-[11px] text-muted-foreground">
                     ≈{" "}
                     {Math.round(
                       (parseFloat(prodPriceUsd) || 0) * (s?.usd_to_htg || 132),
                     ).toLocaleString("fr-FR")}{" "}
-                    HTG
-                  </p>
+                    GDS
+                  </p>}
                 </div>
 
                 <div className="space-y-1.5">
                   <Label className="text-xs font-semibold">
-                    Prix Promotionnel en USD (Optionnel)
+                    Prix promotionnel en {prodCurrency === "HTG" ? "GDS" : "USD"} (optionnel)
                   </Label>
                   <div className="relative">
                     <Input
@@ -1623,7 +1632,7 @@ function AdminHubPage() {
                 {/* Exigence adresse de livraison (configurable admin) */}
                 <div className="sm:col-span-2 grid gap-3 sm:grid-cols-2 border-t pt-4">
                   {!prodAmountMode && <div className="space-y-2"><Label htmlFor="minimum-quantity">Quantité minimum</Label><Input id="minimum-quantity" type="number" min="1" max="999" step="1" required value={prodMinimumQuantity} onChange={(e) => setProdMinimumQuantity(e.target.value)} /></div>}
-                  <div className="space-y-2"><Label htmlFor="minimum-order">{prodAmountMode ? "Montant minimum à recharger (USD)" : "Montant minimum de commande (USD, hors frais)"}</Label><Input id="minimum-order" type="number" min="0" step="0.01" value={prodMinimumOrderUsd} onChange={(e) => setProdMinimumOrderUsd(e.target.value)} placeholder="Aucun minimum" /></div>
+                  <div className="space-y-2"><Label htmlFor="minimum-order">{prodAmountMode ? "Montant minimum à recharger (USD)" : `Montant minimum de commande (${prodCurrency === "HTG" ? "GDS" : "USD"}, hors frais)`}</Label><Input id="minimum-order" type="number" min="0" step="0.01" value={prodMinimumOrderUsd} onChange={(e) => setProdMinimumOrderUsd(e.target.value)} placeholder="Aucun minimum" /></div>
                   <div className="space-y-2 sm:col-span-2"><Label htmlFor="order-notice">Conditions et délais affichés avant commande</Label><Textarea id="order-notice" rows={4} value={prodOrderNotice} onChange={(e) => setProdOrderNotice(e.target.value)} /></div>
                 </div>
                 <div className="space-y-1.5 sm:col-span-2 rounded-2xl border p-4 bg-muted/40">
@@ -1688,8 +1697,9 @@ function AdminHubPage() {
                         <option value="pickup">Retrait en succursale uniquement</option>
                       </select>
                       <p className="text-[11px] text-muted-foreground">
-                        Les succursales se modifient dans Réglages → « Succursales de retrait ».
+                        Retrait en succursale gratuit. Les adresses se modifient dans les réglages.
                       </p>
+                      {prodDeliveryOptions !== "pickup" && <div className="space-y-2 pt-3"><Label>Tarif de livraison de ce produit</Label><select aria-label="Tarification livraison" value={prodDeliveryPricing} onChange={(e) => setProdDeliveryPricing(e.target.value as "fixed" | "quote")} className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="quote">À confirmer par un administrateur selon l’adresse</option><option value="fixed">Tarif fixe par commande</option></select>{prodDeliveryPricing === "fixed" && <><Label htmlFor="delivery-fee">Prix livraison (GDS)</Label><Input id="delivery-fee" type="number" min="0" step="0.01" value={prodDeliveryFee} onChange={(e) => setProdDeliveryFee(e.target.value)} /></>}</div>}
                     </div>
                   )}
                 </div>
@@ -1715,7 +1725,7 @@ function AdminHubPage() {
 
                 {prodVariants.length === 0 ? (
                   <p className="text-xs text-muted-foreground italic bg-muted/30 p-3 rounded-xl">
-                    Aucune variante spécifique. Le prix de base ({prodPriceUsd} USD) s'appliquera.
+                    Aucune variante spécifique. Le prix de base ({prodPriceUsd} {prodCurrency === "HTG" ? "GDS" : "USD"}) s'appliquera.
                   </p>
                 ) : (
                   <div className="space-y-2">
@@ -1735,7 +1745,7 @@ function AdminHubPage() {
                             <Input
                               type="number"
                               step="any"
-                              placeholder="Prix USD"
+                              placeholder={`Prix ${prodCurrency === "HTG" ? "GDS" : "USD"}`}
                               value={v.price_usd}
                               onChange={(e) =>
                                 handleUpdateVariant(vIdx, {
@@ -1745,7 +1755,7 @@ function AdminHubPage() {
                               className="text-xs font-bold pr-10"
                             />
                             <span className="absolute right-2 top-2 text-[10px] text-muted-foreground font-bold">
-                              USD
+                              {prodCurrency === "HTG" ? "GDS" : "USD"}
                             </span>
                           </div>
                           <Input

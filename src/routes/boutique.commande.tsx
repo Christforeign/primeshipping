@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatNumber } from "@/lib/utils";
 import { readCart, writeCart } from "@/lib/cart";
+import { fixedProductTotals, deliveryQuoteNotice } from "@/lib/product-commerce";
 import { topupPrice } from "@/lib/product-pricing";
 import { DEFAULT_ORDER_NOTICE, orderMinimumError } from "@/lib/order-minimums";
 import { deliveryChoices } from "@/lib/delivery-options";
@@ -159,14 +160,17 @@ function CheckoutPage() {
   if (freeAmount) { try { amountPrice = topupPrice(Number(sel.requestedAmountUsd), Number(product.extra?.product_rate_htg), rate); } catch { /* invalid selection cannot be submitted */ } }
   const qty = freeAmount ? 1 : Math.max(1, Number(sel.quantity) || 1);
   const subtotal = freeAmount ? amountPrice.walletUsd : +(unit * qty).toFixed(2);
-  const minimumError = orderMinimumError(product.extra, qty, freeAmount ? Number(sel.requestedAmountUsd) : subtotal, freeAmount);
+  const minimumError = orderMinimumError(product.extra, qty, freeAmount ? Number(sel.requestedAmountUsd) : unit * qty, freeAmount);
   const taxRate = product.apply_tax ? Number(product.tax_rate_override ?? (s?.tax_enabled ? s?.tax_rate || 0 : 0)) : 0;
-  const tax = +((subtotal * taxRate) / 100).toFixed(2);
   const pay = payments.find((p) => p.id === method);
-  const fee = pay ? +(((subtotal + tax) * (Number(pay.fee_percentage) || 0)) / 100 + (Number(pay.fee_fixed_usd) || 0)).toFixed(2) : 0;
-  const total = +(subtotal + tax + fee).toFixed(2);
-  const totalHtg = freeAmount && !tax && !fee ? amountPrice.totalHtg : Math.round(total * rate * 100) / 100;
   const needsShipping = !!product.requires_shipping_address;
+  const fixed = fixedProductTotals(unit, qty, product.extra, rate, taxRate, Number(pay?.fee_percentage) || 0, Number(pay?.fee_fixed_usd) || 0, needsShipping && deliveryMode === "home");
+  const lineSubtotal = freeAmount ? subtotal : fixed.subtotalUsd;
+  const tax = freeAmount ? +((subtotal * taxRate) / 100).toFixed(2) : fixed.taxUsd;
+  const fee = freeAmount ? (pay ? +(((subtotal + tax) * (Number(pay.fee_percentage) || 0)) / 100 + (Number(pay.fee_fixed_usd) || 0)).toFixed(2) : 0) : fixed.feeUsd;
+  const total = freeAmount ? +(subtotal + tax + fee).toFixed(2) : fixed.totalUsd;
+  const totalHtg = freeAmount ? (!tax && !fee ? amountPrice.totalHtg : Math.round(total * rate * 100) / 100) : fixed.totalHtg;
+  const quoteDelivery = needsShipping && deliveryMode === "home" && fixed.quote;
   const walletShort = method === "wallet" && walletBalance < total;
   const displayedTotal = paymentDisplayAmount(method, total, totalHtg);
   const displayMoney = (usd: number, htg = Math.round(usd * rate * 100) / 100) => {
@@ -207,12 +211,13 @@ function CheckoutPage() {
           variant_name: variant?.name || null,
           quantity: qty,
           unit_price_usd: unit,
-          subtotal_usd: subtotal,
+          subtotal_usd: lineSubtotal,
           tax_amount_usd: tax,
           service_fee_usd: fee,
           total_usd: total,
           total_htg: totalHtg,
           delivery_address: delivery,
+          delivery_mode: needsShipping ? deliveryMode : null,
           custom_field_responses: sel.formValues || {},
           payment_method: method,
           payment_reference: method === "wallet" ? null : reference || null,
@@ -220,6 +225,7 @@ function CheckoutPage() {
         },
       });
       if (error) throw error;
+      if (quoteDelivery) toast.info(deliveryQuoteNotice);
       const order = data as { id: string; order_number: string; status: string; total_usd: number };
       sessionStorage.removeItem("prime_checkout");
       if (sel.cartKey) writeCart(readCart().filter((item) => item.key !== sel.cartKey));
@@ -254,7 +260,7 @@ function CheckoutPage() {
         <h2 className="text-xs font-black uppercase">Votre article</h2>
         <div className="flex justify-between gap-3">
           <span className="min-w-0">{product.title}{variant ? ` — ${variant.name}` : ""} × {qty}</span>
-          <span className="font-bold shrink-0">{freeAmount ? `${sel.requestedAmountUsd} USD` : displayMoney(subtotal)}</span>
+          <span className="font-bold shrink-0">{freeAmount ? `${sel.requestedAmountUsd} USD` : displayMoney(lineSubtotal, fixed.subtotalHtg)}</span>
         </div>
         {freeAmount && <p className="text-muted-foreground">Taux produit : {product.extra?.product_rate_htg} GDS/USD</p>}
       </section>
@@ -275,7 +281,7 @@ function CheckoutPage() {
             </Button>}
             {choices.pickup && (
               <Button type="button" variant="outline" className={`${opt(deliveryMode === "pickup")} h-auto whitespace-normal justify-start`} onClick={() => setDeliveryMode("pickup")}>
-                <Warehouse className="h-4 w-4 mb-1" /> Retrait en succursale
+                <Warehouse className="h-4 w-4 mb-1" /> Retrait en succursale — Gratuit
               </Button>
             )}
           </div>
@@ -287,6 +293,7 @@ function CheckoutPage() {
               <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Rue, numéro, ville" />
             </div>
           )}
+          {deliveryMode === "home" && <p className="text-sm text-muted-foreground">{quoteDelivery ? deliveryQuoteNotice : `Livraison : ${formatNumber(fixed.deliveryFeeHtg)} GDS`}</p>}
         </section>
       )}
 
@@ -343,11 +350,12 @@ function CheckoutPage() {
       </section>
 
       <section className="rounded-3xl border bg-card p-5 space-y-2 text-sm">
-        <div className="flex justify-between"><span>Sous-total</span><span>{displayMoney(subtotal, freeAmount ? amountPrice.totalHtg : undefined)}</span></div>
-        {tax > 0 && <div className="flex justify-between"><span>Taxe ({taxRate}%)</span><span>{displayMoney(tax)}</span></div>}
-        {fee > 0 && <div className="flex justify-between"><span>Frais de paiement</span><span>{displayMoney(fee)}</span></div>}
+        <div className="flex justify-between"><span>Sous-total</span><span>{displayMoney(lineSubtotal, freeAmount ? amountPrice.totalHtg : fixed.subtotalHtg)}</span></div>
+        {tax > 0 && <div className="flex justify-between"><span>Taxe ({taxRate}%)</span><span>{displayMoney(tax, freeAmount ? undefined : fixed.taxHtg)}</span></div>}
+        {fee > 0 && <div className="flex justify-between"><span>Frais de paiement</span><span>{displayMoney(fee, freeAmount ? undefined : fixed.feeHtg)}</span></div>}
+        {!freeAmount && needsShipping && <div className="flex justify-between gap-3"><span>Livraison / retrait</span><span>{quoteDelivery ? "À confirmer, non inclus" : deliveryMode === "pickup" ? "Gratuit" : `${formatNumber(fixed.deliveryFeeHtg)} GDS`}</span></div>}
         <div className="flex justify-between font-black text-base border-t pt-2">
-          <span>Total</span>
+          <span>{quoteDelivery ? "Total hors livraison" : "Total"}</span>
           <span className="text-right">{displayMoney(total, totalHtg)}</span>
         </div>
         {minimumError && <div role="alert" className="text-sm text-destructive">{minimumError} <Link to="/boutique/$id" params={{ id: product.id }} className="underline">Modifier ma sélection</Link></div>}

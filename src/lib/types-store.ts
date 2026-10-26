@@ -42,7 +42,7 @@ export interface ProductVariant {
 
 export interface ProductItem {
   id: string;
-  extra?: { order_mode?: "site" | "link" | "whatsapp"; order_link?: string; order_label?: string; amount_mode?: "fixed" | "custom_usd"; product_rate_htg?: number | null; minimum_quantity?: number; minimum_order_usd?: number; order_notice?: string } | null;
+  extra?: { price_currency?: "USD" | "HTG"; delivery_pricing?: "fixed" | "quote"; delivery_fee_htg?: number; order_mode?: "site" | "link" | "whatsapp"; order_link?: string; order_label?: string; amount_mode?: "fixed" | "custom_usd"; product_rate_htg?: number | null; minimum_quantity?: number; minimum_order_usd?: number; order_notice?: string } | null;
   title: string;
   short_description?: string;
   description: string;

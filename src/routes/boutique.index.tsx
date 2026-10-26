@@ -6,6 +6,7 @@ import { ShoppingBag, Search, Sparkles, ArrowRight, ShoppingCart } from "lucide-
 import { supabase } from "@/integrations/supabase/client";
 import { useSettings } from "@/lib/settings";
 import type { ProductItem } from "@/lib/types-store";
+import { productCurrency } from "@/lib/product-commerce";
 import { formatNumber } from "@/lib/utils";
 import { PrimeStoreLogo, PaymentMethodsBar, PartnerBrandsBar } from "@/components/BrandLogos";
 import { Button } from "@/components/ui/button";
@@ -217,10 +218,10 @@ function BoutiquePage() {
                   <div className="mt-3 pt-3 border-t flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       {prod.extra?.amount_mode === "custom_usd" ? <p className="text-sm font-bold text-foreground">Montant libre</p> : <>
-                      <p className="text-base sm:text-lg font-extrabold text-foreground">{prod.price_usd} USD</p>
-                      <p className="text-xs font-semibold text-muted-foreground">
-                        ≈ {formatNumber(htgPrice)} HTG
-                      </p>
+                      <p className="text-base sm:text-lg font-extrabold text-foreground">{prod.price_usd} {productCurrency(prod.extra)}</p>
+                      {productCurrency(prod.extra) === "USD" && <p className="text-xs font-semibold text-muted-foreground">
+                        ≈ {formatNumber(htgPrice)} GDS
+                      </p>}
                       </>}
                     </div>
 
