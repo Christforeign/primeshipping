@@ -1783,7 +1783,30 @@ function AdminHubPage() {
               <div className="space-y-3 border-t pt-4">
                 <h4 className="text-sm font-bold text-foreground">Galerie Photos & Vidéo</h4>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">URLs d'images (une par ligne)</Label>
+                  <Label className="text-xs font-semibold">Photos du produit</Label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    aria-label="Ajouter des photos"
+                    className="block w-full text-xs file:mr-3 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:text-primary-foreground"
+                    onChange={async (e) => {
+                      const files = Array.from(e.target.files || []);
+                      e.target.value = "";
+                      if (!files.length) return;
+                      try {
+                        toast.info("Envoi des photos…");
+                        const { uploadImage } = await import("@/lib/upload");
+                        const urls = [];
+                        for (const file of files) urls.push(await uploadImage("products/all", file));
+                        setProdMediaUrls((prev) => [prev.trim(), ...urls].filter(Boolean).join("\n"));
+                        toast.success("Photos ajoutées");
+                      } catch (err) {
+                        toast.error(err instanceof Error ? err.message : "Envoi impossible");
+                      }
+                    }}
+                  />
+                  <Label className="text-xs text-muted-foreground">Ou liens d'images (un par ligne)</Label>
                   <Textarea
                     value={prodMediaUrls}
                     onChange={(e) => setProdMediaUrls(e.target.value)}
