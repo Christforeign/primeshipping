@@ -149,10 +149,12 @@ async function run(data: Input & { vars: EmailVars }, context: { supabase: any; 
     }
     }
     let adminWarning = "";
-    if (!data.test && !data.toEmail && kind !== "panier" && kind !== "alerte_admin" && extra["email_admin_alerts_enabled"] !== false) {
-      const recipients = [...new Set(String(extra["email_admin_recipients"] || "").split(/[\s,;]+/).filter((email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)))].slice(0, 10);
+    if (!data.test && !data.toEmail && kind !== "panier" && kind !== "alerte_admin") {
+      const { data: roleEmails, error: roleError } = await supabase.rpc("admin_alert_recipients");
+      if (roleError) console.error("admin recipients", roleError.message);
+      const recipients = [...new Set(((roleEmails || []) as string[]).filter((email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email !== to.toLowerCase()))].slice(0, 20);
       const adminTemplate = mergeTemplates(extra["email_templates"]).alerte_admin;
-      if (!recipients.length) adminWarning = "Aucune adresse administrateur enregistrée";
+      if (!recipients.length) adminWarning = roleError ? `Lecture des administrateurs impossible : ${roleError.message}` : "Aucun compte administrateur à alerter";
       else if (!adminTemplate.enabled) adminWarning = "Modèle alerte administrateur désactivé";
       else {
         const adminVars = { ...vars, lien: `${siteUrl}${adminLink}`, details: `Client : ${vars.nom || ""} (${vars.code || ""})\n${vars.produit || ""}\n${vars.details || ""}`, produit: "" };
