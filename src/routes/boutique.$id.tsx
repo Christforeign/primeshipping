@@ -28,6 +28,7 @@ import { useSettings } from "@/lib/settings";
 import { useUser } from "@/lib/session";
 import { clientStore } from "@/lib/store";
 import { supabase } from "@/integrations/supabase/client";
+import { productCurrency } from "@/lib/product-commerce";
 import { topupPrice } from "@/lib/product-pricing";
 import { DEFAULT_ORDER_NOTICE, minimumQuantity, orderMinimumError } from "@/lib/order-minimums";
 import { addCartItem } from "@/lib/cart";
@@ -504,11 +505,11 @@ export function ProductDetailPage() {
                 <div className="flex items-baseline gap-3 mt-1">
                   <span className="text-3xl sm:text-4xl font-black text-foreground">
                     {(freeAmount ? subtotalUsd : unitPrice).toFixed(2)}{" "}
-                    <span className="text-sm font-bold text-muted-foreground">USD</span>
+                    <span className="text-sm font-bold text-muted-foreground">{productCurrency(product.extra)}</span>
                   </span>
-                  <span className="text-sm font-bold text-amber-500 font-mono">
-                    ≈ {formatNumber(Math.round(unitPrice * rate))} HTG
-                  </span>
+                  {productCurrency(product.extra) === "USD" && <span className="text-sm font-bold text-amber-500 font-mono">
+                    ≈ {formatNumber(Math.round(unitPrice * rate))} GDS
+                  </span>}
                 </div>
                 {product.promo_price_usd && (
                   <p className="text-xs text-red-600 font-bold mt-1">
@@ -564,7 +565,7 @@ export function ProductDetailPage() {
 
                           <div className="text-right">
                             <span className="font-black text-foreground block">
-                              {vPrice.toFixed(2)} USD
+                              {vPrice.toFixed(2)} {productCurrency(product.extra)}
                             </span>
                             <span className="text-[10px] text-muted-foreground font-mono">
                               ≈ {formatNumber(Math.round(vPrice * rate))} HTG
