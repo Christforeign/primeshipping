@@ -18,7 +18,7 @@ export const DEFAULT_TEMPLATES: Record<EmailKind, EmailTemplate> = {
   transit: { enabled: true, color: "#1d4ed8", subject: "Votre colis {{tracking}} est en route vers Haïti", body: "Bonjour {{nom}},\n\nVotre colis {{tracking}} est en transit.\n{{details}}" },
   arrivee: { enabled: true, color: "#15803d", subject: "Votre colis {{tracking}} est disponible", body: "Bonjour {{nom}},\n\nBonne nouvelle : votre colis {{tracking}} est arrivé et peut être retiré.\n{{details}}" },
   facture: { enabled: true, color: "#b45309", subject: "Votre facture {{reference}}", body: "Bonjour {{nom}},\n\nVoici votre facture {{reference}} d'un montant de {{montant}}.\n{{details}}" },
-  commande: { enabled: true, color: "#7c2d12", subject: "Commande {{reference}} confirmée", body: "Bonjour {{nom}},\n\nMerci pour votre commande {{reference}} ({{montant}}).\n{{details}}" },
+  commande: { enabled: true, color: "#7c2d12", subject: "Commande {{reference}} — mise à jour", body: "Bonjour {{nom}},\n\nMerci pour votre commande {{reference}} ({{montant}}).\n{{details}}" },
   achat: { enabled: true, color: "#9d174d", subject: "Mise à jour de votre achat assisté", body: "Bonjour {{nom}},\n\nVotre demande d'achat assisté a été mise à jour.\n{{details}}" },
   portefeuille: { enabled: true, color: "#0e7490", subject: "Mouvement sur votre portefeuille", body: "Bonjour {{nom}},\n\nUn mouvement de {{montant}} a été enregistré sur votre portefeuille.\n{{details}}" },
   support: { enabled: true, color: "#334155", subject: "Réponse du support Prime Express Shipping", body: "Bonjour {{nom}},\n\n{{details}}" },
