@@ -63,7 +63,7 @@ export function AdminSiteLinks() {
             <Input value={l.url} onChange={(e) => setSocials(socials.map((x, j) => (j === i ? { ...x, url: e.target.value } : x)))} placeholder="https://..." />
             <Select value={l.icon || "auto"} onValueChange={(icon) => setSocials(socials.map((x, j) => j === i ? { ...x, icon: icon as SocialIconName } : x))}>
               <SelectTrigger aria-label={`Icône ${l.label || "du lien"}`}><SelectValue /></SelectTrigger>
-              <SelectContent>{[["auto", "Automatique"], ["whatsapp", "WhatsApp"], ["facebook", "Facebook"], ["instagram", "Instagram"], ["mail", "E-mail"], ["phone", "Téléphone"], ["link", "Lien"]].map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
+              <SelectContent>{[{ value: "auto", label: "Automatique" }, { value: "whatsapp", label: "WhatsApp" }, { value: "facebook", label: "Facebook" }, { value: "instagram", label: "Instagram" }, { value: "mail", label: "E-mail" }, { value: "phone", label: "Téléphone" }, { value: "link", label: "Lien" }].map(({ value, label }) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
             </Select>
             <label className="flex items-center gap-2 text-sm">
               <Switch checked={l.enabled} onCheckedChange={(v) => setSocials(socials.map((x, j) => (j === i ? { ...x, enabled: v } : x)))} />
