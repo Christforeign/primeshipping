@@ -160,7 +160,7 @@ export function AdminEmailTemplates() {
 
       <div className="rounded-lg border border-border bg-card p-4 space-y-3">
         <h3 className="font-semibold">Alertes administrateurs</h3>
-        <p className="text-xs text-muted-foreground">Tous les comptes ayant le rôle Administrateur ou Super admin reçoivent automatiquement une alerte (commande, colis, recharge, support), à l'e-mail de leur compte. Le client reçoit séparément son propre e-mail. Pour ajouter un administrateur, donne-lui le rôle dans Gestion colis → Équipe.</p>
+        <p className="text-xs text-muted-foreground">Tous les comptes ayant le rôle Administrateur ou Super admin reçoivent automatiquement une alerte (commande, colis, recharge, support), à l'e-mail de leur compte. Le client reçoit séparément son propre e-mail. Pour ajouter un administrateur, donne-lui le rôle dans Gestion colis → « Rôles & Accès Administrateur ».</p>
         <input className={inp} type="url" placeholder="Logo Prime Store des e-mails (facultatif)" value={storeLogoUrl} onChange={(e) => setStoreLogoUrl(e.target.value)} />
         <Button disabled={busy} onClick={save}>Enregistrer</Button>
       </div>
