@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export type CartSelection = { key: string; productId: string; variantId: string | null; quantity: number; formValues: Record<string, unknown> };
+export type CartSelection = { key: string; productId: string; variantId: string | null; quantity: number; formValues: Record<string, unknown>; requestedAmountUsd?: number };
 const STORAGE_KEY = "prime_cart";
 export function readCart(): CartSelection[] {
   try {
@@ -14,8 +14,8 @@ export function writeCart(items: CartSelection[]) {
 }
 export function addCartItem(item: Omit<CartSelection, "key">) {
   const items = readCart();
-  const existing = items.find((entry) => entry.productId === item.productId && entry.variantId === item.variantId && JSON.stringify(entry.formValues) === JSON.stringify(item.formValues));
-  if (existing) existing.quantity += item.quantity;
+  const existing = items.find((entry) => entry.productId === item.productId && entry.variantId === item.variantId && entry.requestedAmountUsd === item.requestedAmountUsd && JSON.stringify(entry.formValues) === JSON.stringify(item.formValues));
+  if (existing && !item.requestedAmountUsd) existing.quantity += item.quantity;
   else items.push({ ...item, key: crypto.randomUUID() });
   writeCart(items);
 }

@@ -28,6 +28,7 @@ import { useSettings } from "@/lib/settings";
 import { useUser } from "@/lib/session";
 import { clientStore } from "@/lib/store";
 import { supabase } from "@/integrations/supabase/client";
+import { topupPrice } from "@/lib/product-pricing";
 import { addCartItem } from "@/lib/cart";
 import { DynamicProductForm } from "@/components/DynamicProductForm";
 import type {
@@ -92,6 +93,7 @@ export function ProductDetailPage() {
 
   // Quantity
   const [quantity, setQuantity] = useState(1);
+  const [requestedAmount, setRequestedAmount] = useState("");
 
   // Custom Form Field Values
   const [formValues, setFormValues] = useState<Record<string, any>>({});
@@ -176,7 +178,10 @@ export function ProductDetailPage() {
     ? (selectedVariant.promo_price_usd ?? selectedVariant.price_usd)
     : (product.promo_price_usd ?? product.price_usd));
 
-  const subtotalUsd = Number((unitPrice * quantity).toFixed(2));
+  const freeAmount = product.extra?.amount_mode === "custom_usd";
+  let amountPrice = { totalHtg: 0, walletUsd: 0 };
+  if (freeAmount && Number(requestedAmount) > 0) { try { amountPrice = topupPrice(Number(requestedAmount), Number(product.extra?.product_rate_htg), Number(rate)); } catch { /* invalid input is checked at submission */ } }
+  const subtotalUsd = freeAmount ? amountPrice.walletUsd : Number((unitPrice * quantity).toFixed(2));
   const activeTaxRate = product.apply_tax ? (product.tax_rate_override ?? defaultTaxRate) : 0;
   const taxAmountUsd = Number(((subtotalUsd * activeTaxRate) / 100).toFixed(2));
 
@@ -220,6 +225,8 @@ export function ProductDetailPage() {
   // Step 1: validate product options then go to the checkout page
   const handleOrderSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (freeAmount) { try { topupPrice(Number(requestedAmount), Number(product.extra?.product_rate_htg), Number(rate)); } catch { return toast.error("Saisissez un montant USD valide (deux décimales maximum)."); } }
+    const selection = { productId: product.id, variantId: freeAmount ? null : selectedVariant?.id || null, quantity: freeAmount ? 1 : quantity, formValues, requestedAmountUsd: freeAmount ? Number(requestedAmount) : undefined };
     const newErrors: Record<string, string> = {};
     for (const field of product.custom_fields || []) {
       const val = formValues[field.id];
@@ -233,7 +240,7 @@ export function ProductDetailPage() {
     }
     if (e.nativeEvent?.submitter?.value === "cart") {
       try {
-        addCartItem({ productId: product.id, variantId: selectedVariant?.id || null, quantity, formValues });
+        addCartItem(selection);
         toast.success("Article ajouté au panier");
         navigate({ to: "/boutique/panier" });
       } catch { toast.error("Impossible de sauvegarder le panier sur cet appareil."); }
@@ -241,7 +248,7 @@ export function ProductDetailPage() {
     }
     sessionStorage.setItem(
       "prime_checkout",
-      JSON.stringify({ productId: product.id, variantId: selectedVariant?.id || null, quantity, formValues }),
+      JSON.stringify(selection),
     );
     navigate({ to: "/boutique/commande" });
   };
@@ -488,7 +495,7 @@ export function ProductDetailPage() {
                 </span>
                 <div className="flex items-baseline gap-3 mt-1">
                   <span className="text-3xl sm:text-4xl font-black text-foreground">
-                    {unitPrice.toFixed(2)}{" "}
+                    {(freeAmount ? subtotalUsd : unitPrice).toFixed(2)}{" "}
                     <span className="text-sm font-bold text-muted-foreground">USD</span>
                   </span>
                   <span className="text-sm font-bold text-amber-500 font-mono">
@@ -503,7 +510,7 @@ export function ProductDetailPage() {
               </div>
 
               {/* 1. VARIANTS SELECTOR (If product has variants) */}
-              {product.variants && product.variants.length > 0 && (
+              {!freeAmount && product.variants && product.variants.length > 0 && (
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
                     <Label className="text-xs font-bold text-foreground">
@@ -562,8 +569,9 @@ export function ProductDetailPage() {
                 </div>
               )}
 
+              {freeAmount && <div className="space-y-2"><Label htmlFor="recharge-amount">Montant à recharger (USD)</Label><Input id="recharge-amount" type="number" min="0.01" step="0.01" required value={requestedAmount} onChange={(e) => setRequestedAmount(e.target.value)} /><p className="text-sm text-muted-foreground">Taux : {product.extra?.product_rate_htg} HTG/USD · {amountPrice.totalHtg.toFixed(2)} HTG</p><p className="text-sm font-semibold">Équivalent portefeuille : {amountPrice.walletUsd.toFixed(2)} USD</p></div>}
               {/* 2. QUANTITY SELECTOR */}
-              <div className="space-y-1.5">
+              {!freeAmount && <div className="space-y-1.5">
                 <Label className="text-xs font-bold text-foreground">Quantité</Label>
                 <div className="flex items-center gap-3">
                   <button
@@ -584,6 +592,7 @@ export function ProductDetailPage() {
                 </div>
               </div>
 
+              }
               {/* 3. DYNAMIC CUSTOM FORM FIELDS (All 16 field types supported!) */}
               {product.custom_fields && product.custom_fields.length > 0 && (
                 <div className="pt-4 border-t space-y-4">
