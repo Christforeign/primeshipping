@@ -74,7 +74,7 @@ function WalletPage() {
     },
   });
 
-  const balanceUsd = walletQuery.data?.balance_usd ?? 0;
+  const balanceUsd = Number(walletQuery.data?.balance_usd ?? 0) || 0;
   const balanceHtg = Math.round(balanceUsd * rate);
 
   const transactions = txQuery.data || [];

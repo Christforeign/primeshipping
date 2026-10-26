@@ -52,7 +52,7 @@ function PackageDetail() {
           .select("*")
           .eq("user_id", user!.id)
           .maybeSingle();
-        if (!error && data) return (data.balance_usd || 0) as number;
+        if (!error && data) return Number(data.balance_usd) || 0;
       } catch {
         // fallback
       }
