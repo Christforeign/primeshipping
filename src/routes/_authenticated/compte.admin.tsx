@@ -26,7 +26,6 @@ import {
   Globe,
   ExternalLink,
   MessageCircle,
-  Send,
   UserCheck,
   Bot,
   FileText,
@@ -55,7 +54,6 @@ import { clientStore } from "@/lib/store";
 import { PageHeader } from "@/components/PageHeader";
 import { AdminInvoiceBuilder } from "@/components/AdminInvoiceBuilder";
 import { AdminWalletAdjust } from "@/components/AdminWalletAdjust";
-import { AdminSupportInbox } from "@/components/AdminSupportInbox";
 import { AdminEmailTemplates } from "@/components/AdminEmailTemplates";
 import { AdminErrorLogs } from "@/components/AdminErrorLogs";
 import { AdminWhatsAppContacts } from "@/components/AdminWhatsAppContacts";
