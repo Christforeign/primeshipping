@@ -155,6 +155,27 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_carts: {
+        Row: {
+          items: Json
+          last_reminded_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          items?: Json
+          last_reminded_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          items?: Json
+          last_reminded_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       package_events: {
         Row: {
           created_at: string
