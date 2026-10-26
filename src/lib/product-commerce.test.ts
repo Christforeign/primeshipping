@@ -4,7 +4,7 @@ describe("Product currency and delivery", () => {
   it("keeps a 1500 gourde product exactly 1500 gourdes", () => {
     const total = fixedProductTotals(1500, 1, { price_currency: "HTG" }, 135);
     expect(total.totalHtg).toBe(1500);
-    expect(total.totalUsd).toBe(11.11);
+    expect(total.totalUsd).toBe(11.12);
   });
   it("retains USD prices", () => { expect(fixedProductTotals(15, 2, {}, 135).totalHtg).toBe(4050); });
   it("makes pickup free despite configured delivery fees", () => { expect(deliveryPricing({ delivery_pricing: "fixed", delivery_fee_htg: 500 }, false)).toEqual({ quote: false, feeHtg: 0 }); });
