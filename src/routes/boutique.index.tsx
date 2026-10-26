@@ -77,7 +77,7 @@ function BoutiquePage() {
             </div>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white">
+          <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-foreground">
             Prime Store Haïti
           </h1>
           <p className="mt-3 text-base sm:text-lg text-muted-foreground leading-relaxed font-normal">
