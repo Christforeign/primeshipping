@@ -70,7 +70,7 @@ export function SiteHeader() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-1.5 lg:flex">
           {NAV.map((n) => {
             const isShipping = n.highlight === "orange";
             const isStore = n.highlight === "gold";
@@ -78,16 +78,12 @@ export function SiteHeader() {
               <Link
                 key={n.to}
                 to={n.to}
-                className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
-                  isShipping
-                    ? "text-primary hover:bg-primary/10"
-                    : isStore
-                      ? "text-amber-600 hover:bg-amber-500/10 dark:text-amber-400"
-                      : "text-muted-foreground hover:text-foreground hover:bg-foreground/5"
+                className={`liquid rounded-full px-3.5 py-1.5 text-xs font-black transition-all hover:scale-105 ${
+                  isShipping ? "text-primary" : isStore ? "text-amber-700 dark:text-amber-400" : "text-foreground"
                 }`}
                 activeProps={{
                   className:
-                    "bg-primary/10 text-primary font-extrabold shadow-sm border border-primary/20",
+                    "liquid-active text-foreground font-black",
                 }}
                 activeOptions={{ exact: n.to === "/" }}
               >
