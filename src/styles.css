@@ -62,93 +62,91 @@
 
 :root {
   --radius: 0.85rem;
-  /* Charte Graphique ps-invoice.lovable.app & Logo Officiel Prime Express Shipping:
-     Orange Flamme #EA580C / #E8590C,
-     Navy / Slate Corporatif #0F172A,
-     Ambre Solaire #F59E0B,
-     Fond Propre Épuré #F8FAFC
+  /* Charte Prime Express Shipping — tons chauds uniquement, aucun bleu:
+     Orange Flamme #EA580C, Ambre Solaire #F59E0B,
+     Brun Café Profond #1F150C, Fond Crème Chaud #FBF7F1
   */
   --primary: #EA580C;
   --primary-foreground: #FFFFFF;
-  --forest: #0F172A;
+  --forest: #1F150C;
   --forest-foreground: #FFFFFF;
   --emerald: #16A34A;
   --emerald-foreground: #FFFFFF;
   --sun: #EA580C;
   --sun-foreground: #FFFFFF;
-  --cream: #F8FAFC;
-  --cream-foreground: #0F172A;
+  --cream: #FBF7F1;
+  --cream-foreground: #1F150C;
 
-  --background: #F8FAFC;
-  --foreground: #0F172A;
+  --background: #FBF7F1;
+  --foreground: #1F150C;
   --card: #FFFFFF;
-  --card-foreground: #0F172A;
+  --card-foreground: #1F150C;
   --popover: #FFFFFF;
-  --popover-foreground: #0F172A;
-  --secondary: #F1F5F9;
-  --secondary-foreground: #0F172A;
-  --muted: #E2E8F0;
-  --muted-foreground: #64748B;
+  --popover-foreground: #1F150C;
+  --secondary: #F5EDE2;
+  --secondary-foreground: #1F150C;
+  --muted: #EFE6D8;
+  --muted-foreground: #7A6A58;
   --accent: #EA580C;
   --accent-foreground: #FFFFFF;
   --success: #16A34A;
   --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
-  --border: #E2E8F0;
-  --input: #E2E8F0;
+  --border: #E9DCC9;
+  --input: #E9DCC9;
   --ring: #EA580C;
   --chart-1: #EA580C;
-  --chart-2: #0F172A;
+  --chart-2: #1F150C;
   --chart-3: #F59E0B;
-  --chart-4: #3B82F6;
+  --chart-4: #D97706;
   --chart-5: #10B981;
-  --sidebar: #0F172A;
-  --sidebar-foreground: #F8FAFC;
+  --sidebar: #1F150C;
+  --sidebar-foreground: #FBF7F1;
   --sidebar-primary: #EA580C;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #1E293B;
+  --sidebar-accent: #2E2013;
   --sidebar-accent-foreground: #FFFFFF;
-  --sidebar-border: #1E293B;
+  --sidebar-border: #2E2013;
   --sidebar-ring: #EA580C;
-  --shadow-soft: 0 10px 25px -10px rgba(15, 23, 42, 0.08);
+  --shadow-soft: 0 10px 25px -10px rgba(31, 21, 12, 0.10);
   --primary-glow: #F59E0B;
-  --shadow-glass: 0 8px 32px -12px rgba(15, 23, 42, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  --shadow-glass: 0 8px 32px -12px rgba(31, 21, 12, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 .dark {
   --primary: #EA580C;
   --primary-foreground: #FFFFFF;
-  --forest: #0B1320;
-  --forest-foreground: #F8FAFC;
+  --forest: #140D06;
+  --forest-foreground: #FBF7F1;
   --emerald: #16A34A;
   --emerald-foreground: #FFFFFF;
   --sun: #EA580C;
   --sun-foreground: #FFFFFF;
-  --cream: #0B1320;
-  --cream-foreground: #F8FAFC;
+  --cream: #140D06;
+  --cream-foreground: #FBF7F1;
 
-  --background: #0B1320;
-  --foreground: #F8FAFC;
-  --card: #111C2E;
-  --card-foreground: #F8FAFC;
-  --popover: #111C2E;
-  --popover-foreground: #F8FAFC;
-  --secondary: #18263E;
-  --secondary-foreground: #F8FAFC;
-  --muted: #18263E;
-  --muted-foreground: #94A3B8;
+  --background: #140D06;
+  --foreground: #FBF7F1;
+  --card: #20150B;
+  --card-foreground: #FBF7F1;
+  --popover: #20150B;
+  --popover-foreground: #FBF7F1;
+  --secondary: #2B1D10;
+  --secondary-foreground: #FBF7F1;
+  --muted: #2B1D10;
+  --muted-foreground: #B8A68E;
   --accent: #EA580C;
   --accent-foreground: #FFFFFF;
-  --border: #1E2E48;
-  --input: #1E2E48;
+  --border: #3A2817;
+  --input: #3A2817;
   --ring: #EA580C;
-  --sidebar: #070D18;
-  --sidebar-foreground: #F8FAFC;
+  --sidebar: #0D0803;
+  --sidebar-foreground: #FBF7F1;
   --sidebar-primary: #EA580C;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #111C2E;
-  --sidebar-accent-foreground: #F8FAFC;
-  --sidebar-border: #1E2E48;
+  --sidebar-accent: #20150B;
+  --sidebar-accent-foreground: #FBF7F1;
+  --sidebar-border: #3A2817;
   --sidebar-ring: #EA580C;
   --shadow-glass: 0 8px 32px -12px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
@@ -168,16 +166,16 @@ body {
 
 /* Effet « verre dépoli » façon iOS, aux couleurs de la marque */
 @utility glass {
-  background: color-mix(in oklab, var(--card) 74%, transparent);
-  backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
+  background: color-mix(in oklab, var(--card) 52%, transparent);
+  backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid color-mix(in oklab, #ffffff 55%, transparent);
   box-shadow: var(--shadow-glass);
 }
 
 @utility glass-strong {
-  background: color-mix(in oklab, var(--card) 90%, transparent);
-  backdrop-filter: blur(24px) saturate(170%);
-  border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+  background: color-mix(in oklab, var(--card) 68%, transparent);
+  backdrop-filter: blur(32px) saturate(190%);
+  border: 1px solid color-mix(in oklab, #ffffff 60%, transparent);
   box-shadow: var(--shadow-glass);
 }
 
