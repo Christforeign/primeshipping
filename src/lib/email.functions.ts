@@ -90,12 +90,12 @@ export const sendClientEmail = createServerFn({ method: "POST" })
       if (error) throw error;
       const lines = cart.map((item) => {
         const product = products?.find((entry) => entry.id === item.productId);
-        if (!product) throw new Error("Un article du panier n'est plus disponible");
+        if (!product) return "";
         const variants = Array.isArray(product.variants) ? product.variants as { id?: string; name?: string }[] : [];
         const variant = variants.find((entry) => entry.id === item.variantId);
         return `${product.title}${variant?.name ? ` — ${variant.name}` : ""} × ${item.quantity}`;
       });
-      vars.details = lines.join("\n");
+      vars.details = lines.filter(Boolean).join("\n"); if (!vars.details) return { sent: false, reason: "Articles indisponibles" };
       vars.reference = "Boutique → Mon panier";
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) throw new Error("Email invalide");
