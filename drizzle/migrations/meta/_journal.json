@@ -36,6 +36,13 @@
       "when": 1793017154797,
       "tag": "0004_private_package_tracking_summary",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793019399723,
+      "tag": "0005_secure_product_amount_pricing",
+      "breakpoints": true
     }
   ]
 }
