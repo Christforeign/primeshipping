@@ -767,6 +767,14 @@ function AdminHubPage() {
   };
 
   const handleDeleteAchat = (id: string) => {
+    if (confirm("Supprimer cette demande d'achat ?")) {
+      clientStore.deleteAssistedPurchase(id);
+      qc.invalidateQueries({ queryKey: ["admin-assisted-purchases"] });
+      qc.invalidateQueries({ queryKey: ["my-assisted-purchases"] });
+      toast.success("Demande d'achat supprimée.");
+    }
+  };
+
   // -------------------------------------------------------------
   // TAB 6: Support Threads & Chat Dossiers — retired
   // -------------------------------------------------------------
