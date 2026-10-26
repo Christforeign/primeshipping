@@ -29,3 +29,4 @@
 - Order emails derive their stage, recipient and details from the saved order ID; Brevo operational alerts use configured staff recipients and link only to authenticated administration pages.
 - Email logos use transparent PNG counterparts of the existing vectors because inbox clients do not reliably render SVG.
 - Cart reminders are staff-triggered only: signed-in carts sync to customer_carts so admins can bulk-remind; customers no longer email their own cart.
+- Customer and package deletion use authenticated database RPCs with server-enforced administrator checks and atomic cleanup; this avoids private deployment keys and prevents partial deletions.

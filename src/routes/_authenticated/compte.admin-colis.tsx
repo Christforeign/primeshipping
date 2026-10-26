@@ -33,6 +33,11 @@ export const Route = createFileRoute("/_authenticated/compte/admin-colis")({
   head: () => ({
     meta: [
       { title: "Gestion des colis & Envois Groupés — Prime Shipping" },
+      { name: "description", content: "Gestion sécurisée des colis et envois Prime Shipping." },
+      { property: "og:title", content: "Gestion des colis — Prime Shipping" },
+      { property: "og:description", content: "Administration des colis Prime Shipping." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),
@@ -61,6 +66,8 @@ function AdminColis() {
   const [f, setF] = useState<any>({ status: "recu_entrepot" });
   const [search, setSearch] = useState("");
   const [editPkg, setEditPkg] = useState<any>(null);
+  const [deletePkgId, setDeletePkgId] = useState<string | null>(null);
+  const [deletingPkgId, setDeletingPkgId] = useState<string | null>(null);
   const [pkgSearch, setPkgSearch] = useState("");
   const [busy, setBusy] = useState(false);
   const [staffEmail, setStaffEmail] = useState("");
@@ -321,6 +328,21 @@ function AdminColis() {
       setF({ status: "recu_entrepot" });
       qc.invalidateQueries({ queryKey: ["admin-packages"] });
     }
+  };
+
+  const deletePackage = async (id: string) => {
+    if (deletingPkgId) return;
+    if (deletePkgId !== id) { setDeletePkgId(id); return; }
+    setDeletingPkgId(id);
+    try {
+      const { error } = await supabase.rpc("admin_delete_package", { _package_id: id });
+      if (error) throw error;
+      setDeletePkgId(null);
+      if (editPkg?.id === id) setEditPkg(null);
+      await Promise.all(["admin-packages", "packages", "my-packages", "notifications"].map((key) => qc.invalidateQueries({ queryKey: [key] })));
+      toast.success("Colis supprimé");
+    } catch { toast.error("Impossible de supprimer ce colis. Vérifie tes droits et réessaie."); }
+    finally { setDeletingPkgId(null); }
   };
 
   const changeStatus = async (id: string, status: PackageStatus): Promise<unknown> => {
@@ -1061,6 +1083,12 @@ function AdminColis() {
                   >
                     <FileDown className="h-3.5 w-3.5" /> Facture PDF
                   </Button>
+                  <Button size="sm" type="button" variant="destructive" disabled={deletingPkgId !== null}
+                    aria-label={`Supprimer le colis ${p.tracking_number}`} onClick={() => deletePackage(p.id)} className="h-8 text-xs gap-1">
+                    <Trash2 className="h-3.5 w-3.5" />
+                    {deletingPkgId === p.id ? "Suppression…" : deletePkgId === p.id ? "Confirmer définitivement" : "Supprimer"}
+                  </Button>
+                  {deletePkgId === p.id && <Button size="sm" type="button" variant="ghost" disabled={deletingPkgId !== null} onClick={() => setDeletePkgId(null)}>Annuler</Button>}
                 </div>
               </div>
             );

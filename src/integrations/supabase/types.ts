@@ -728,6 +728,11 @@ export type Database = {
         Returns: number
       }
       admin_alert_recipients: { Args: never; Returns: string[] }
+      admin_delete_customer_account: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
+      admin_delete_package: { Args: { _package_id: string }; Returns: boolean }
       admin_setup_available: { Args: never; Returns: boolean }
       can_manage_packages: { Args: { _user_id: string }; Returns: boolean }
       claim_first_admin: { Args: never; Returns: boolean }

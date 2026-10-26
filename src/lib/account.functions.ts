@@ -9,14 +9,7 @@ export const deleteCustomerAccount = createServerFn({ method: "POST" })
     return d;
   })
   .handler(async ({ data, context }) => {
-    const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
-    if (!isStaff) throw new Error("Non autorisé");
-    if (data.userId === context.userId) throw new Error("Tu ne peux pas supprimer ton propre compte");
-    const { data: targetStaff } = await context.supabase.rpc("is_staff", { _user_id: data.userId });
-    if (targetStaff) throw new Error("Retire d'abord le rôle administrateur de ce compte");
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
-    if (error) throw new Error("Suppression impossible");
-    await supabaseAdmin.from("profiles").delete().eq("id", data.userId);
+    const { error } = await context.supabase.rpc("admin_delete_customer_account", { _user_id: data.userId });
+    if (error) throw new Error("Suppression impossible : vérifie tes droits et que le compte n’appartient pas au personnel.");
     return { ok: true };
   });
