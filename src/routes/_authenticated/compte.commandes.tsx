@@ -180,7 +180,7 @@ function MyOrdersPage() {
       {/* Details modal */}
       {selectedOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-          <div className="relative w-full max-w-lg rounded-3xl bg-card border shadow-2xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto">
+          <div className="relative w-full max-w-lg min-w-0 break-words rounded-3xl bg-card border shadow-2xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b pb-4 mb-4">
               <div>
                 <span className="text-xs font-bold font-mono text-primary bg-primary/10 px-2.5 py-1 rounded-md">
@@ -196,7 +196,7 @@ function MyOrdersPage() {
             </div>
 
             <div className="space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-3 p-3.5 rounded-2xl bg-muted/60 border">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 rounded-2xl bg-muted/60 border break-words">
                 <div>
                   <span className="text-muted-foreground">Destinataire :</span>
                   <p className="font-semibold text-foreground">{selectedOrder.customer_name}</p>
@@ -223,7 +223,7 @@ function MyOrdersPage() {
                   </div>
                 )}
 
-              <div className="p-3.5 rounded-2xl bg-secondary/80 border border-primary/20 space-y-1.5">
+              <div className="p-3.5 rounded-2xl bg-secondary/80 border border-primary/20 space-y-1.5 [&>div]:flex-wrap [&>div]:gap-x-3">
                 <div className="flex justify-between">
                   <span>Sous-total article(s) :</span>
                   <span>{selectedOrder.subtotal_usd} USD</span>
@@ -257,7 +257,7 @@ function MyOrdersPage() {
               )}
 
               <div className="flex justify-end gap-2 pt-2">
-                <Button variant="outline" size="sm" onClick={() => window.print()}>
+                <Button variant="outline" size="sm" onClick={() => printOrderInvoice(selectedOrder)}>
                   <Printer className="h-4 w-4 mr-1.5" /> Imprimer
                 </Button>
                 <Button size="sm" onClick={() => setSelectedOrder(null)}>
@@ -269,5 +269,25 @@ function MyOrdersPage() {
         </div>
       )}
     </div>
+  );
+}
+
+function printOrderInvoice(o: any) {
+  import("@/lib/invoice").then(({ openInvoice }) =>
+    openInvoice({
+      brand: "store",
+      template: "minimalist",
+      number: String(o.order_number || ""),
+      date: o.created_at ? new Date(o.created_at).toLocaleDateString("fr-FR") : undefined,
+      title: "FACTURE COMMANDE",
+      status: o.status === "en_attente" ? "non_payee" : o.status === "annulee" ? "annulee" : "payee",
+      client: { name: o.customer_name, phone: o.customer_phone, address: o.delivery_address },
+      lines: [{ label: o.product_title + (o.variant_name ? ` — ${o.variant_name}` : ""), qty: Number(o.quantity) || 1, unit: Number(o.subtotal_usd) / (Number(o.quantity) || 1), total: Number(o.subtotal_usd) || 0 }],
+      service_fee_usd: Number(o.service_fee_usd) || 0,
+      customs_total_usd: Number(o.tax_amount_usd) || 0,
+      paid: o.status === "en_attente" ? 0 : Number(o.total_usd) || 0,
+      rate: o.total_usd ? Number(o.total_htg) / Number(o.total_usd) : undefined,
+      company: { name: "Prime Store" },
+    }),
   );
 }
