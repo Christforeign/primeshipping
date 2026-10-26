@@ -25,3 +25,6 @@
 - The package lifecycle uses shared canonical mappings over the existing enum for backward compatibility; payment never advances physical shipping status.
 - Tracking privacy is enforced by `track_package` in the database: only the owner gets private details or event notes, regardless of UI visibility.
 - Package email calls derive recipient, current status and variables from the stored package and use its event ID for Brevo idempotency; all app creation and staff transition paths invoke the sender.
+- Shop-order prices are recalculated atomically from active database products; custom USD amounts snapshot both rates and debit the HTG-equivalent wallet value to prevent client-forged totals.
+- Order emails derive their stage, recipient and details from the saved order ID; Brevo operational alerts use configured staff recipients and link only to authenticated administration pages.
+- Email logos use transparent PNG counterparts of the existing vectors because inbox clients do not reliably render SVG.
