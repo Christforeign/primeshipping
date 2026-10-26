@@ -136,7 +136,7 @@ function AdminPromoter() {
       {client ? (
         <div className="flex items-center justify-between gap-2 rounded-md border border-border px-3 py-2 text-sm min-w-0">
           <span className="truncate">{client.full_name || client.email} · {client.client_code}</span>
-          <Button type="button" variant="ghost" size="sm" onClick={() => { setClient(null); setArmed(false); }}>Changer</Button>
+          <Button type="button" variant="ghost" size="sm" onClick={() => setClient(null)}>Changer</Button>
         </div>
       ) : <ClientPicker onPick={setClient} />}
       <div className="flex flex-col gap-2 sm:flex-row">
