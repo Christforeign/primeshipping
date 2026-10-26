@@ -9,8 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import type { SiteSocialLink, SocialIconName } from "@/lib/social-links";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-export type SocialLink = { id: string; label: string; url: string; enabled: boolean };
+export type SocialLink = SiteSocialLink & { id: string };
 export type Corridor = { id: string; label: string; enabled: boolean };
 
 const DEFAULT_SOCIALS: SocialLink[] = [
@@ -56,9 +58,13 @@ export function AdminSiteLinks() {
       <section className="rounded-xl border border-border bg-card p-4 space-y-3">
         <h3 className="font-bold">Réseaux sociaux & canaux</h3>
         {socials.map((l, i) => (
-          <div key={l.id} className="grid gap-2 sm:grid-cols-[10rem_minmax(0,1fr)_auto_auto] items-center">
+          <div key={l.id} className="grid gap-2 sm:grid-cols-2 lg:grid-cols-[9rem_minmax(0,1fr)_8rem_auto_auto] items-center">
             <Input value={l.label} onChange={(e) => setSocials(socials.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} placeholder="Nom" />
             <Input value={l.url} onChange={(e) => setSocials(socials.map((x, j) => (j === i ? { ...x, url: e.target.value } : x)))} placeholder="https://..." />
+            <Select value={l.icon || "auto"} onValueChange={(icon) => setSocials(socials.map((x, j) => j === i ? { ...x, icon: icon as SocialIconName } : x))}>
+              <SelectTrigger aria-label={`Icône ${l.label || "du lien"}`}><SelectValue /></SelectTrigger>
+              <SelectContent>{[["auto", "Automatique"], ["whatsapp", "WhatsApp"], ["facebook", "Facebook"], ["instagram", "Instagram"], ["mail", "E-mail"], ["phone", "Téléphone"], ["link", "Lien"]].map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
+            </Select>
             <label className="flex items-center gap-2 text-sm">
               <Switch checked={l.enabled} onCheckedChange={(v) => setSocials(socials.map((x, j) => (j === i ? { ...x, enabled: v } : x)))} />
               {l.enabled ? "Visible" : "Caché"}
