@@ -29,11 +29,7 @@ export const Route = createFileRoute("/boutique/panier")({
 function CartPage() {
   const { items, update } = useCart();
   const settings = useSettings();
-  const { user } = useUser();
   const navigate = useNavigate();
-  const sendEmail = useServerFn(sendClientEmail);
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
   const productsQ = useQuery({
     queryKey: ["cart-products", items.map((item) => item.productId).sort().join(",")],
     enabled: items.length > 0,
@@ -46,16 +42,6 @@ function CartPage() {
   const checkout = (item: CartSelection) => {
     sessionStorage.setItem("prime_checkout", JSON.stringify({ ...item, cartKey: item.key }));
     navigate({ to: "/boutique/commande" });
-  };
-  const remind = async () => {
-    setSending(true);
-    try {
-      const result = await sendEmail({ data: { kind: "panier", cart: items.map(({ productId, variantId, quantity }) => ({ productId, variantId, quantity })) } });
-      if (!result.sent) throw new Error(result.reason || "Le rappel n'a pas été envoyé.");
-      setSent(true);
-      toast.success("Votre panier a été envoyé à l'adresse de votre compte.");
-    } catch (error) { toast.error(error instanceof Error ? error.message : "Impossible d'envoyer le rappel."); }
-    finally { setSending(false); }
   };
   return <div className="mx-auto max-w-3xl px-4 py-8 space-y-6">
     <div className="flex items-center justify-between gap-3"><h1 className="text-2xl font-bold">Mon panier</h1><Button asChild variant="ghost" size="icon" aria-label="Fermer le panier"><Link to="/boutique"><X className="h-5 w-5" /></Link></Button></div>
@@ -77,7 +63,7 @@ function CartPage() {
           {Object.entries(item.formValues).map(([key, value]) => <p key={key} className="text-sm text-muted-foreground break-words">{product?.custom_fields?.find((field) => field.id === key)?.label || key} : {Array.isArray(value) ? value.join(", ") : String(value)}</p>)}
         </article>;
       })}
-      <div className="flex flex-wrap gap-3 justify-between"><Button asChild variant="outline"><Link to="/boutique">Continuer mes achats</Link></Button>{user ? <Button variant="outline" onClick={remind} disabled={sending || sent || productsQ.isError}><Mail className="h-4 w-4 mr-2" />{sending ? "Envoi…" : sent ? "Panier envoyé" : "Recevoir mon panier par e-mail"}</Button> : <Button asChild variant="outline"><Link to="/auth">Se connecter pour recevoir mon panier</Link></Button>}</div>
+      <div className="flex flex-wrap gap-3 justify-between"><Button asChild variant="outline"><Link to="/boutique">Continuer mes achats</Link></Button></div>
     </>}
   </div>;
 }

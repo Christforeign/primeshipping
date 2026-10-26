@@ -11,6 +11,18 @@ export function readCart(): CartSelection[] {
 export function writeCart(items: CartSelection[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   window.dispatchEvent(new Event("prime-cart-change"));
+  void syncCart(items);
+}
+/** Copie le panier du client connecté pour que l'équipe puisse lui envoyer un rappel manuel. */
+async function syncCart(items: CartSelection[]) {
+  try {
+    const { supabase } = await import("@/integrations/supabase/client");
+    const { data } = await supabase.auth.getSession();
+    const uid = data.session?.user.id;
+    if (!uid) return;
+    const slim = items.map(({ productId, variantId, quantity }) => ({ productId, variantId, quantity }));
+    await supabase.from("customer_carts").upsert({ user_id: uid, items: slim as never, updated_at: new Date().toISOString() });
+  } catch { /* le panier reste disponible sur l'appareil */ }
 }
 export function addCartItem(item: Omit<CartSelection, "key">) {
   const items = readCart();
