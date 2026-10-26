@@ -38,6 +38,8 @@ export const Route = createFileRoute("/")({
         content:
           "Expédition USA ➔ Haïti, achats assistés, boutique en ligne, suivi en temps réel et livraison locale partout en Haïti avec Prime Express Shipping.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { property: "og:title", content: "Prime Express Shipping — Fret, Colis & Achats vers Haïti" },
       {
         property: "og:description",
@@ -168,7 +170,7 @@ function Index() {
       {/* Marques Partenaires */}
       <LocationMap />
       <section className="mx-auto max-w-7xl px-4">
-        <div className="rounded-xl bg-[#090f1e] border border-slate-800 p-6 md:p-8 shadow-xs">
+        <div className="bg-forest px-4 py-4 sm:px-6">
           <PartnerBrandsBar />
         </div>
       </section>
@@ -485,8 +487,7 @@ function Index() {
       {/* Marques Partenaires & Moyens de paiement */}
       <section className="mx-auto max-w-7xl px-4">
         <div className="rounded-xl bg-card border border-border p-6 shadow-xs space-y-6">
-          <PartnerBrandsBar />
-          <div className="pt-6 border-t border-border">
+          <div>
             <PaymentMethodsBar />
           </div>
         </div>
