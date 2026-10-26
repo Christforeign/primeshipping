@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { EMAIL_KINDS, mergeTemplates, renderEmail, type EmailKind, type EmailVars } from "./email-templates";
 
-type Input = { kind: EmailKind; userId?: string; toEmail?: string; vars?: EmailVars; test?: boolean };
+type Input = { kind: EmailKind; userId?: string; toEmail?: string; vars?: EmailVars; test?: boolean; cart?: { productId: string; variantId: string | null; quantity: number }[] };
 
 export const sendClientEmail = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -34,6 +34,21 @@ export const sendClientEmail = createServerFn({ method: "POST" })
       to = p.email;
       vars.nom ||= p.full_name || "";
       vars.code ||= p.client_code || "";
+    }
+    if (data.kind === "panier" && !data.test) {
+      const cart = data.cart;
+      if (!cart?.length || cart.length > 50 || cart.some((item) => typeof item.productId !== "string" || !Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 999)) throw new Error("Panier invalide");
+      const { data: products, error } = await supabase.from("products").select("id, title, variants").eq("is_active", true).in("id", cart.map((item) => item.productId));
+      if (error) throw error;
+      const lines = cart.map((item) => {
+        const product = products?.find((entry) => entry.id === item.productId);
+        if (!product) throw new Error("Un article du panier n'est plus disponible");
+        const variants = Array.isArray(product.variants) ? product.variants as { id?: string; name?: string }[] : [];
+        const variant = variants.find((entry) => entry.id === item.variantId);
+        return `${product.title}${variant?.name ? ` — ${variant.name}` : ""} × ${item.quantity}`;
+      });
+      vars.details = lines.join("\n");
+      vars.reference = "Boutique → Mon panier";
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) throw new Error("Email invalide");
 

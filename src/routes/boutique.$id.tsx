@@ -28,6 +28,7 @@ import { useSettings } from "@/lib/settings";
 import { useUser } from "@/lib/session";
 import { clientStore } from "@/lib/store";
 import { supabase } from "@/integrations/supabase/client";
+import { addCartItem } from "@/lib/cart";
 import { DynamicProductForm } from "@/components/DynamicProductForm";
 import type {
   ProductItem,
@@ -229,6 +230,14 @@ export function ProductDetailPage() {
     if (Object.keys(newErrors).length > 0) {
       setFormErrors(newErrors);
       return toast.error(Object.values(newErrors)[0]);
+    }
+    if (e.nativeEvent?.submitter?.value === "cart") {
+      try {
+        addCartItem({ productId: product.id, variantId: selectedVariant?.id || null, quantity, formValues });
+        toast.success("Article ajouté au panier");
+        navigate({ to: "/boutique/panier" });
+      } catch { toast.error("Impossible de sauvegarder le panier sur cet appareil."); }
+      return;
     }
     sessionStorage.setItem(
       "prime_checkout",
@@ -602,6 +611,10 @@ export function ProductDetailPage() {
                   </div>
                 </div>
               </div>
+              <Button type="submit" name="action" value="cart" size="lg" variant="outline" className="w-full h-12">
+                <ShoppingBag className="h-4 w-4 mr-2" /> Ajouter au panier
+              </Button>
+              <Button asChild variant="ghost" className="w-full"><Link to="/boutique/panier">Voir mon panier</Link></Button>
               <Button type="submit" size="lg" className="w-full h-12 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-sm">
                 Continuer vers le paiement <ArrowRight className="h-4 w-4 ml-2" />
               </Button>

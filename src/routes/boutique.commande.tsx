@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatNumber } from "@/lib/utils";
+import { readCart, writeCart } from "@/lib/cart";
+import { deliveryChoices } from "@/lib/delivery-options";
 
 export const Route = createFileRoute("/boutique/commande")({
   head: () => ({
@@ -29,7 +31,7 @@ export const Route = createFileRoute("/boutique/commande")({
   component: CheckoutPage,
 });
 
-type Selection = { productId: string; variantId: string | null; quantity: number; formValues: Record<string, unknown> };
+type Selection = { productId: string; variantId: string | null; quantity: number; formValues: Record<string, unknown>; cartKey?: string };
 
 function CheckoutPage() {
   const navigate = useNavigate();
@@ -55,7 +57,8 @@ function CheckoutPage() {
     queryKey: ["product", sel?.productId],
     enabled: !!sel?.productId,
     queryFn: async () => {
-      const { data, error } = await supabase.from("products").select("*").eq("id", sel!.productId).eq("is_active", true).maybeSingle();
+      if (!sel) return null;
+      const { data, error } = await supabase.from("products").select("*").eq("id", sel.productId).eq("is_active", true).maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -65,7 +68,8 @@ function CheckoutPage() {
     queryKey: ["my-wallet", user?.id],
     enabled: !!user,
     queryFn: async () => {
-      const { data, error } = await supabase.from("wallets").select("balance_usd").eq("user_id", user!.id).maybeSingle();
+      if (!user) return 0;
+      const { data, error } = await supabase.from("wallets").select("balance_usd").eq("user_id", user.id).maybeSingle();
       if (error) throw error;
       return Number(data?.balance_usd) || 0;
     },
@@ -93,9 +97,11 @@ function CheckoutPage() {
   }, [profile]);
 
   const pickupAddress = String(s?.pickup_address || "").trim();
+  const choices = deliveryChoices(productQ.data?.delivery_options);
   useEffect(() => {
-    if (!pickupAddress) setDeliveryMode("home");
-  }, [pickupAddress]);
+    if (!choices.home) setDeliveryMode("pickup");
+    else if (!choices.pickup) setDeliveryMode("home");
+  }, [choices.home, choices.pickup]);
 
   if (!ready || (sel && productQ.isPending)) {
     return <div className="mx-auto max-w-3xl px-4 py-24 text-center text-muted-foreground">Chargement…</div>;
@@ -123,6 +129,7 @@ function CheckoutPage() {
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
             <Button asChild variant="outline"><Link to="/boutique">Continuer mes achats</Link></Button>
+            <Button asChild variant="outline"><Link to="/boutique/panier">Retour au panier</Link></Button>
             <Button asChild><Link to="/compte/commandes">Mes commandes</Link></Button>
           </div>
         </div>
@@ -164,6 +171,7 @@ function CheckoutPage() {
   };
 
   const submit = async () => {
+    if (needsShipping && deliveryMode === "pickup" && !pickupAddress) return toast.error("L'adresse de la succursale doit être renseignée par l'équipe avant de commander en retrait.");
     if (needsShipping && deliveryMode === "home" && !address.trim()) return toast.error("Indiquez votre adresse de livraison en Haïti.");
     if (walletShort) return toast.error("Solde du portefeuille insuffisant.");
     if (method !== "wallet" && pay?.require_proof && !proofUrl) return toast.error("Ajoutez la capture de votre paiement.");
@@ -198,6 +206,7 @@ function CheckoutPage() {
       if (error) throw error;
       const order = data as { order_number: string; status: string };
       sessionStorage.removeItem("prime_checkout");
+      if (sel.cartKey) writeCart(readCart().filter((item) => item.key !== sel.cartKey));
       qc.invalidateQueries({ queryKey: ["my-wallet"] });
       qc.invalidateQueries({ queryKey: ["my-orders"] });
       sendEmail({
@@ -249,18 +258,18 @@ function CheckoutPage() {
       {needsShipping && (
         <section className="rounded-3xl border bg-card p-5 space-y-3">
           <h2 className="text-xs font-black uppercase">Réception en Haïti</h2>
-          <div className={`grid gap-2 ${pickupAddress ? "grid-cols-2" : "grid-cols-1"}`}>
-            <button type="button" className={opt(deliveryMode === "home")} onClick={() => setDeliveryMode("home")}>
+          <div className={`grid gap-2 ${choices.home && choices.pickup ? "sm:grid-cols-2" : "grid-cols-1"}`}>
+            {choices.home && <Button type="button" variant="outline" className={`${opt(deliveryMode === "home")} h-auto whitespace-normal justify-start`} onClick={() => setDeliveryMode("home")}>
               <MapPin className="h-4 w-4 mb-1" /> Livraison à mon adresse
-            </button>
-            {pickupAddress && (
-              <button type="button" className={opt(deliveryMode === "pickup")} onClick={() => setDeliveryMode("pickup")}>
-                <Warehouse className="h-4 w-4 mb-1" /> Retrait au bureau
-              </button>
+            </Button>}
+            {choices.pickup && (
+              <Button type="button" variant="outline" className={`${opt(deliveryMode === "pickup")} h-auto whitespace-normal justify-start`} onClick={() => setDeliveryMode("pickup")}>
+                <Warehouse className="h-4 w-4 mb-1" /> Retrait en succursale
+              </Button>
             )}
           </div>
           {deliveryMode === "pickup" ? (
-            <p className="text-sm text-muted-foreground">{pickupAddress}</p>
+            <p className={`text-sm ${pickupAddress ? "text-muted-foreground" : "text-destructive"}`}>{pickupAddress || "L'adresse de retrait n'est pas encore renseignée. Contactez l'équipe."}</p>
           ) : (
             <div className="space-y-1">
               <Label className="text-xs">Adresse de livraison *</Label>

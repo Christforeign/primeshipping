@@ -175,7 +175,7 @@ function RootComponent() {
 function AppShellContent() {
   const s = useSettings();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
-  const isCheckout = pathname.replace(/\/$/, "") === "/boutique/commande";
+  const isCheckout = ["/boutique/commande", "/boutique/panier"].includes(pathname.replace(/\/$/, ""));
 
   // Dynamic background style
   const getBackgroundStyle = () => {

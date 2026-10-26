@@ -27,6 +27,7 @@ import { Route as AuthenticatedCompteRouteImport } from './routes/_authenticated
 import { Route as BoutiqueIndexRouteImport } from './routes/boutique.index'
 import { Route as BoutiqueIdRouteImport } from './routes/boutique.$id'
 import { Route as BoutiqueCommandeRouteImport } from './routes/boutique.commande'
+import { Route as BoutiquePanierRouteImport } from './routes/boutique.panier'
 import { Route as AuthenticatedCompteIndexRouteImport } from './routes/_authenticated/compte.index'
 import { Route as AuthenticatedCompteAdminRouteImport } from './routes/_authenticated/compte.admin'
 import { Route as AuthenticatedCompteAdminColisRouteImport } from './routes/_authenticated/compte.admin-colis'
@@ -129,6 +130,11 @@ const BoutiqueCommandeRoute = BoutiqueCommandeRouteImport.update({
   path: '/boutique/commande',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BoutiquePanierRoute = BoutiquePanierRouteImport.update({
+  id: '/boutique/panier',
+  path: '/boutique/panier',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedCompteIndexRoute =
   AuthenticatedCompteIndexRouteImport.update({
     id: '/',
@@ -217,6 +223,7 @@ export interface FileRoutesByFullPath {
   '/compte': typeof AuthenticatedCompteRouteWithChildren
   '/boutique/$id': typeof BoutiqueIdRoute
   '/boutique/commande': typeof BoutiqueCommandeRoute
+  '/boutique/panier': typeof BoutiquePanierRoute
   '/boutique/': typeof BoutiqueIndexRoute
   '/compte/admin': typeof AuthenticatedCompteAdminRoute
   '/compte/admin-colis': typeof AuthenticatedCompteAdminColisRoute
@@ -247,6 +254,7 @@ export interface FileRoutesByTo {
   '/support': typeof SupportRoute
   '/boutique/$id': typeof BoutiqueIdRoute
   '/boutique/commande': typeof BoutiqueCommandeRoute
+  '/boutique/panier': typeof BoutiquePanierRoute
   '/boutique': typeof BoutiqueIndexRoute
   '/compte/admin': typeof AuthenticatedCompteAdminRoute
   '/compte/admin-colis': typeof AuthenticatedCompteAdminColisRoute
@@ -280,6 +288,7 @@ export interface FileRoutesById {
   '/_authenticated/compte': typeof AuthenticatedCompteRouteWithChildren
   '/boutique/$id': typeof BoutiqueIdRoute
   '/boutique/commande': typeof BoutiqueCommandeRoute
+  '/boutique/panier': typeof BoutiquePanierRoute
   '/boutique/': typeof BoutiqueIndexRoute
   '/_authenticated/compte/admin': typeof AuthenticatedCompteAdminRoute
   '/_authenticated/compte/admin-colis': typeof AuthenticatedCompteAdminColisRoute
@@ -313,6 +322,7 @@ export interface FileRouteTypes {
     | '/compte'
     | '/boutique/$id'
     | '/boutique/commande'
+    | '/boutique/panier'
     | '/boutique/'
     | '/compte/admin'
     | '/compte/admin-colis'
@@ -343,6 +353,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/boutique/$id'
     | '/boutique/commande'
+    | '/boutique/panier'
     | '/boutique'
     | '/compte/admin'
     | '/compte/admin-colis'
@@ -375,6 +386,7 @@ export interface FileRouteTypes {
     | '/_authenticated/compte'
     | '/boutique/$id'
     | '/boutique/commande'
+    | '/boutique/panier'
     | '/boutique/'
     | '/_authenticated/compte/admin'
     | '/_authenticated/compte/admin-colis'
@@ -407,6 +419,7 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   BoutiqueIdRoute: typeof BoutiqueIdRoute
   BoutiqueCommandeRoute: typeof BoutiqueCommandeRoute
+  BoutiquePanierRoute: typeof BoutiquePanierRoute
   BoutiqueIndexRoute: typeof BoutiqueIndexRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -538,6 +551,13 @@ declare module '@tanstack/react-router' {
       path: '/boutique/commande'
       fullPath: '/boutique/commande'
       preLoaderRoute: typeof BoutiqueCommandeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/boutique/panier': {
+      id: '/boutique/panier'
+      path: '/boutique/panier'
+      fullPath: '/boutique/panier'
+      preLoaderRoute: typeof BoutiquePanierRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/compte/': {
@@ -684,6 +704,7 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   BoutiqueIdRoute: BoutiqueIdRoute,
   BoutiqueCommandeRoute: BoutiqueCommandeRoute,
+  BoutiquePanierRoute: BoutiquePanierRoute,
   BoutiqueIndexRoute: BoutiqueIndexRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,

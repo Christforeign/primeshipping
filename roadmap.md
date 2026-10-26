@@ -16,6 +16,10 @@
 - [x] Envoi manuel d'e-mail, paiement/recharge en pleine page avec X
 
 ## À faire
+- [x] Choix livraison/retrait conforme au produit ; retrait visible même sans adresse, mais validation bloquée jusqu'à configuration (3 tests réussis)
+- [x] Panier persistant avec quantités, suppression et accès au paiement article par article (parcours public ordinateur/téléphone vérifié)
+- [x] Rappel demandé par le client via Brevo et modèle administrable ajoutés
+- [ ] Vérifier retrait et rappel Brevo avec le compte du demandeur — aucun compte correspondant pour la connexion de test ; envoi réel non testé
 - [x] Déclaration : erreur réseau lisible, nouvelle tentative avec identifiant stable et estimation au tarif administré (tests du calcul et message réseau réussis)
 - [x] Checkout mobile sans éléments flottants et logos sans fond (affichage public vérifié à 390 et 1280 px)
 - [ ] Tester la déclaration et le checkout connecté — connexion du demandeur nécessaire dans l’aperçu, aucun compte correspondant disponible pour le test

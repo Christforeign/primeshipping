@@ -58,6 +58,7 @@ function BoutiquePage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12">
+      <div className="flex justify-end mb-4"><Button asChild variant="outline"><Link to="/boutique/panier"><ShoppingCart className="h-4 w-4 mr-2" /> Mon panier</Link></Button></div>
       {/* Header Banner with Prime Store Visual Identity */}
       <div className="rounded-3xl bg-gradient-to-br from-[#090d16] via-[#1e293b] to-[#ca8a04]/40 p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden mb-8 border border-amber-500/30">
 
