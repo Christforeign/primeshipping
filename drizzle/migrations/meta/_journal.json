@@ -57,6 +57,13 @@
       "when": 1793020584494,
       "tag": "0007_app_error_logs",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793021419334,
+      "tag": "0008_avatars_media",
+      "breakpoints": true
     }
   ]
 }

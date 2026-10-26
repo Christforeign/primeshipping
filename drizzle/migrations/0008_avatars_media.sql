@@ -1,0 +1,5 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS avatar_url text;
+CREATE POLICY "media read authenticated" ON storage.objects FOR SELECT TO authenticated USING (bucket_id = 'media');
+CREATE POLICY "media user upload own" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'media' AND ((storage.foldername(name))[1] = 'avatars' AND (storage.foldername(name))[2] = auth.uid()::text OR ((storage.foldername(name))[1] = 'products' AND public.is_staff(auth.uid()))));
+CREATE POLICY "media user update own" ON storage.objects FOR UPDATE TO authenticated USING (bucket_id = 'media' AND ((storage.foldername(name))[2] = auth.uid()::text OR public.is_staff(auth.uid())));
+CREATE POLICY "media user delete own" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'media' AND ((storage.foldername(name))[2] = auth.uid()::text OR public.is_staff(auth.uid())));
