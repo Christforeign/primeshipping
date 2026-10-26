@@ -32,7 +32,9 @@ function LiveChat({ userId }: { userId: string }) {
       .subscribe();
     return () => void supabase.removeChannel(ch);
   }, [userId, qc]);
-  useEffect(() => end.current?.scrollIntoView({ block: "end" }), [q.data]);
+  useEffect(() => {
+    end.current?.scrollIntoView({ block: "end" });
+  }, [q.data]);
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
     const body = text.trim();
