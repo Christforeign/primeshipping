@@ -102,7 +102,7 @@ function BoutiquePage() {
       return clientStore.getWalletBalance(user?.id || "anon");
     },
   });
-  const walletBalance = walletQuery.data ?? 0;
+  const walletBalance = Number(walletQuery.data ?? 0) || 0;
 
   const products = productsQuery.data || [];
 
