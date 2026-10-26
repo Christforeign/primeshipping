@@ -92,6 +92,13 @@
       "when": 1793028610483,
       "tag": "0012_remove_email_super_admin",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793035656987,
+      "tag": "0013_secure_admin_deletions",
+      "breakpoints": true
     }
   ]
 }
