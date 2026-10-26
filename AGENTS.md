@@ -32,3 +32,4 @@
 - Customer and package deletion use authenticated database RPCs with server-enforced administrator checks and atomic cleanup; this avoids private deployment keys and prevents partial deletions.
 - Product minimums and purchase notices live in product extra settings; shared frontend validation and an order-insert database trigger enforce minimums even for stale carts or direct requests.
 - Checkout display helpers select the payment currency and deduplicate payment options/coordinates without changing the database's authoritative pricing calculation.
+- Product fixed prices and variant amounts use the denomination in extra.price_currency (legacy price_usd storage); product-commerce and the order RPC preserve exact HTG totals, and convert only the wallet debit. Delivery fees are per order, with free pickup; quote delivery is separately payable and explicitly snapshotted and notified.
