@@ -26,7 +26,6 @@ import {
   Globe,
   ExternalLink,
   MessageCircle,
-  Send,
   UserCheck,
   Bot,
   FileText,
@@ -55,7 +54,6 @@ import { clientStore } from "@/lib/store";
 import { PageHeader } from "@/components/PageHeader";
 import { AdminInvoiceBuilder } from "@/components/AdminInvoiceBuilder";
 import { AdminWalletAdjust } from "@/components/AdminWalletAdjust";
-import { AdminSupportInbox } from "@/components/AdminSupportInbox";
 import { AdminEmailTemplates } from "@/components/AdminEmailTemplates";
 import { AdminErrorLogs } from "@/components/AdminErrorLogs";
 import { AdminWhatsAppContacts } from "@/components/AdminWhatsAppContacts";
@@ -776,42 +774,14 @@ function AdminHubPage() {
   };
 
   // -------------------------------------------------------------
-  // TAB 6: Support Threads & Chat Dossiers
+  // TAB 6: Support Threads & Chat Dossiers — retired
   // -------------------------------------------------------------
-  const adminThreadsQuery = useQuery({
-    queryKey: ["admin-support-threads"],
-    queryFn: async () => clientStore.getSupportThreads(),
-  });
-
-  const [selectedThreadId, setSelectedThreadId] = useState<string>("thread-default");
-  const [adminReplyText, setAdminReplyText] = useState<string>("");
-
-  const currentSelectedThread =
-    adminThreadsQuery.data?.find((t) => t.id === selectedThreadId) || adminThreadsQuery.data?.[0];
-
-  const handleSendAdminReply = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!adminReplyText.trim() || !currentSelectedThread) return;
-
-    clientStore.sendChatMessage(currentSelectedThread.id, {
-      sender: "agent",
-      sender_name: "Gestionnaire Admin (Prime)",
-      sender_role: "Support & Suivi de dossier",
-      message: adminReplyText.trim(),
-      dossier_id: currentSelectedThread.dossier_id,
-      dossier_title: currentSelectedThread.dossier_title,
-    });
-
-    setAdminReplyText("");
-    qc.invalidateQueries({ queryKey: ["admin-support-threads"] });
-    toast.success("Réponse envoyée au client !");
-  };
 
   return (
     <div className="space-y-6">
       <PageHeader
         title="Administration & Configuration Globale"
-        subtitle="Gestion en marque blanche absolue : taux, taxes, vitrine, formulaires, achats assistés, recharges portefeuille et support en direct."
+        subtitle="Gestion en marque blanche absolue : taux, taxes, vitrine, formulaires, achats assistés, recharges portefeuille."
       />
 
       {/* Tabs selector */}
@@ -849,10 +819,9 @@ function AdminHubPage() {
               icon: Wallet,
             },
             { key: "orders", label: "8. Commandes Produits", icon: ShoppingBag },
-            { key: "chats", label: "9. Chat Support & Dossiers", icon: MessageCircle },
-            { key: "contacts", label: "10. WhatsApp, réseaux & zones", icon: MessageCircle },
-            { key: "emails", label: "11. E-mails Brevo", icon: MessageCircle },
-            { key: "logs", label: "12. Journal des erreurs", icon: MessageCircle },
+            { key: "contacts", label: "9. WhatsApp, réseaux & zones", icon: MessageCircle },
+            { key: "emails", label: "10. E-mails Brevo", icon: MessageCircle },
+            { key: "logs", label: "11. Journal des erreurs", icon: MessageCircle },
           ] as const
         ).map((item) => {
           const Icon = item.icon;
@@ -2652,142 +2621,6 @@ function AdminHubPage() {
         </div>
       )}
 
-      {/* ================================================================= */}
-      {/* TAB 6: SUPPORT CHAT EN DIRECT & DOSSIERS */}
-      {/* ================================================================= */}
-      {tab === "chats" && (
-        <div className="space-y-6">
-          <AdminSupportInbox />
-          <div>
-            <h3 className="text-base font-bold text-forest">
-              Chat Support en direct & Dossiers clients
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              Répondez directement aux clients connectés via la bulle de chat en direct. Vos
-              réponses s'affichent instantanément dans leur interface.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 rounded-3xl border bg-card overflow-hidden min-h-[480px]">
-            {/* Threads List Sidebar */}
-            <div className="md:col-span-4 border-r bg-muted/20 p-3 space-y-2">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase px-2 py-1">
-                Fils de discussion actifs
-              </p>
-              {adminThreadsQuery.data?.map((th) => (
-                <button
-                  key={th.id}
-                  type="button"
-                  onClick={() => setSelectedThreadId(th.id)}
-                  className={`w-full text-left p-3 rounded-2xl transition-all border ${
-                    selectedThreadId === th.id
-                      ? "bg-card border-primary shadow-xs"
-                      : "bg-transparent border-transparent hover:bg-muted/50"
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-bold text-xs text-foreground truncate max-w-[150px]">
-                      {th.customer_name || "Client"}
-                    </span>
-                    <span className="text-[9px] text-muted-foreground font-mono">
-                      {new Date(th.updated_at).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-primary font-semibold truncate">
-                    {th.dossier_title} ({th.dossier_id})
-                  </p>
-                  <p className="text-[10px] text-muted-foreground truncate mt-0.5">
-                    {th.messages[th.messages.length - 1]?.message || "Aucun message"}
-                  </p>
-                </button>
-              ))}
-            </div>
-
-            {/* Conversation Active Window */}
-            <div className="md:col-span-8 flex flex-col justify-between p-4 bg-card">
-              {currentSelectedThread ? (
-                <>
-                  <div className="border-b pb-3 flex items-center justify-between">
-                    <div>
-                      <h4 className="font-bold text-sm text-forest">
-                        {currentSelectedThread.customer_name} ·{" "}
-                        {currentSelectedThread.dossier_title}
-                      </h4>
-                      <p className="text-[11px] text-muted-foreground">
-                        Dossier :{" "}
-                        <strong className="text-foreground">
-                          {currentSelectedThread.dossier_id}
-                        </strong>
-                      </p>
-                    </div>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">
-                      Canal Direct Ouvert
-                    </span>
-                  </div>
-
-                  <div className="flex-1 overflow-y-auto py-4 space-y-3 max-h-[360px] text-xs">
-                    {currentSelectedThread.messages.map((m) => {
-                      const isAgent = m.sender === "agent";
-                      return (
-                        <div
-                          key={m.id}
-                          className={`flex items-end gap-2 ${
-                            isAgent ? "justify-end" : "justify-start"
-                          }`}
-                        >
-                          <div
-                            className={`max-w-[80%] rounded-2xl p-3 shadow-xs space-y-1 ${
-                              isAgent
-                                ? "bg-forest text-forest-foreground"
-                                : "bg-muted border text-foreground"
-                            }`}
-                          >
-                            <p className="text-[10px] font-bold opacity-80 leading-none">
-                              {m.sender_name}
-                            </p>
-                            <p className="text-xs leading-relaxed whitespace-pre-wrap">
-                              {m.message}
-                            </p>
-                            <span className="text-[9px] opacity-70 block text-right">
-                              {new Date(m.created_at).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <form onSubmit={handleSendAdminReply} className="border-t pt-3 flex gap-2">
-                    <Input
-                      value={adminReplyText}
-                      onChange={(e) => setAdminReplyText(e.target.value)}
-                      placeholder={`Répondre à ${currentSelectedThread.customer_name} sur son dossier...`}
-                      className="text-xs h-10 rounded-xl flex-1"
-                    />
-                    <Button
-                      type="submit"
-                      size="sm"
-                      className="h-10 px-4 rounded-xl font-bold bg-forest text-white"
-                    >
-                      <Send className="h-3.5 w-3.5 mr-1" /> Répondre
-                    </Button>
-                  </form>
-                </>
-              ) : (
-                <div className="grid place-items-center h-full text-muted-foreground text-xs">
-                  Sélectionnez une discussion à gauche pour répondre.
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
