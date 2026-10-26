@@ -821,10 +821,9 @@ function AdminHubPage() {
               icon: Wallet,
             },
             { key: "orders", label: "8. Commandes Produits", icon: ShoppingBag },
-            { key: "chats", label: "9. Chat Support & Dossiers", icon: MessageCircle },
-            { key: "contacts", label: "10. WhatsApp, réseaux & zones", icon: MessageCircle },
-            { key: "emails", label: "11. E-mails Brevo", icon: MessageCircle },
-            { key: "logs", label: "12. Journal des erreurs", icon: MessageCircle },
+            { key: "contacts", label: "9. WhatsApp, réseaux & zones", icon: MessageCircle },
+            { key: "emails", label: "10. E-mails Brevo", icon: MessageCircle },
+            { key: "logs", label: "11. Journal des erreurs", icon: MessageCircle },
           ] as const
         ).map((item) => {
           const Icon = item.icon;
