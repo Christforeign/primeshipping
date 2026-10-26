@@ -218,7 +218,7 @@ function CheckoutPage() {
       qc.invalidateQueries({ queryKey: ["my-orders"] });
       try {
         const result = await sendEmail({ data: { kind: "commande", orderId: order.id } });
-        if (!result.sent || result.reason) toast.warning(`Commande enregistrée : ${result.reason || "e-mail non envoyé"}`);
+        void result;
       } catch (error) { toast.warning(error instanceof Error ? error.message : "Commande enregistrée, e-mail non envoyé"); }
       setDone({ order_number: order.order_number, total });
       window.scrollTo({ top: 0 });

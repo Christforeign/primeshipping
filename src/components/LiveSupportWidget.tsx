@@ -43,7 +43,7 @@ function LiveChat({ userId }: { userId: string }) {
     setText("");
     const { data: saved, error } = await supabase.from("support_messages").insert({ user_id: userId, sender: "client", body }).select("id").single();
     if (error) return void toast.error(error.message);
-    if (saved) { try { const r = await sendClientEmail({ data: { kind: "support", supportMessageId: saved.id } }); if (!r.sent) toast.warning(r.reason); } catch (e) { toast.warning(e instanceof Error ? e.message : "Message enregistré, e-mail non envoyé"); } }
+    if (saved) { try { await sendClientEmail({ data: { kind: "support", supportMessageId: saved.id } }); } catch { /* journalisé côté serveur */ } }
     qc.invalidateQueries({ queryKey: ["support-mine", userId] });
   };
   return (

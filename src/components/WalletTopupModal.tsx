@@ -90,7 +90,7 @@ export function WalletTopupModal({
         _proof_url: txPayload.proof_url ?? "",
       });
       if (rpcErr) throw new Error(rpcErr.message);
-      if (typeof txId === "string") { try { const r = await sendClientEmail({ data: { kind: "portefeuille", walletTxId: txId } }); if (!r.sent) toast.warning(r.reason); } catch (e) { toast.warning(e instanceof Error ? e.message : "Recharge enregistrée, e-mail non envoyé"); } }
+      if (typeof txId === "string") { try { await sendClientEmail({ data: { kind: "portefeuille", walletTxId: txId } }); } catch { /* journalisé côté serveur */ } }
 
       toast.success(
         "Demande de recharge soumise avec succès ! Notre équipe validera votre solde sous peu.",
