@@ -16,6 +16,8 @@
 - [x] Envoi manuel d'e-mail, paiement/recharge en pleine page avec X
 
 ## À faire
+- [ ] Déclaration : erreur réseau lisible, nouvelle tentative sans doublon et estimation au tarif administré
+- [ ] Checkout mobile sans page visible dessous et logos sans fond
 - [x] Modèles des six e-mails d’authentification et envoi personnalisé configurés
 - [ ] Activation des e-mails d’authentification — attend vérification DNS et mise en ligne des nouvelles routes
 - [x] Catalogue réel et navigation « Commander » vers la fiche produit (tests ordinateur/mobile)

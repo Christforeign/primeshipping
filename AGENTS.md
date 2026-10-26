@@ -15,3 +15,4 @@
 - Public boutique pages read active products from Lovable Cloud and show query failures explicitly; browser-local sample products must not replace the real catalogue.
 - Authentication email routes use the managed SDK and bypass app redirects/CSRF; signed verification stays inside the email handler, independent of Brevo app emails.
 - Authentication templates share email-safe theme tokens because email clients cannot load the site's CSS.
+- Package declaration retries reuse one UUID per mounted form to avoid duplicate inserts after a lost response; shipping estimates use the current settings rate and remain provisional.
