@@ -13,6 +13,11 @@ import {
   ArrowRight,
   ShieldCheck,
   CheckCircle2,
+  Zap,
+  Globe,
+  Headphones,
+  Package,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +31,7 @@ import {
   PrimeStoreLogo,
   PartnerBrandsBar,
 } from "@/components/BrandLogos";
-import hero from "@/assets/hero.jpg";
+import heroPlane from "@/assets/hero-plane.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -93,17 +98,91 @@ function Index() {
 
   return (
     <div className="space-y-12 pb-20">
-      {/* Hero Section - Clean, Sharp, No Bubbles */}
-      <section className="mx-auto max-w-7xl px-4 pt-4 space-y-4">
-        {/* Tracking Search Form */}
+      {/* Hero — verre iOS sur fond chaleureux, comme la maquette */}
+      <section className="mx-auto max-w-7xl px-4 pt-6 space-y-5">
+        <div className="grid items-center gap-8 lg:grid-cols-2">
+          {/* Texte à gauche */}
+          <div>
+            <span className="inline-flex rounded-full bg-primary px-3.5 py-1 text-[11px] font-black uppercase tracking-wider text-primary-foreground shadow-soft">
+              {name}
+            </span>
+            <h1 className="mt-4 font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-5xl">
+              {s?.slogan || "Vos colis et achats jusqu'en Haïti"}
+            </h1>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+              Service de fret aérien & maritime Miami ➔ Haïti. Achats assistés, carte
+              internationale, suivi GPS en direct et bien plus encore.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Button asChild className="rounded-full px-6 font-bold">
+                <Link to="/suivi">
+                  <Search className="h-4 w-4 mr-1.5" /> Suivre un colis
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="rounded-full px-6 font-bold">
+                <Link to="/boutique">
+                  Visiter notre boutique <ArrowRight className="h-4 w-4 ml-1.5" />
+                </Link>
+              </Button>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {[
+                { icon: Zap, label: "Rapide" },
+                { icon: ShieldCheck, label: "Fiable" },
+                { icon: Globe, label: "Global" },
+                { icon: Headphones, label: "Support 7j/7" },
+              ].map((c) => (
+                <span
+                  key={c.label}
+                  className="glass inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-foreground"
+                >
+                  <c.icon className="h-3.5 w-3.5 text-primary" /> {c.label}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Illustration + cartes flottantes à droite */}
+          <div className="relative mx-auto w-full max-w-lg">
+            <img
+              src={heroPlane}
+              alt="Avion cargo, globe et navire Prime Express Shipping"
+              width={1024}
+              height={1024}
+              className="w-full drop-shadow-2xl"
+            />
+            <div className="glass-strong absolute right-0 top-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-foreground">
+              <Plane className="h-3.5 w-3.5 text-primary" /> Haïti plus proche que jamais
+            </div>
+            <div className="glass-strong absolute bottom-3 left-1/2 w-[86%] max-w-xs -translate-x-1/2 rounded-2xl p-3.5">
+              <p className="flex items-center gap-1.5 text-xs font-black text-foreground">
+                <Package className="h-3.5 w-3.5 text-primary" /> Colis en route
+              </p>
+              <div className="mt-2.5 flex items-center gap-1">
+                <span className="h-2 w-2 shrink-0 rounded-full bg-primary" />
+                <span className="h-0.5 flex-1 rounded bg-primary" />
+                <span className="h-2 w-2 shrink-0 rounded-full bg-primary" />
+                <span className="h-0.5 flex-1 rounded bg-primary/40" />
+                <span className="h-2 w-2 shrink-0 rounded-full bg-primary/40" />
+                <span className="h-0.5 flex-1 rounded bg-border" />
+                <span className="h-2 w-2 shrink-0 rounded-full bg-border" />
+              </div>
+              <p className="mt-2 text-[11px] font-semibold text-muted-foreground">
+                Miami → Port-au-Prince
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Barre de suivi en pilule de verre */}
         <form
-          className="glass flex gap-2 rounded-2xl p-2"
+          className="glass-strong flex gap-2 rounded-full p-2"
           onSubmit={(e) => {
             e.preventDefault();
             if (tracking.trim()) navigate({ to: "/suivi", search: { n: tracking.trim() } });
           }}
         >
-          <Search className="h-5 w-5 self-center text-muted-foreground ml-2" />
+          <Search className="h-5 w-5 self-center text-muted-foreground ml-3" />
           <Input
             value={tracking}
             onChange={(e) => setTracking(e.target.value)}
@@ -111,59 +190,10 @@ function Index() {
             className="border-0 bg-transparent shadow-none focus-visible:ring-0 text-sm font-medium"
             maxLength={50}
           />
-          <Button
-            type="submit"
-            className="rounded-lg px-6 font-bold bg-primary text-primary-foreground hover:bg-primary/90"
-          >
+          <Button type="submit" className="rounded-full px-6 font-bold">
             Suivre le colis
           </Button>
         </form>
-
-        {/* Hero Banner */}
-        <div className="relative overflow-hidden rounded-3xl border border-white/10 shadow-glass">
-          <img
-            src={(s as any)?.hero_image_url || hero}
-            alt="Remise d'un colis Prime Express Shipping"
-            width={1600}
-            height={1104}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/80 to-transparent" />
-          <div className="absolute right-4 top-4">
-            <PrimeShippingLogo className="h-14 w-auto sm:h-20" />
-          </div>
-          <div className="relative max-w-2xl p-6 py-12 sm:p-10 md:py-16">
-            <span className="inline-flex rounded-md bg-primary/20 text-orange-400 border border-primary/30 px-2.5 py-1 text-xs font-bold uppercase tracking-wider">
-              {name}
-            </span>
-            <h1 className="mt-3 text-3xl font-extrabold leading-tight text-white sm:text-5xl">
-              {s?.slogan || "Vos colis et achats jusqu'en Haïti"}
-            </h1>
-            <p className="mt-3 text-slate-300 text-sm leading-relaxed max-w-xl">
-              Service de fret aérien & maritime Miami ➔ Haïti, achats assistés sans carte
-              internationale, suivi GPS en direct et facturation transparente.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Button
-                asChild
-                className="rounded-lg font-bold bg-primary hover:bg-primary/90 text-white shadow-xs"
-              >
-                <Link to="/suivi">
-                  <Search className="h-4 w-4 mr-1.5" /> Suivre un colis
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="rounded-lg font-bold bg-white/10 border-white/20 text-white hover:bg-white/20"
-              >
-                <Link to="/boutique">
-                  Visiter notre boutique <ArrowRight className="h-4 w-4 ml-1.5" />
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
       </section>
 
       {/* Marques Partenaires */}
@@ -308,7 +338,7 @@ function Index() {
             className="rounded-lg font-bold self-start md:self-auto"
           >
             <Link to="/boutique">
-              Visiter notre boutique <ArrowRight className="h-4 w-4 ml-1.5" />
+              Voir toute la boutique <ArrowRight className="h-4 w-4 ml-1.5" />
             </Link>
           </Button>
         </div>
@@ -439,7 +469,7 @@ function Index() {
             >
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="grid h-10 w-10 place-items-center rounded-lg bg-muted text-primary">
+                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary">
                     <st.icon className="h-5 w-5" />
                   </span>
                   <span className="font-mono text-2xl font-extrabold text-muted-foreground/60">
@@ -456,27 +486,37 @@ function Index() {
 
       {/* Agences & Retrait */}
       <section className="mx-auto grid max-w-7xl gap-6 px-4 md:grid-cols-2">
-        <div className="glass rounded-2xl p-6 md:p-8">
-          <Warehouse className="h-8 w-8 text-primary" />
-          <h3 className="mt-3 text-xl font-bold text-foreground">Retrait en Succursale</h3>
-          <p className="mt-1.5 text-muted-foreground text-xs leading-relaxed">
-            {s?.pickup_address || ""}
-          </p>
-          <div className="mt-4 flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
-            <CheckCircle2 className="h-4 w-4" />
-            <span>Retrait sans frais de remise au guichet</span>
+        <div className="glass flex items-center gap-4 rounded-2xl p-5 md:p-6">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+            <Warehouse className="h-6 w-6" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base font-bold text-foreground">Retrait en Succursale</h3>
+            <p className="mt-0.5 text-muted-foreground text-xs leading-relaxed">
+              {s?.pickup_address || ""}
+            </p>
+            <div className="mt-2 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              <span>Retrait sans frais de remise au guichet</span>
+            </div>
           </div>
+          <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
         </div>
-        <div className="glass rounded-2xl p-6 md:p-8">
-          <Truck className="h-8 w-8 text-primary" />
-          <h3 className="mt-3 text-xl font-bold text-foreground">Livraison à Domicile en Haïti</h3>
-          <p className="mt-1.5 text-muted-foreground text-xs leading-relaxed">
-            {s?.delivery_zones ? `Zones desservies : ${s.delivery_zones.split(/\n|,/).map((z) => z.trim()).filter(Boolean).join(", ")}` : ""}
-          </p>
-          <div className="mt-4 flex items-center gap-2 text-xs text-primary font-semibold">
-            <CheckCircle2 className="h-4 w-4" />
-            <span>Remis en main propre à votre porte ou bureau</span>
+        <div className="glass flex items-center gap-4 rounded-2xl p-5 md:p-6">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+            <Truck className="h-6 w-6" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base font-bold text-foreground">Livraison à Domicile en Haïti</h3>
+            <p className="mt-0.5 text-muted-foreground text-xs leading-relaxed">
+              {s?.delivery_zones ? `Zones desservies : ${s.delivery_zones.split(/\n|,/).map((z) => z.trim()).filter(Boolean).join(", ")}` : ""}
+            </p>
+            <div className="mt-2 flex items-center gap-1.5 text-xs text-primary font-semibold">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              <span>Remis en main propre à votre porte ou bureau</span>
+            </div>
           </div>
+          <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
         </div>
       </section>
 

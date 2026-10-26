@@ -17,7 +17,8 @@ export function SiteFooter() {
   const socials = activeSocialLinks(s);
 
   return (
-    <footer className="relative mt-24 bg-forest text-forest-foreground">
+    <div className="px-3 pb-4 sm:px-4">
+    <footer className="relative mx-auto mt-16 max-w-7xl overflow-hidden rounded-3xl bg-forest text-forest-foreground shadow-glass">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-4">
         {/* Company Identity & Logo */}
@@ -105,5 +106,6 @@ export function SiteFooter() {
         © 2026 {name}. Tous droits réservés. Service logistique & e-commerce vers Haïti.
       </div>
     </footer>
+    </div>
   );
 }
