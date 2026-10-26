@@ -37,6 +37,8 @@ import { Route as AuthenticatedCompteProfilRouteImport } from './routes/_authent
 import { Route as AuthenticatedCompteColisIndexRouteImport } from './routes/_authenticated/compte.colis.index'
 import { Route as AuthenticatedCompteColisIdRouteImport } from './routes/_authenticated/compte.colis.$id'
 import { Route as AuthenticatedCompteColisNouveauRouteImport } from './routes/_authenticated/compte.colis.nouveau'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -187,6 +189,16 @@ const AuthenticatedCompteColisNouveauRoute =
     path: '/colis/nouveau',
     getParentRoute: () => AuthenticatedCompteRoute,
   } as any)
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -215,6 +227,8 @@ export interface FileRoutesByFullPath {
   '/compte/': typeof AuthenticatedCompteIndexRoute
   '/compte/colis/$id': typeof AuthenticatedCompteColisIdRoute
   '/compte/colis/nouveau': typeof AuthenticatedCompteColisNouveauRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/compte/colis/': typeof AuthenticatedCompteColisIndexRoute
 }
 export interface FileRoutesByTo {
@@ -243,6 +257,8 @@ export interface FileRoutesByTo {
   '/compte': typeof AuthenticatedCompteIndexRoute
   '/compte/colis/$id': typeof AuthenticatedCompteColisIdRoute
   '/compte/colis/nouveau': typeof AuthenticatedCompteColisNouveauRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/compte/colis': typeof AuthenticatedCompteColisIndexRoute
 }
 export interface FileRoutesById {
@@ -274,6 +290,8 @@ export interface FileRoutesById {
   '/_authenticated/compte/': typeof AuthenticatedCompteIndexRoute
   '/_authenticated/compte/colis/$id': typeof AuthenticatedCompteColisIdRoute
   '/_authenticated/compte/colis/nouveau': typeof AuthenticatedCompteColisNouveauRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/_authenticated/compte/colis/': typeof AuthenticatedCompteColisIndexRoute
 }
 export interface FileRouteTypes {
@@ -305,6 +323,8 @@ export interface FileRouteTypes {
     | '/compte/'
     | '/compte/colis/$id'
     | '/compte/colis/nouveau'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/compte/colis/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -333,6 +353,8 @@ export interface FileRouteTypes {
     | '/compte'
     | '/compte/colis/$id'
     | '/compte/colis/nouveau'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/compte/colis'
   id:
     | '__root__'
@@ -363,6 +385,8 @@ export interface FileRouteTypes {
     | '/_authenticated/compte/'
     | '/_authenticated/compte/colis/$id'
     | '/_authenticated/compte/colis/nouveau'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/_authenticated/compte/colis/'
   fileRoutesById: FileRoutesById
 }
@@ -384,6 +408,8 @@ export interface RootRouteChildren {
   BoutiqueIdRoute: typeof BoutiqueIdRoute
   BoutiqueCommandeRoute: typeof BoutiqueCommandeRoute
   BoutiqueIndexRoute: typeof BoutiqueIndexRoute
+  LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
+  LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -584,6 +610,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCompteColisNouveauRouteImport
       parentRoute: typeof AuthenticatedCompteRoute
     }
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/auth/webhook': {
+      id: '/lovable/email/auth/webhook'
+      path: '/lovable/email/auth/webhook'
+      fullPath: '/lovable/email/auth/webhook'
+      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -645,6 +685,8 @@ const rootRouteChildren: RootRouteChildren = {
   BoutiqueIdRoute: BoutiqueIdRoute,
   BoutiqueCommandeRoute: BoutiqueCommandeRoute,
   BoutiqueIndexRoute: BoutiqueIndexRoute,
+  LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
+  LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
