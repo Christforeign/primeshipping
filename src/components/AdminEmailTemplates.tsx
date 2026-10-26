@@ -86,13 +86,21 @@ function CartReminder() {
 
 function AccountDeleter() {
   const del = useServerFn(deleteCustomerAccount);
+  const qc = useQueryClient();
   const [client, setClient] = useState<ClientHit | null>(null);
   const [busy, setBusy] = useState(false);
+  const [armed, setArmed] = useState(false);
   const go = async () => {
     if (!client) return;
-    if (!window.confirm(`Supprimer définitivement le compte de ${client.full_name || client.email} ? Cette action est irréversible.`)) return;
+    if (!armed) { setArmed(true); return; }
+    setArmed(false);
     setBusy(true);
-    try { await del({ data: { userId: client.id } }); toast.success("Compte supprimé"); setClient(null); }
+    try {
+      await del({ data: { userId: client.id } });
+      toast.success("Compte supprimé");
+      setClient(null);
+      qc.invalidateQueries({ queryKey: ["admin-client-list"] });
+    }
     catch (e) { toast.error(e instanceof Error ? e.message : "Suppression impossible"); }
     finally { setBusy(false); }
   };
