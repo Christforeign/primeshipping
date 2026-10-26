@@ -15,6 +15,7 @@ import {
   Plus,
   Trash2,
   Edit3,
+  Copy,
   CheckCircle2,
   XCircle,
   Eye,
@@ -558,7 +559,9 @@ function AdminHubPage() {
       variants: prodVariants,
       media_urls: mediaArray,
       video_url: prodVideoUrl.trim() || null,
-      custom_fields: prodCustomFields,
+      custom_fields: prodCustomFields.map((f) =>
+        f.options ? { ...f, options: f.options.map((o) => o.trim()).filter(Boolean) } : f,
+      ),
       is_active: true,
       extra: { ...(editingProduct?.extra || {}), price_currency: prodAmountMode ? "USD" : prodCurrency, delivery_pricing: prodDeliveryPricing, delivery_fee_htg: Number(prodDeliveryFee), order_mode: prodOrderMode, order_link: prodOrderLink.trim(), amount_mode: prodAmountMode ? "custom_usd" : "fixed", product_rate_htg: prodAmountMode ? Number(prodSpecificRate) : null, minimum_quantity: prodAmountMode ? 1 : minimumQty, minimum_order_usd: minimumUsd, order_notice: prodOrderNotice.trim() },
     };
@@ -1478,6 +1481,19 @@ function AdminHubPage() {
                         <Edit3 className="h-3.5 w-3.5 mr-1" /> Modifier
                       </Button>
                       <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          handleStartEditProduct(prod);
+                          setEditingProduct(null);
+                          setIsCreatingProduct(true);
+                          setProdTitle(`${prod.title} (copie)`);
+                        }}
+                        className="text-xs"
+                      >
+                        <Copy className="h-3.5 w-3.5 mr-1" /> Dupliquer
+                      </Button>
+                      <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDeleteProduct(prod.id)}
@@ -1991,23 +2007,47 @@ function AdminHubPage() {
                         cf.type === "radio" ||
                         cf.type === "multiselect" ||
                         cf.type === "checkbox") && (
-                        <div className="space-y-1 pt-1">
-                          <Label className="text-[11px]">
-                            Options disponibles (séparées par des virgules)
-                          </Label>
-                          <Input
-                            placeholder="Ex : Option 1, Option 2, Option 3"
-                            value={cf.options?.join(", ") || ""}
-                            onChange={(e) =>
-                              handleUpdateCustomField(idx, {
-                                options: e.target.value
-                                  .split(",")
-                                  .map((s) => s.trim())
-                                  .filter(Boolean),
-                              })
+                        <div className="space-y-2 pt-1">
+                          <Label className="text-[11px]">Options disponibles</Label>
+                          {(cf.options ?? []).map((opt, oIdx) => (
+                            <div key={oIdx} className="flex items-center gap-2">
+                              <Input
+                                placeholder={`Option ${String.fromCharCode(65 + (oIdx % 26))}`}
+                                value={opt}
+                                onChange={(e) => {
+                                  const next = [...(cf.options ?? [])];
+                                  next[oIdx] = e.target.value;
+                                  handleUpdateCustomField(idx, { options: next });
+                                }}
+                                className="text-xs"
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                aria-label="Retirer l'option"
+                                onClick={() =>
+                                  handleUpdateCustomField(idx, {
+                                    options: (cf.options ?? []).filter((_, i) => i !== oIdx),
+                                  })
+                                }
+                                className="text-destructive h-8 w-8 shrink-0"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ))}
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              handleUpdateCustomField(idx, { options: [...(cf.options ?? []), ""] })
                             }
                             className="text-xs"
-                          />
+                          >
+                            <Plus className="h-3.5 w-3.5 mr-1" /> Ajouter une option
+                          </Button>
                         </div>
                       )}
                     </div>
