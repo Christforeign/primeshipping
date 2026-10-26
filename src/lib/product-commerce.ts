@@ -18,7 +18,7 @@ export function fixedProductTotals(amount: number, quantity: number, extra: Extr
   const delivery = deliveryPricing(extra, home);
   // Gourde prices stay exact; USD conversion is only for the USD wallet.
   const taxHtg = htg ? round(subtotalHtg * taxRate / 100) : round(round(subtotalUsd * taxRate / 100) * rate);
-  const taxUsd = htg ? round(taxHtg / rate) : round(subtotalUsd * taxRate / 100);
+  const taxUsd = htg ? htgToUsd(taxHtg, rate) : round(subtotalUsd * taxRate / 100);
   const feeHtg = htg ? round((subtotalHtg + taxHtg + delivery.feeHtg) * feePercent / 100 + feeFixedUsd * rate) : round(round((subtotalUsd + taxUsd + round(delivery.feeHtg / rate)) * feePercent / 100 + feeFixedUsd) * rate);
   const feeUsd = round(feeHtg / rate);
   const totalHtg = round(subtotalHtg + taxHtg + delivery.feeHtg + feeHtg);
