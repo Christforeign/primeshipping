@@ -18,6 +18,7 @@ import { readCart, writeCart } from "@/lib/cart";
 import { topupPrice } from "@/lib/product-pricing";
 import { DEFAULT_ORDER_NOTICE, orderMinimumError } from "@/lib/order-minimums";
 import { deliveryChoices } from "@/lib/delivery-options";
+import { checkoutPayments, paymentCoordinates, paymentDisplayAmount } from "@/lib/checkout-display";
 
 export const Route = createFileRoute("/boutique/commande")({
   head: () => ({
@@ -81,7 +82,7 @@ function CheckoutPage() {
   const [payments, setPayments] = useState<any[]>([]);
   useEffect(() => {
     const configured = Array.isArray(s?.payment_configs) ? s.payment_configs : clientStore.getPaymentConfigs();
-    setPayments(configured.filter((p) => p.is_enabled && p.id !== "wallet"));
+    setPayments(checkoutPayments(configured));
   }, [s?.payment_configs]);
   const [method, setMethod] = useState<string>("wallet");
   const [deliveryMode, setDeliveryMode] = useState<"pickup" | "home">("home");
@@ -91,7 +92,7 @@ function CheckoutPage() {
   const [proofName, setProofName] = useState("");
   const proofRef = useRef<HTMLInputElement>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [done, setDone] = useState<{ order_number: string; total: number } | null>(null);
+  const [done, setDone] = useState<{ order_number: string; amount: number; currency: string } | null>(null);
 
   useEffect(() => {
     if (profile && !address) {
@@ -128,7 +129,7 @@ function CheckoutPage() {
           <h1 className="text-2xl font-black">Merci pour votre commande !</h1>
           <p className="font-mono text-xl font-bold text-primary">Commande {done.order_number}</p>
           <p className="text-sm text-muted-foreground">
-            Total : {done.total.toFixed(2)} USD. La confirmation et les mises à jour de statut sont envoyées à {profile?.email || user.email}.
+            Total : {formatNumber(done.amount)} {done.currency}. La confirmation et les mises à jour de statut sont envoyées à {profile?.email || user.email}.
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
             <Button asChild variant="outline"><Link to="/boutique">Continuer mes achats</Link></Button>
@@ -167,6 +168,11 @@ function CheckoutPage() {
   const totalHtg = freeAmount && !tax && !fee ? amountPrice.totalHtg : Math.round(total * rate * 100) / 100;
   const needsShipping = !!product.requires_shipping_address;
   const walletShort = method === "wallet" && walletBalance < total;
+  const displayedTotal = paymentDisplayAmount(method, total, totalHtg);
+  const displayMoney = (usd: number, htg = Math.round(usd * rate * 100) / 100) => {
+    const value = paymentDisplayAmount(method, usd, htg);
+    return `${formatNumber(value.amount)} ${value.currency}`;
+  };
 
   const onProof = (e) => {
     const f = e.target.files?.[0];
@@ -223,7 +229,7 @@ function CheckoutPage() {
         const result = await sendEmail({ data: { kind: "commande", orderId: order.id } });
         void result;
       } catch { /* journalisé côté serveur */ }
-      setDone({ order_number: order.order_number, total });
+      setDone({ order_number: order.order_number, ...displayedTotal });
       window.scrollTo({ top: 0 });
     } catch (e: any) {
       toast.error(e?.message || "La commande n'a pas pu être enregistrée.");
@@ -248,9 +254,9 @@ function CheckoutPage() {
         <h2 className="text-xs font-black uppercase">Votre article</h2>
         <div className="flex justify-between gap-3">
           <span className="min-w-0">{product.title}{variant ? ` — ${variant.name}` : ""} × {qty}</span>
-          <span className="font-bold shrink-0">{subtotal.toFixed(2)} USD</span>
+          <span className="font-bold shrink-0">{freeAmount ? `${sel.requestedAmountUsd} USD` : displayMoney(subtotal)}</span>
         </div>
-        {freeAmount && <p className="text-muted-foreground">Recharge : {sel.requestedAmountUsd} USD · Taux produit : {product.extra?.product_rate_htg} HTG/USD · Débit portefeuille : {subtotal.toFixed(2)} USD</p>}
+        {freeAmount && <p className="text-muted-foreground">Taux produit : {product.extra?.product_rate_htg} GDS/USD</p>}
       </section>
 
       <section className="rounded-3xl border bg-card p-5 space-y-1 text-sm">
@@ -286,19 +292,19 @@ function CheckoutPage() {
 
       <section className="rounded-3xl border bg-card p-5 space-y-3">
         <h2 className="text-xs font-black uppercase">Mode de paiement</h2>
-        <button type="button" className={opt(method === "wallet")} onClick={() => setMethod("wallet")}>
+        <Button type="button" variant="outline" className={`${opt(method === "wallet")} h-auto block whitespace-normal`} onClick={() => setMethod("wallet")}>
           <div className="flex items-center justify-between gap-2">
             <span className="flex items-center gap-2"><Wallet className="h-4 w-4" /> Portefeuille Prime</span>
             <span className="font-mono">{walletQ.isPending ? "…" : `${walletBalance.toFixed(2)} USD`}</span>
           </div>
-        </button>
+        </Button>
         {payments.map((p) => (
-          <button key={p.id} type="button" className={opt(method === p.id)} onClick={() => setMethod(p.id)}>
+          <Button key={p.id} type="button" variant="outline" className={`${opt(method === p.id)} h-auto block whitespace-normal`} onClick={() => setMethod(p.id)}>
             <div className="flex justify-between gap-2">
               <span>{p.name}</span>
               {Number(p.fee_percentage) > 0 && <span className="text-muted-foreground">+{p.fee_percentage}%</span>}
             </div>
-          </button>
+          </Button>
         ))}
 
         {method === "wallet" ? (
@@ -313,12 +319,12 @@ function CheckoutPage() {
         ) : (
           pay && (
             <div className="p-4 rounded-2xl bg-secondary/60 border space-y-2 text-xs">
-              {[pay.phone_number, pay.account_number].filter(Boolean).map((v) => (
+              {paymentCoordinates(pay).map((v) => (
                 <div key={v} className="flex items-center justify-between gap-2 bg-background p-2 rounded-xl border">
                   <span className="font-mono font-bold break-all">{v}</span>
-                  <button type="button" className="flex items-center gap-1 text-primary" onClick={() => { navigator.clipboard.writeText(v); toast.success("Copié"); }}>
+                  <Button type="button" variant="ghost" size="sm" className="flex items-center gap-1 text-primary" onClick={() => { navigator.clipboard.writeText(v); toast.success("Copié"); }}>
                     <Copy className="h-3 w-3" /> Copier
-                  </button>
+                  </Button>
                 </div>
               ))}
               {pay.instructions && <p className="text-muted-foreground">{pay.instructions}</p>}
@@ -337,12 +343,12 @@ function CheckoutPage() {
       </section>
 
       <section className="rounded-3xl border bg-card p-5 space-y-2 text-sm">
-        <div className="flex justify-between"><span>Sous-total</span><span>{subtotal.toFixed(2)} USD</span></div>
-        {tax > 0 && <div className="flex justify-between"><span>Taxe ({taxRate}%)</span><span>{tax.toFixed(2)} USD</span></div>}
-        {fee > 0 && <div className="flex justify-between"><span>Frais de paiement</span><span>{fee.toFixed(2)} USD</span></div>}
+        <div className="flex justify-between"><span>Sous-total</span><span>{displayMoney(subtotal, freeAmount ? amountPrice.totalHtg : undefined)}</span></div>
+        {tax > 0 && <div className="flex justify-between"><span>Taxe ({taxRate}%)</span><span>{displayMoney(tax)}</span></div>}
+        {fee > 0 && <div className="flex justify-between"><span>Frais de paiement</span><span>{displayMoney(fee)}</span></div>}
         <div className="flex justify-between font-black text-base border-t pt-2">
           <span>Total</span>
-          <span className="text-right">{total.toFixed(2)} USD<br /><span className="text-xs font-normal text-muted-foreground">≈ {formatNumber(totalHtg)} HTG</span></span>
+          <span className="text-right">{displayMoney(total, totalHtg)}</span>
         </div>
         {minimumError && <div role="alert" className="text-sm text-destructive">{minimumError} <Link to="/boutique/$id" params={{ id: product.id }} className="underline">Modifier ma sélection</Link></div>}
         <p className="text-sm text-muted-foreground whitespace-pre-line pt-3">{product.extra?.order_notice ?? DEFAULT_ORDER_NOTICE}</p>

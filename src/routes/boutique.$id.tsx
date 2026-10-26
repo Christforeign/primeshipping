@@ -400,7 +400,7 @@ export function ProductDetailPage() {
                 </div>
 
                 {/* Promo Badge */}
-                {product.promo_price_usd && (
+                {!freeAmount && product.promo_price_usd && (
                   <div className="absolute top-4 right-4">
                     <span className="rounded-full bg-red-600 text-white px-3 py-1 text-xs font-black uppercase tracking-wider shadow-lg">
                       PROMO
@@ -497,7 +497,7 @@ export function ProductDetailPage() {
               className="rounded-3xl border bg-card p-6 sm:p-8 shadow-xl space-y-6 border-border"
             >
               {/* Header Pricing Card */}
-              <div className="pb-4 border-b">
+              {!freeAmount && <div className="pb-4 border-b">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                   Tarif de l'article
                 </span>
@@ -515,7 +515,7 @@ export function ProductDetailPage() {
                     Prix promotionnel spécial en vigueur !
                   </p>
                 )}
-              </div>
+              </div>}
 
               {/* 1. VARIANTS SELECTOR (If product has variants) */}
               {!freeAmount && product.variants && product.variants.length > 0 && (
@@ -577,7 +577,7 @@ export function ProductDetailPage() {
                 </div>
               )}
 
-              {freeAmount && <div className="space-y-2"><Label htmlFor="recharge-amount">Montant à recharger (USD)</Label><Input id="recharge-amount" type="number" min={Math.max(0.01, Number(product.extra?.minimum_order_usd) || 0)} step="0.01" required value={requestedAmount} onChange={(e) => setRequestedAmount(e.target.value)} /><p className="text-sm text-muted-foreground">Taux : {product.extra?.product_rate_htg} HTG/USD · {amountPrice.totalHtg.toFixed(2)} HTG</p><p className="text-sm font-semibold">Équivalent portefeuille : {amountPrice.walletUsd.toFixed(2)} USD</p></div>}
+              {freeAmount && <div className="space-y-2"><Label htmlFor="recharge-amount">Montant à recharger (USD)</Label><Input id="recharge-amount" type="number" min={Math.max(0.01, Number(product.extra?.minimum_order_usd) || 0)} step="0.01" required value={requestedAmount} onChange={(e) => setRequestedAmount(e.target.value)} /><p className="text-sm text-muted-foreground">Taux : {product.extra?.product_rate_htg} GDS/USD{amountPrice.totalHtg > 0 && ` · ${formatNumber(amountPrice.totalHtg)} GDS`}</p></div>}
               {/* 2. QUANTITY SELECTOR */}
               {!freeAmount && <div className="space-y-1.5">
                 <Label className="text-xs font-bold text-foreground">Quantité</Label>
@@ -619,7 +619,7 @@ export function ProductDetailPage() {
                 </div>
               )}
 
-              <div className="pt-4 border-t space-y-2 text-xs">
+              {!freeAmount && <div className="pt-4 border-t space-y-2 text-xs">
                 <div className="flex justify-between items-baseline text-sm font-black text-foreground">
                   <span>Sous-total ({quantity}) :</span>
                   <div className="text-right">
@@ -627,7 +627,7 @@ export function ProductDetailPage() {
                     <span className="text-xs font-semibold text-muted-foreground font-mono">≈ {formatNumber(Math.round(subtotalUsd * rate))} HTG</span>
                   </div>
                 </div>
-              </div>
+              </div>}
               <div className="text-sm text-muted-foreground space-y-2">
                 {!freeAmount && minQty > 1 && <p>Quantité minimum : {minQty}</p>}
                 {Number(product.extra?.minimum_order_usd) > 0 && <p>Montant minimum : {Number(product.extra.minimum_order_usd).toFixed(2)} USD{!freeAmount && " (hors frais)"}</p>}
