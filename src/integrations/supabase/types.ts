@@ -727,6 +727,7 @@ export type Database = {
         Args: { _amount_usd: number; _reason: string; _user_id: string }
         Returns: number
       }
+      admin_alert_recipients: { Args: never; Returns: string[] }
       admin_setup_available: { Args: never; Returns: boolean }
       can_manage_packages: { Args: { _user_id: string }; Returns: boolean }
       claim_first_admin: { Args: never; Returns: boolean }

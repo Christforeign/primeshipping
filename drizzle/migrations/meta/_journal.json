@@ -64,6 +64,13 @@
       "when": 1793021419334,
       "tag": "0008_avatars_media",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793022593109,
+      "tag": "0009_admin_alert_recipients",
+      "breakpoints": true
     }
   ]
 }
