@@ -150,6 +150,9 @@ function AuthPage() {
           const { error: e2 } = await supabase.auth.signInWithPassword({ email, password });
           if (e2) throw new Error("Compte créé. Connectez-vous avec votre e-mail.");
         }
+        import("@/lib/email.functions")
+          .then(({ sendClientEmail }) => sendClientEmail({ data: { kind: "bienvenue" } }))
+          .catch(() => {});
         toast.success("Bienvenue chez Prime Shipping !");
         navigate({ to: "/compte" });
       }

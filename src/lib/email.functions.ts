@@ -42,6 +42,10 @@ async function run(data: Input & { vars: EmailVars }, context: { supabase: any; 
     let eventId: string | undefined;
     let adminLink = "/compte/admin";
     if (!staff && (data.test || data.kind === "alerte_admin")) throw new Error("Non autorisé");
+    if (data.kind === "bienvenue" && !data.test) {
+      if (data.toEmail || (data.userId && data.userId !== userId)) throw new Error("Non autorisé");
+      target = userId; eventId = `welcome-${userId}`; data.vars = { reference: "Bienvenue" };
+    }
     if (data.walletTxId) {
       const { data: tx, error } = await supabase.from("wallet_transactions").select("*").eq("id", data.walletTxId).single();
       if (error || !tx || (!staff && tx.user_id !== userId)) throw new Error("Recharge inaccessible");
