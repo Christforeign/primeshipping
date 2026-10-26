@@ -99,6 +99,13 @@
       "when": 1793035656987,
       "tag": "0013_secure_admin_deletions",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1793041184440,
+      "tag": "0014_enforce_product_order_minimums",
+      "breakpoints": true
     }
   ]
 }
