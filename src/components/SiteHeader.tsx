@@ -46,7 +46,7 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-800 bg-[#0a1128]/95 text-white backdrop-blur-md shadow-md">
+    <header className="sticky top-0 z-40 border-b border-border/50 bg-background/70 text-foreground backdrop-blur-xl shadow-sm">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4">
         {/* Brand Logo & Name */}
         <Link
@@ -59,7 +59,7 @@ export function SiteHeader() {
             className="h-14 w-auto max-w-[150px] object-contain group-hover:scale-105 transition-transform"
           />
           <div className="hidden sm:block">
-            <span className="text-white text-base font-black block leading-tight tracking-tight">
+            <span className="text-foreground text-base font-black block leading-tight tracking-tight">
               PRIME EXPRESS
             </span>
             <span className="text-[10px] font-extrabold uppercase tracking-wider text-orange-500 block leading-tight">
@@ -79,14 +79,14 @@ export function SiteHeader() {
                 to={n.to}
                 className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
                   isShipping
-                    ? "text-orange-400 hover:text-orange-300 hover:bg-orange-500/10"
+                    ? "text-primary hover:bg-primary/10"
                     : isStore
-                      ? "text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
-                      : "text-slate-300 hover:text-white hover:bg-white/5"
+                      ? "text-amber-600 hover:bg-amber-500/10 dark:text-amber-400"
+                      : "text-muted-foreground hover:text-foreground hover:bg-foreground/5"
                 }`}
                 activeProps={{
                   className:
-                    "bg-white/10 text-white font-extrabold shadow-sm border border-white/10",
+                    "bg-primary/10 text-primary font-extrabold shadow-sm border border-primary/20",
                 }}
                 activeOptions={{ exact: n.to === "/" }}
               >
@@ -105,9 +105,9 @@ export function SiteHeader() {
             <button
               onClick={triggerTutorial}
               title="Guide interactif"
-              className="flex items-center gap-1 text-xs font-semibold text-slate-300 hover:text-white px-2.5 py-1.5 rounded-xl border border-slate-700 bg-slate-800/50 hover:bg-slate-800 transition-colors mr-1"
+              className="flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground px-2.5 py-1.5 rounded-xl border border-border bg-card/60 backdrop-blur-md hover:bg-card transition-colors mr-1"
             >
-              <HelpCircle className="h-3.5 w-3.5 text-amber-400" />
+              <HelpCircle className="h-3.5 w-3.5 text-amber-500" />
               <span>Guide</span>
             </button>
 
@@ -117,10 +117,10 @@ export function SiteHeader() {
                   asChild
                   variant="outline"
                   size="sm"
-                  className="font-bold border-slate-700 bg-slate-800/80 hover:bg-slate-700 text-slate-200 rounded-xl text-xs h-9"
+                  className="font-bold border-border bg-card/70 hover:bg-card text-foreground rounded-xl text-xs h-9"
                 >
                   <Link to="/compte/portefeuille">
-                    <Wallet className="h-3.5 w-3.5 mr-1.5 text-amber-400" />
+                    <Wallet className="h-3.5 w-3.5 mr-1.5 text-amber-500" />
                     Portefeuille
                   </Link>
                 </Button>
@@ -135,7 +135,7 @@ export function SiteHeader() {
                   variant="ghost"
                   size="sm"
                   onClick={logout}
-                  className="text-slate-400 hover:text-white text-xs h-9"
+                  className="text-muted-foreground hover:text-foreground text-xs h-9"
                 >
                   Déconnexion
                 </Button>
@@ -146,7 +146,7 @@ export function SiteHeader() {
                   asChild
                   variant="ghost"
                   size="sm"
-                  className="text-slate-300 hover:text-white rounded-xl text-xs h-9"
+                  className="text-muted-foreground hover:text-foreground rounded-xl text-xs h-9"
                 >
                   <Link to="/auth">Connexion</Link>
                 </Button>
@@ -165,7 +165,7 @@ export function SiteHeader() {
 
           {/* Mobile hamburger button */}
           <button
-            className="lg:hidden p-2 text-slate-300 hover:text-white"
+            className="lg:hidden p-2 text-muted-foreground hover:text-foreground"
             onClick={() => setOpen(!open)}
             aria-label="Menu"
           >
@@ -176,30 +176,30 @@ export function SiteHeader() {
 
       {/* Mobile Drawer */}
       {open && (
-        <div className="border-t border-slate-800 bg-[#070b14] px-4 pb-6 pt-2 lg:hidden animate-in fade-in slide-in-from-top-2 duration-150">
-          <nav className="divide-y divide-slate-800">
+        <div className="border-t border-border/50 bg-background/95 px-4 pb-6 pt-2 backdrop-blur-xl lg:hidden animate-in fade-in slide-in-from-top-2 duration-150">
+          <nav className="divide-y divide-border/60">
             {NAV.map((n) => (
               <Link
                 key={n.to}
                 to={n.to}
                 onClick={() => setOpen(false)}
-                className="flex items-center justify-between py-3 text-sm font-semibold text-slate-200 hover:text-white"
+                className="flex items-center justify-between py-3 text-sm font-semibold text-foreground/80 hover:text-foreground"
               >
                 <span>{n.label}</span>
-                <ArrowRight className="h-4 w-4 text-slate-500" />
+                <ArrowRight className="h-4 w-4 text-muted-foreground" />
               </Link>
             ))}
           </nav>
 
-          <div className="mt-4 flex flex-col gap-2 pt-2 border-t border-slate-800">
+          <div className="mt-4 flex flex-col gap-2 pt-2 border-t border-border/60">
             <button
               onClick={() => {
                 setOpen(false);
                 triggerTutorial();
               }}
-              className="flex items-center justify-center gap-2 text-xs font-semibold text-slate-300 border border-slate-700 py-2.5 rounded-xl hover:bg-slate-800"
+              className="flex items-center justify-center gap-2 text-xs font-semibold text-muted-foreground border border-border py-2.5 rounded-xl hover:bg-card"
             >
-              <HelpCircle className="h-4 w-4 text-amber-400" />
+              <HelpCircle className="h-4 w-4 text-amber-500" />
               <span>Guide interactif</span>
             </button>
 
@@ -208,10 +208,10 @@ export function SiteHeader() {
                 <Button
                   asChild
                   variant="outline"
-                  className="border-slate-700 bg-slate-800/80 text-white rounded-xl"
+                  className="border-border bg-card/70 text-foreground rounded-xl"
                 >
                   <Link to="/compte/portefeuille" onClick={() => setOpen(false)}>
-                    <Wallet className="h-4 w-4 mr-2 text-amber-400" /> Mon Portefeuille
+                    <Wallet className="h-4 w-4 mr-2 text-amber-500" /> Mon Portefeuille
                   </Link>
                 </Button>
                 <Button
@@ -225,7 +225,7 @@ export function SiteHeader() {
                 <Button
                   variant="ghost"
                   onClick={logout}
-                  className="text-slate-400 hover:text-white"
+                  className="text-muted-foreground hover:text-foreground"
                 >
                   Déconnexion
                 </Button>
@@ -235,7 +235,7 @@ export function SiteHeader() {
                 <Button
                   asChild
                   variant="outline"
-                  className="border-slate-700 bg-slate-800 text-white rounded-xl"
+                  className="border-border bg-card/70 text-foreground rounded-xl"
                 >
                   <Link to="/auth" onClick={() => setOpen(false)}>
                     Connexion

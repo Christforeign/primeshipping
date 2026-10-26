@@ -97,7 +97,7 @@ function Index() {
       <section className="mx-auto max-w-7xl px-4 pt-4 space-y-4">
         {/* Tracking Search Form */}
         <form
-          className="flex gap-2 rounded-xl bg-card border border-border p-2 shadow-xs"
+          className="glass flex gap-2 rounded-2xl p-2"
           onSubmit={(e) => {
             e.preventDefault();
             if (tracking.trim()) navigate({ to: "/suivi", search: { n: tracking.trim() } });
@@ -120,7 +120,7 @@ function Index() {
         </form>
 
         {/* Hero Banner */}
-        <div className="relative overflow-hidden rounded-xl border border-border shadow-xs">
+        <div className="relative overflow-hidden rounded-3xl border border-white/10 shadow-glass">
           <img
             src={(s as any)?.hero_image_url || hero}
             alt="Remise d'un colis Prime Express Shipping"
@@ -173,7 +173,7 @@ function Index() {
       <section className="mx-auto max-w-7xl px-4">
         <div className="grid gap-6 md:grid-cols-2">
           {/* Module 1: PRIME SHIPPING */}
-          <div className="rounded-xl bg-gradient-to-br from-[#1c1917] via-[#0f172a] to-[#c2410c] text-white p-7 sm:p-8 shadow-xs border border-orange-500/30 flex flex-col justify-between relative overflow-hidden group">
+          <div className="rounded-3xl bg-gradient-to-br from-[#1c1917] via-[#0f172a] to-[#c2410c] text-white p-7 sm:p-8 shadow-glass border border-orange-500/30 flex flex-col justify-between relative overflow-hidden group">
             <div className="relative z-10">
               <div className="flex items-center justify-between gap-3 mb-4">
                 <div className="h-24 w-28 sm:w-36 flex-shrink-0">
@@ -233,7 +233,7 @@ function Index() {
           </div>
 
           {/* Module 2: PRIME STORE */}
-          <div className="rounded-xl bg-gradient-to-br from-[#090d16] via-[#1e293b] to-[#b45309]/40 text-white p-7 sm:p-8 shadow-xs border border-amber-500/30 flex flex-col justify-between relative overflow-hidden group">
+          <div className="rounded-3xl bg-gradient-to-br from-[#090d16] via-[#1e293b] to-[#b45309]/40 text-white p-7 sm:p-8 shadow-glass border border-amber-500/30 flex flex-col justify-between relative overflow-hidden group">
             <div className="relative z-10">
               <div className="flex items-center justify-between gap-3 mb-4">
                 <div className="h-24 w-28 sm:w-36 flex-shrink-0">
@@ -294,8 +294,8 @@ function Index() {
               <ShoppingBag className="h-3.5 w-3.5" />
               Catalogue Prime Shipping
             </div>
-            <h2 className="text-2xl font-extrabold text-foreground md:text-3xl">
-              Articles & Produits Disponibles
+            <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground md:text-3xl">
+              Articles & <span className="text-gradient">Produits Disponibles</span>
             </h2>
             <p className="mt-1 text-muted-foreground text-sm max-w-xl">
               Commandez directement nos articles ou recharges numériques. Vous n'avez pas de carte
@@ -321,7 +321,7 @@ function Index() {
             return (
               <div
                 key={p.id}
-                className="group rounded-xl border border-border bg-card overflow-hidden shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between"
+                className="group glass rounded-2xl overflow-hidden hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between"
               >
                 <div>
                   <Link
@@ -394,7 +394,7 @@ function Index() {
         </div>
 
         {/* Dedicated "Achetez pour moi" Banner Highlight */}
-        <div className="mt-8 rounded-xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border border-slate-800 text-white p-6 md:p-8 shadow-xs relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="mt-8 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border border-slate-800 text-white p-6 md:p-8 shadow-glass relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="max-w-xl z-10">
             <span className="inline-flex items-center gap-1.5 rounded-md bg-primary/20 text-orange-400 border border-primary/30 px-2.5 py-0.5 text-xs font-extrabold mb-2.5">
               Service Achetez Pour Moi
@@ -424,7 +424,9 @@ function Index() {
 
       {/* Comment ça marche */}
       <section className="mx-auto max-w-7xl px-4">
-        <h2 className="text-2xl font-bold text-foreground md:text-3xl">Comment ça marche</h2>
+        <h2 className="font-display text-2xl font-extrabold tracking-tight text-foreground md:text-3xl">
+          Comment <span className="text-gradient">ça marche</span>
+        </h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Chaque client s'inscrit en choisissant sa ville actuelle en Haïti, son adresse et son mode
           de réception préféré.
@@ -433,7 +435,7 @@ function Index() {
           {STEPS.map((st, i) => (
             <div
               key={st.title}
-              className="rounded-xl border border-border bg-card p-5 shadow-xs flex flex-col justify-between"
+              className="glass rounded-2xl p-5 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between">
@@ -454,7 +456,7 @@ function Index() {
 
       {/* Agences & Retrait */}
       <section className="mx-auto grid max-w-7xl gap-6 px-4 md:grid-cols-2">
-        <div className="rounded-xl bg-card border border-border p-6 md:p-8 shadow-xs">
+        <div className="glass rounded-2xl p-6 md:p-8">
           <Warehouse className="h-8 w-8 text-primary" />
           <h3 className="mt-3 text-xl font-bold text-foreground">Retrait en Succursale</h3>
           <p className="mt-1.5 text-muted-foreground text-xs leading-relaxed">
@@ -465,7 +467,7 @@ function Index() {
             <span>Retrait sans frais de remise au guichet</span>
           </div>
         </div>
-        <div className="rounded-xl bg-card border border-border p-6 md:p-8 shadow-xs">
+        <div className="glass rounded-2xl p-6 md:p-8">
           <Truck className="h-8 w-8 text-primary" />
           <h3 className="mt-3 text-xl font-bold text-foreground">Livraison à Domicile en Haïti</h3>
           <p className="mt-1.5 text-muted-foreground text-xs leading-relaxed">
@@ -480,13 +482,13 @@ function Index() {
 
       {/* Marques internationales */}
       <section className="mx-auto max-w-7xl px-4">
-        <PartnerBrandsBar className="bg-card rounded-lg px-4 py-5" />
+        <PartnerBrandsBar className="glass rounded-2xl px-4 py-5" />
       </section>
 
       {/* Inscription CTA if not logged in */}
       {!user && (
         <section className="mx-auto max-w-4xl px-4 text-center">
-          <div className="p-8 sm:p-10 rounded-xl border border-border bg-card shadow-xs">
+          <div className="glass rounded-3xl p-8 sm:p-10">
             <h3 className="text-xl sm:text-2xl font-black text-foreground">
               Prêt à expédier et recevoir vos colis en Haïti ?
             </h3>
