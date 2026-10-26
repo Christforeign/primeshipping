@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 // Opt-in live authorization regression tests. No existing accounts are deleted.
-const enabled = process.env.RUN_ADMIN_DELETION_TESTS === "1";
+const enabled = process.env['RUN_ADMIN_DELETION_TESTS'] === "1";
 describe.skipIf(!enabled)("administrator deletion authorization", () => {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_PUBLISHABLE_KEY;
-  const session = JSON.parse(process.env.LOVABLE_BROWSER_SUPABASE_SESSION_JSON || "{}");
+  const url = process.env['SUPABASE_URL'];
+  const key = process.env['SUPABASE_PUBLISHABLE_KEY'];
+  const session = JSON.parse(process.env['LOVABLE_BROWSER_SUPABASE_SESSION_JSON'] || "{}");
   async function call(fn: string, data: Record<string, string>, authenticated: boolean) {
     if (!url || !key) throw new Error("Missing test configuration");
     return fetch(`${url}/rest/v1/rpc/${fn}`, {

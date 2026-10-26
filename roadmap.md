@@ -16,7 +16,7 @@
 - [x] Envoi manuel d'e-mail, paiement/recharge en pleine page avec X
 
 ## À faire
-- [ ] Corriger la suppression des comptes sans clé privée sur Vercel et ajouter la suppression confirmée des colis administrateur.
+- [x] Suppression des comptes sans clé privée et suppression confirmée des colis : parcours connectés vérifiés sur données temporaires, protections testées ; redéploiement Vercel requis.
 - [ ] Confirmer l’envoi du nouveau colis depuis Vercel — clé Brevo valide et expéditeur configuré, mais aucune requête pour ce colis dans Brevo ; absence de compte du demandeur pour reproduire. Erreurs précises et renvoi manuel ajoutés.
 - [x] E-mails commandes enrichis : photo, détails, étapes selon paiement, logos PNG transparents
 - [x] Montant USD libre et taux par produit, conversion recalculée dans la base et taux conservés avec la commande (17 tests réussis)
