@@ -235,7 +235,7 @@ export const PaymentLogosBar = PaymentMethodsBar;
 // ==========================================
 
 export function AmazonSvgLogo({ className = "h-6 w-auto" }: { className?: string }) {
-  return <img src=amazonAsset.url alt="Amazon" className={`${className} object-contain`} loading="lazy" />;
+  return <img src={amazonAsset.url} alt="Amazon" className={`${className} object-contain`} loading="lazy" />;
 }
 
 export function SheinSvgLogo({ className = "h-5 w-auto" }: { className?: string }) {
@@ -257,19 +257,19 @@ export function SheinSvgLogo({ className = "h-5 w-auto" }: { className?: string 
 }
 
 export function EbaySvgLogo({ className = "h-6 w-auto" }: { className?: string }) {
-  return <img src=ebayAsset.url alt="Ebay" className={`${className} object-contain`} loading="lazy" />;
+  return <img src={ebayAsset.url} alt="Ebay" className={`${className} object-contain`} loading="lazy" />;
 }
 
 export function WalmartSvgLogo({ className = "h-6 w-auto" }: { className?: string }) {
-  return <img src=walmartAsset.url alt="Walmart" className={`${className} object-contain`} loading="lazy" />;
+  return <img src={walmartAsset.url} alt="Walmart" className={`${className} object-contain`} loading="lazy" />;
 }
 
 export function AliexpressSvgLogo({ className = "h-6 w-auto" }: { className?: string }) {
-  return <img src=aliexpressAsset.url alt="Aliexpress" className={`${className} object-contain`} loading="lazy" />;
+  return <img src={aliexpressAsset.url} alt="Aliexpress" className={`${className} object-contain`} loading="lazy" />;
 }
 
 export function AppleSvgLogo({ className = "h-6 w-auto" }: { className?: string }) {
-  return <img src=appleAsset.url alt="Apple" className={`${className} object-contain`} loading="lazy" />;
+  return <img src={appleAsset.url} alt="Apple" className={`${className} object-contain`} loading="lazy" />;
 }
 
 export function FashionNovaSvgLogo({ className = "h-5 w-auto" }: { className?: string }) {
@@ -311,15 +311,15 @@ export function TemuSvgLogo({ className = "h-6 w-auto" }: { className?: string }
 }
 
 export function NikeSvgLogo({ className = "h-6 w-auto" }: { className?: string }) {
-  return <img src=nikeAsset.url alt="Nike" className={`${className} object-contain`} loading="lazy" />;
+  return <img src={nikeAsset.url} alt="Nike" className={`${className} object-contain`} loading="lazy" />;
 }
 
 export function ZaraSvgLogo({ className = "h-6 w-auto" }: { className?: string }) {
-  return <img src=zaraAsset.url alt="Zara" className={`${className} object-contain`} loading="lazy" />;
+  return <img src={zaraAsset.url} alt="Zara" className={`${className} object-contain`} loading="lazy" />;
 }
 
 export function TargetSvgLogo({ className = "h-6 w-auto" }: { className?: string }) {
-  return <img src=targetAsset.url alt="Target" className={`${className} object-contain`} loading="lazy" />;
+  return <img src={targetAsset.url} alt="Target" className={`${className} object-contain`} loading="lazy" />;
 }
 
 export function BestBuySvgLogo({ className = "h-6 w-auto" }: { className?: string }) {
