@@ -86,13 +86,21 @@ function CartReminder() {
 
 function AccountDeleter() {
   const del = useServerFn(deleteCustomerAccount);
+  const qc = useQueryClient();
   const [client, setClient] = useState<ClientHit | null>(null);
   const [busy, setBusy] = useState(false);
+  const [armed, setArmed] = useState(false);
   const go = async () => {
     if (!client) return;
-    if (!window.confirm(`Supprimer définitivement le compte de ${client.full_name || client.email} ? Cette action est irréversible.`)) return;
+    if (!armed) { setArmed(true); return; }
+    setArmed(false);
     setBusy(true);
-    try { await del({ data: { userId: client.id } }); toast.success("Compte supprimé"); setClient(null); }
+    try {
+      await del({ data: { userId: client.id } });
+      toast.success("Compte supprimé");
+      setClient(null);
+      qc.invalidateQueries({ queryKey: ["admin-client-list"] });
+    }
     catch (e) { toast.error(e instanceof Error ? e.message : "Suppression impossible"); }
     finally { setBusy(false); }
   };
@@ -101,10 +109,10 @@ function AccountDeleter() {
       {client ? (
         <div className="flex items-center justify-between gap-2 rounded-md border border-border px-3 py-2 text-sm min-w-0">
           <span className="truncate">{client.full_name || client.email} · {client.client_code}</span>
-          <Button type="button" variant="ghost" size="sm" onClick={() => setClient(null)}>Changer</Button>
+          <Button type="button" variant="ghost" size="sm" onClick={() => { setClient(null); setArmed(false); }}>Changer</Button>
         </div>
       ) : <ClientPicker onPick={setClient} />}
-      <Button type="button" variant="destructive" disabled={busy || !client} onClick={go}>{busy ? "Suppression…" : "Supprimer ce compte"}</Button>
+      <Button type="button" variant="destructive" disabled={busy || !client} onClick={go}>{busy ? "Suppression…" : armed ? "Confirmer la suppression définitive" : "Supprimer ce compte"}</Button>
     </div>
   );
 }

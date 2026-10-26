@@ -569,11 +569,19 @@ function AdminHubPage() {
     }
   };
 
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const handleDeleteProduct = async (id: string) => {
-    if (!confirm("Voulez-vous vraiment supprimer ce produit / formulaire ?")) return;
+    if (pendingDeleteId !== id) {
+      setPendingDeleteId(id);
+      toast("Cliquez encore sur la corbeille pour confirmer la suppression.");
+      setTimeout(() => setPendingDeleteId((p) => (p === id ? null : p)), 5000);
+      return;
+    }
+    setPendingDeleteId(null);
     try {
-      const { error } = await supabase.from("products").delete().eq("id", id);
-      if (error) throw new Error("Suppression impossible : " + error.message);
+      const { data: deleted, error } = await supabase.from("products").delete().eq("id", id).select("id");
+      if (error) throw new Error("Suppression impossible. Réessayez.");
+      if (!deleted || deleted.length === 0) throw new Error("Suppression refusée : compte administrateur requis.");
       clientStore.deleteProduct(id);
       qc.invalidateQueries({ queryKey: ["admin-products"] });
       qc.invalidateQueries({ queryKey: ["products-list"] });
@@ -1486,6 +1494,7 @@ function AdminHubPage() {
                         className="text-destructive hover:bg-destructive/10 text-xs"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
+                        {pendingDeleteId === prod.id && <span className="ml-1 font-bold">Confirmer</span>}
                       </Button>
                     </div>
                   </div>
