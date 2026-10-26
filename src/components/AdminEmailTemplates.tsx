@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { saveExtraSettings } from "@/lib/admin-settings";
 import { EMAIL_KINDS, mergeTemplates, renderEmail, type EmailKind, type EmailTemplate } from "@/lib/email-templates";
 import { sendClientEmail } from "@/lib/email.functions";
+import { Button } from "@/components/ui/button";
 import { ClientPicker } from "@/components/ClientPicker";
 import type { ClientHit } from "@/lib/admin-settings";
 
@@ -64,6 +65,10 @@ export function AdminEmailTemplates() {
   const [sender, setSender] = useState("");
   const [senderName, setSenderName] = useState("Prime Express Shipping");
   const [logoUrl, setLogoUrl] = useState("");
+  const [storeLogoUrl, setStoreLogoUrl] = useState("");
+  const [adminRecipients, setAdminRecipients] = useState("");
+  const [adminEnabled, setAdminEnabled] = useState(false);
+  const [packageId, setPackageId] = useState("");
   const [kind, setKind] = useState<EmailKind>("colis_recu");
   const [testTo, setTestTo] = useState("");
   const [busy, setBusy] = useState(false);
@@ -74,16 +79,26 @@ export function AdminEmailTemplates() {
     setSender(String(data["email_sender"] || ""));
     setSenderName(String(data["email_sender_name"] || "Prime Express Shipping"));
     setLogoUrl(String(data["email_logo_url"] || ""));
+    setStoreLogoUrl(String(data["email_store_logo_url"] || ""));
+    setAdminRecipients(String(data["email_admin_recipients"] || ""));
+    setAdminEnabled(data["email_admin_alerts_enabled"] === true);
   }, [data]);
 
   const t = tpls[kind];
   const upd = (p: Partial<EmailTemplate>) => setTpls({ ...tpls, [kind]: { ...t, ...p } });
-  const preview = renderEmail(t, SAMPLE, senderName, logoUrl || undefined);
+  const isOrder = kind.startsWith("commande");
+  const preview = renderEmail(t, isOrder ? { ...SAMPLE, brand: "store", produit: "Article commandé", quantite: "1", paiement: "Portefeuille Prime", statut: "Commande en traitement", tracking: "" } : SAMPLE, senderName, (isOrder ? storeLogoUrl : logoUrl) || undefined);
+
+  async function resendPackage() {
+    setBusy(true);
+    try { const r = await send({ data: { kind: "colis_recu", packageId: packageId.trim() } }); r.sent ? toast.success("Brevo a accepté l’e-mail du colis") : toast.error(r.reason); } catch (e) { toast.error(e instanceof Error ? e.message : "Envoi impossible"); } finally { setBusy(false); }
+  }
 
   async function save() {
+    if (adminEnabled && adminRecipients.split(/[\s,;]+/).filter(Boolean).some((email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) { toast.error("Une adresse administrateur est invalide."); return; }
     setBusy(true);
     try {
-      await saveExtraSettings({ email_templates: tpls, email_sender: sender.trim(), email_sender_name: senderName.trim(), email_logo_url: logoUrl.trim() });
+      await saveExtraSettings({ email_templates: tpls, email_sender: sender.trim(), email_sender_name: senderName.trim(), email_logo_url: logoUrl.trim(), email_store_logo_url: storeLogoUrl.trim(), email_admin_recipients: adminRecipients.trim(), email_admin_alerts_enabled: adminEnabled });
       qc.invalidateQueries({ queryKey: ["email_settings"] });
       toast.success("Emails enregistrés");
     } catch (e) { toast.error((e as Error).message); } finally { setBusy(false); }
@@ -92,7 +107,7 @@ export function AdminEmailTemplates() {
     if (!testTo) { toast.error("Saisis un email de test"); return; }
     setBusy(true);
     try {
-      await saveExtraSettings({ email_templates: tpls, email_sender: sender.trim(), email_sender_name: senderName.trim(), email_logo_url: logoUrl.trim() });
+      await saveExtraSettings({ email_templates: tpls, email_sender: sender.trim(), email_sender_name: senderName.trim(), email_logo_url: logoUrl.trim(), email_store_logo_url: storeLogoUrl.trim(), email_admin_recipients: adminRecipients.trim(), email_admin_alerts_enabled: adminEnabled });
       const r = await send({ data: { kind, toEmail: testTo.trim(), vars: SAMPLE, test: true } });
       r.sent ? toast.success("Email de test envoyé") : toast.error(r.reason);
     } catch (e) { toast.error((e as Error).message); } finally { setBusy(false); }
@@ -111,6 +126,18 @@ export function AdminEmailTemplates() {
         <input className={inp} type="url" placeholder="Logo des e-mails — adresse https (facultatif)" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} />
       </div>
 
+      <div className="rounded-lg border border-border bg-card p-4 space-y-3">
+        <h3 className="font-semibold">Alertes administrateurs</h3>
+        <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={adminEnabled} onChange={(e) => setAdminEnabled(e.target.checked)} /> Recevoir les alertes d’activité</label>
+        <textarea className={inp} rows={3} aria-label="E-mails administrateurs" placeholder="Adresses e-mail séparées par une virgule ou une ligne" value={adminRecipients} onChange={(e) => setAdminRecipients(e.target.value)} />
+        <input className={inp} type="url" placeholder="Logo Prime Store des e-mails (facultatif)" value={storeLogoUrl} onChange={(e) => setStoreLogoUrl(e.target.value)} />
+        <Button disabled={busy} onClick={save}>Enregistrer</Button>
+      </div>
+      <div className="rounded-lg border border-border bg-card p-4 space-y-3">
+        <h3 className="font-semibold">Renvoyer l’e-mail d’un colis</h3>
+        <input className={inp} aria-label="Identifiant du colis" placeholder="Identifiant du colis (dans son adresse de page)" value={packageId} onChange={(e) => setPackageId(e.target.value)} />
+        <Button disabled={busy || !packageId.trim()} onClick={resendPackage}>Renvoyer le statut actuel</Button>
+      </div>
       <div className="rounded-lg border border-border bg-card p-4 space-y-3">
         <div className="flex flex-wrap gap-2">
           {EMAIL_KINDS.map((k) => (

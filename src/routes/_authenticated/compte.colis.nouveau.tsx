@@ -56,7 +56,7 @@ function NewPackage() {
       try {
         const result = await sendClientEmail({ data: { kind: "colis_attente", packageId: saved.id } });
         if (!result.sent) toast.warning(`Colis enregistré. E-mail non envoyé : ${result.reason}`);
-      } catch { toast.warning("Votre colis est enregistré, mais son e-mail n’a pas pu être envoyé."); }
+      } catch (error) { toast.warning(`Colis enregistré. E-mail non envoyé : ${error instanceof Error ? error.message : "Connexion au service indisponible"}`); }
       navigate({ to: "/compte/colis/$id", params: { id: saved.id } });
     } catch (err) {
       setFailure(packageSubmissionError(err, navigator.onLine));

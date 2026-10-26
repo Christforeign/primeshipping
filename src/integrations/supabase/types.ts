@@ -418,10 +418,14 @@ export type Database = {
           payment_proof_url: string | null
           payment_reference: string | null
           product_id: string | null
+          product_image_url: string | null
           product_kind: string | null
+          product_rate_htg: number | null
           product_title: string
           quantity: number
+          requested_amount_usd: number | null
           service_fee_usd: number
+          site_rate_htg: number | null
           status: string
           subtotal_usd: number
           tax_amount_usd: number
@@ -448,10 +452,14 @@ export type Database = {
           payment_proof_url?: string | null
           payment_reference?: string | null
           product_id?: string | null
+          product_image_url?: string | null
           product_kind?: string | null
+          product_rate_htg?: number | null
           product_title: string
           quantity?: number
+          requested_amount_usd?: number | null
           service_fee_usd?: number
+          site_rate_htg?: number | null
           status?: string
           subtotal_usd?: number
           tax_amount_usd?: number
@@ -478,10 +486,14 @@ export type Database = {
           payment_proof_url?: string | null
           payment_reference?: string | null
           product_id?: string | null
+          product_image_url?: string | null
           product_kind?: string | null
+          product_rate_htg?: number | null
           product_title?: string
           quantity?: number
+          requested_amount_usd?: number | null
           service_fee_usd?: number
+          site_rate_htg?: number | null
           status?: string
           subtotal_usd?: number
           tax_amount_usd?: number

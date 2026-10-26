@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatNumber } from "@/lib/utils";
 import { readCart, writeCart } from "@/lib/cart";
+import { topupPrice } from "@/lib/product-pricing";
 import { deliveryChoices } from "@/lib/delivery-options";
 
 export const Route = createFileRoute("/boutique/commande")({
@@ -31,7 +32,7 @@ export const Route = createFileRoute("/boutique/commande")({
   component: CheckoutPage,
 });
 
-type Selection = { productId: string; variantId: string | null; quantity: number; formValues: Record<string, unknown>; cartKey?: string };
+type Selection = { productId: string; variantId: string | null; quantity: number; formValues: Record<string, unknown>; requestedAmountUsd?: number; cartKey?: string };
 
 function CheckoutPage() {
   const navigate = useNavigate();
@@ -78,8 +79,9 @@ function CheckoutPage() {
 
   const [payments, setPayments] = useState<any[]>([]);
   useEffect(() => {
-    setPayments(clientStore.getPaymentConfigs().filter((p) => p.is_enabled && p.id !== "wallet"));
-  }, []);
+    const configured = Array.isArray(s?.payment_configs) ? s.payment_configs : clientStore.getPaymentConfigs();
+    setPayments(configured.filter((p) => p.is_enabled && p.id !== "wallet"));
+  }, [s?.payment_configs]);
   const [method, setMethod] = useState<string>("wallet");
   const [deliveryMode, setDeliveryMode] = useState<"pickup" | "home">("home");
   const [address, setAddress] = useState("");
@@ -150,14 +152,17 @@ function CheckoutPage() {
 
   const variant = (product.variants || []).find((v) => v.id === sel.variantId) || null;
   const unit = Number(variant ? (variant.promo_price_usd ?? variant.price_usd) : (product.promo_price_usd ?? product.price_usd)) || 0;
-  const qty = Math.max(1, Number(sel.quantity) || 1);
-  const subtotal = +(unit * qty).toFixed(2);
+  const freeAmount = product.extra?.amount_mode === "custom_usd";
+  let amountPrice = { totalHtg: 0, walletUsd: 0 };
+  if (freeAmount) { try { amountPrice = topupPrice(Number(sel.requestedAmountUsd), Number(product.extra?.product_rate_htg), rate); } catch { /* invalid selection cannot be submitted */ } }
+  const qty = freeAmount ? 1 : Math.max(1, Number(sel.quantity) || 1);
+  const subtotal = freeAmount ? amountPrice.walletUsd : +(unit * qty).toFixed(2);
   const taxRate = product.apply_tax ? Number(product.tax_rate_override ?? (s?.tax_enabled ? s?.tax_rate || 0 : 0)) : 0;
   const tax = +((subtotal * taxRate) / 100).toFixed(2);
   const pay = payments.find((p) => p.id === method);
   const fee = pay ? +(((subtotal + tax) * (Number(pay.fee_percentage) || 0)) / 100 + (Number(pay.fee_fixed_usd) || 0)).toFixed(2) : 0;
   const total = +(subtotal + tax + fee).toFixed(2);
-  const totalHtg = Math.round(total * rate);
+  const totalHtg = freeAmount && !tax && !fee ? amountPrice.totalHtg : Math.round(total * rate * 100) / 100;
   const needsShipping = !!product.requires_shipping_address;
   const walletShort = method === "wallet" && walletBalance < total;
 
@@ -171,6 +176,7 @@ function CheckoutPage() {
   };
 
   const submit = async () => {
+    if (freeAmount && !amountPrice.walletUsd) return toast.error("Revenez au produit pour saisir le montant à recharger.");
     if (needsShipping && deliveryMode === "pickup" && !pickupAddress) return toast.error("L'adresse de la succursale doit être renseignée par l'équipe avant de commander en retrait.");
     if (needsShipping && deliveryMode === "home" && !address.trim()) return toast.error("Indiquez votre adresse de livraison en Haïti.");
     if (walletShort) return toast.error("Solde du portefeuille insuffisant.");
@@ -185,6 +191,7 @@ function CheckoutPage() {
       const { data, error } = await supabase.rpc("place_shop_order", {
         _order: {
           product_id: product.id,
+          requested_amount_usd: freeAmount ? sel.requestedAmountUsd : null,
           product_title: product.title,
           product_kind: product.kind,
           variant_id: variant?.id || null,
@@ -204,21 +211,15 @@ function CheckoutPage() {
         },
       });
       if (error) throw error;
-      const order = data as { order_number: string; status: string };
+      const order = data as { id: string; order_number: string; status: string; total_usd: number };
       sessionStorage.removeItem("prime_checkout");
       if (sel.cartKey) writeCart(readCart().filter((item) => item.key !== sel.cartKey));
       qc.invalidateQueries({ queryKey: ["my-wallet"] });
       qc.invalidateQueries({ queryKey: ["my-orders"] });
-      sendEmail({
-        data: {
-          kind: "commande",
-          vars: {
-            reference: order.order_number,
-            montant: `${total.toFixed(2)} USD (≈ ${formatNumber(totalHtg)} HTG)`,
-            details: `${product.title}${variant ? ` — ${variant.name}` : ""} × ${qty}\n${delivery}\nStatut : ${order.status === "payee" ? "Payée" : "En attente de vérification du paiement"}`,
-          },
-        },
-      }).catch((e) => console.error("Email commande:", e));
+      try {
+        const result = await sendEmail({ data: { kind: "commande", orderId: order.id } });
+        if (!result.sent || result.reason) toast.warning(`Commande enregistrée : ${result.reason || "e-mail non envoyé"}`);
+      } catch (error) { toast.warning(error instanceof Error ? error.message : "Commande enregistrée, e-mail non envoyé"); }
       setDone({ order_number: order.order_number, total });
       window.scrollTo({ top: 0 });
     } catch (e: any) {
@@ -246,6 +247,7 @@ function CheckoutPage() {
           <span className="min-w-0">{product.title}{variant ? ` — ${variant.name}` : ""} × {qty}</span>
           <span className="font-bold shrink-0">{subtotal.toFixed(2)} USD</span>
         </div>
+        {freeAmount && <p className="text-muted-foreground">Recharge : {sel.requestedAmountUsd} USD · Taux produit : {product.extra?.product_rate_htg} HTG/USD · Débit portefeuille : {subtotal.toFixed(2)} USD</p>}
       </section>
 
       <section className="rounded-3xl border bg-card p-5 space-y-1 text-sm">

@@ -312,7 +312,7 @@ function AdminColis() {
         const result = await sendClientEmail({ data: { kind: "colis_recu", packageId: data.id } });
         if (!result.sent) toast.warning(`Colis enregistré. E-mail non envoyé : ${result.reason}`);
       } catch (e) { toast.error(e instanceof Error ? e.message : "E-mail non envoyé"); }
-      toast.success(`Colis ${data.tracking_number} créé — le client est notifié`);
+      toast.success(`Colis ${data.tracking_number} créé`);
       notifyNewPackage(data.tracking_number, {
         userId: f.user_id,
         merchant: f.merchant,

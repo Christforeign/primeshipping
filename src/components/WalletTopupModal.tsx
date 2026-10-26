@@ -1,4 +1,5 @@
 // @ts-nocheck — legacy pages pending migration to real tables
+import { sendClientEmail } from "@/lib/email.functions";
 import { useState } from "react";
 import {
   Wallet,
@@ -81,7 +82,7 @@ export function WalletTopupModal({
         description: `Demande de recharge par ${method.toUpperCase()} (${numericUsd} USD)`,
       };
 
-      const { error: rpcErr } = await supabase.rpc("request_wallet_topup", {
+      const { data: txId, error: rpcErr } = await supabase.rpc("request_wallet_topup", {
         _amount_usd: txPayload.amount_usd,
         _amount_htg: txPayload.amount_htg,
         _method: txPayload.method,
@@ -89,6 +90,7 @@ export function WalletTopupModal({
         _proof_url: txPayload.proof_url ?? "",
       });
       if (rpcErr) throw new Error(rpcErr.message);
+      if (typeof txId === "string") { try { const r = await sendClientEmail({ data: { kind: "portefeuille", walletTxId: txId } }); if (!r.sent) toast.warning(r.reason); } catch (e) { toast.warning(e instanceof Error ? e.message : "Recharge enregistrée, e-mail non envoyé"); } }
 
       toast.success(
         "Demande de recharge soumise avec succès ! Notre équipe validera votre solde sous peu.",

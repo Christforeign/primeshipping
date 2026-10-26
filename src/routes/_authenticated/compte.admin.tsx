@@ -1,4 +1,5 @@
 // @ts-nocheck — legacy pages pending migration to real tables
+import { saveExtraSettings } from "@/lib/admin-settings";
 import { sendClientEmail } from "@/lib/email.functions";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -82,6 +83,14 @@ import type {
 } from "@/lib/types-store";
 
 export const Route = createFileRoute("/_authenticated/compte/admin")({
+  head: () => ({ meta: [
+    { title: "Administration — Prime Shipping" },
+    { name: "description", content: "Gestion des commandes, produits et e-mails Prime Shipping." },
+    { property: "og:title", content: "Administration — Prime Shipping" },
+    { property: "og:description", content: "Espace de gestion sécurisé Prime Shipping." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: AdminGate,
 });
 
@@ -347,6 +356,8 @@ function AdminHubPage() {
   const [prodVideoUrl, setProdVideoUrl] = useState<string>("");
   const [prodOrderMode, setProdOrderMode] = useState<"site" | "link" | "whatsapp">("site");
   const [prodOrderLink, setProdOrderLink] = useState("");
+  const [prodAmountMode, setProdAmountMode] = useState(false);
+  const [prodSpecificRate, setProdSpecificRate] = useState("");
   const [prodVariants, setProdVariants] = useState<ProductVariant[]>([]);
   const [prodCustomFields, setProdCustomFields] = useState<CustomFormField[]>([]);
 
@@ -355,10 +366,12 @@ function AdminHubPage() {
     clientStore.getPaymentConfigs(),
   );
 
-  const handleUpdatePayment = (id: string, updates: Partial<AdminPaymentConfig>) => {
+  useEffect(() => { if (Array.isArray(s?.payment_configs)) { clientStore.savePaymentConfigs(s.payment_configs); setPaymentConfigs(s.payment_configs); } }, [s?.payment_configs]);
+
+  const handleUpdatePayment = async (id: string, updates: Partial<AdminPaymentConfig>) => {
     clientStore.updatePaymentConfig(id, updates);
     setPaymentConfigs([...clientStore.getPaymentConfigs()]);
-    toast.success("Moyen de paiement mis à jour !");
+    try { await saveExtraSettings({ payment_configs: clientStore.getPaymentConfigs() }); qc.invalidateQueries({ queryKey: ["company_settings"] }); toast.success("Moyen de paiement mis à jour !"); } catch (e) { toast.error(e instanceof Error ? e.message : "Enregistrement impossible"); }
   };
 
   // Customer Checkout fields management state
@@ -392,6 +405,8 @@ function AdminHubPage() {
     setProdVideoUrl("");
     setProdOrderMode("site");
     setProdOrderLink("");
+    setProdAmountMode(false);
+    setProdSpecificRate("");
     setProdVariants([
       { id: `v-${Date.now()}-1`, name: "Option Standard", price_usd: 15, stock: 100 },
     ]);
@@ -441,6 +456,8 @@ function AdminHubPage() {
     setProdVideoUrl(prod.video_url || "");
     setProdOrderMode(prod.extra?.order_mode ?? "site");
     setProdOrderLink(prod.extra?.order_link ?? "");
+    setProdAmountMode(prod.extra?.amount_mode === "custom_usd");
+    setProdSpecificRate(String(prod.extra?.product_rate_htg || ""));
     setProdVariants(prod.variants || []);
     setProdCustomFields(prod.custom_fields || []);
   };
@@ -503,6 +520,7 @@ function AdminHubPage() {
       .map((u) => u.trim())
       .filter((u) => u.length > 0);
 
+    if (prodAmountMode && !(Number(prodSpecificRate) > 0)) return toast.error("Indiquez le taux spécifique du produit.");
     const payload = {
       title: prodTitle,
       short_description: prodShortDesc.trim() || undefined,
@@ -521,7 +539,7 @@ function AdminHubPage() {
       video_url: prodVideoUrl.trim() || null,
       custom_fields: prodCustomFields,
       is_active: true,
-      extra: { ...(editingProduct?.extra || {}), order_mode: prodOrderMode, order_link: prodOrderLink.trim() },
+      extra: { ...(editingProduct?.extra || {}), order_mode: prodOrderMode, order_link: prodOrderLink.trim(), amount_mode: prodAmountMode ? "custom_usd" : "fixed", product_rate_htg: prodAmountMode ? Number(prodSpecificRate) : null },
     };
 
     try {
@@ -588,6 +606,7 @@ function AdminHubPage() {
     try {
       const { error } = await supabase.rpc("review_wallet_topup", { _tx_id: tx.id, _approve: true });
       if (error) throw new Error(error.message);
+      try { const r = await sendClientEmail({ data: { kind: "portefeuille", walletTxId: tx.id } }); if (!r.sent) toast.warning(r.reason); } catch (e) { toast.warning(e instanceof Error ? e.message : "Recharge enregistrée, e-mail non envoyé"); }
       qc.invalidateQueries({ queryKey: ["admin-wallet-approvals"] });
       qc.invalidateQueries({ queryKey: ["my-wallet"] });
       qc.invalidateQueries({ queryKey: ["wallet-balance"] });
@@ -601,6 +620,7 @@ function AdminHubPage() {
     try {
       const { error } = await supabase.rpc("review_wallet_topup", { _tx_id: tx.id, _approve: false });
       if (error) throw new Error(error.message);
+      try { const r = await sendClientEmail({ data: { kind: "portefeuille", walletTxId: tx.id } }); if (!r.sent) toast.warning(r.reason); } catch (e) { toast.warning(e instanceof Error ? e.message : "Recharge enregistrée, e-mail non envoyé"); }
       qc.invalidateQueries({ queryKey: ["admin-wallet-approvals"] });
       toast.error(`Recharge de ${tx.amount_usd} USD rejetée.`);
     } catch (err: unknown) {
@@ -631,15 +651,12 @@ function AdminHubPage() {
 
   const handleUpdateOrderStatus = async (orderId: string, newStatus: OrderStatus) => {
     try {
-      clientStore.updateOrderStatus(orderId, newStatus);
+      const { data: order, error } = await supabase.from("shop_orders").update({ status: newStatus, updated_at: new Date().toISOString() }).eq("id", orderId).select("id").single();
+      if (error) throw error;
       try {
-        const { data: o } = await supabase.from("shop_orders").update({ status: newStatus, updated_at: new Date().toISOString() }).eq("id", orderId).select("user_id, order_number, total_usd, product_title").maybeSingle();
-        if (o) {
-          sendClientEmail({ data: { kind: "commande", userId: o.user_id, vars: { reference: o.order_number, montant: `${Number(o.total_usd).toFixed(2)} USD`, details: `${o.product_title}\nNouveau statut : ${newStatus}` } } }).catch((e) => console.error(e));
-        }
-      } catch (e) {
-        console.warn("Supabase update order status fallback:", e);
-      }
+        const result = await sendClientEmail({ data: { kind: "commande", orderId: order.id } });
+        if (!result.sent || result.reason) toast.warning(result.reason || "E-mail non envoyé");
+      } catch (error) { toast.warning(error instanceof Error ? error.message : "Statut enregistré, e-mail non envoyé"); }
       qc.invalidateQueries({ queryKey: ["admin-orders"] });
       qc.invalidateQueries({ queryKey: ["my-orders"] });
       toast.success("Statut de la commande actualisé !");
@@ -1741,6 +1758,10 @@ function AdminHubPage() {
                   </div>
                 </div>
 
+                <div className="sm:col-span-2 space-y-3 border-t pt-4">
+                  <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={prodAmountMode} onChange={(e) => setProdAmountMode(e.target.checked)} /> Montant USD libre choisi par le client</label>
+                  {prodAmountMode && <div className="space-y-2"><Label>Taux de vente de ce produit (HTG pour 1 USD)</Label><Input type="number" min="0.01" step="0.01" required value={prodSpecificRate} onChange={(e) => setProdSpecificRate(e.target.value)} /></div>}
+                </div>
                 {/* Exigence adresse de livraison (configurable admin) */}
                 <div className="space-y-1.5 sm:col-span-2 rounded-2xl border p-4 bg-muted/40">
                   <div className="flex items-start justify-between gap-4">
