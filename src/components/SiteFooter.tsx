@@ -8,7 +8,6 @@ import {
   PayPalLogo,
   BankTransferLogo,
 } from "@/components/BrandLogos";
-import logoImg from "@/assets/logo.png";
 
 export function SiteFooter() {
   const s = useSettings();
@@ -26,14 +25,8 @@ export function SiteFooter() {
         {/* Company Identity & Logo */}
         <div className="md:col-span-2 space-y-4">
           <Link to="/" className="inline-flex items-center gap-2.5 font-display text-xl font-bold">
-            <div className="h-11 bg-white rounded-xl p-1 flex items-center justify-center shadow-xs overflow-hidden">
-              <img
-                src="/assets/aistudio/WhatsApp_Image_2026-10-14_at_20.12.29_c1b1b367.jpeg"
-                alt="Prime Express Shipping"
-                className="h-full w-auto object-contain"
-              />
-            </div>
-            <span className="font-black text-white">Prime Express Shipping</span>
+            <img src="/logos/prime-shipping-logo.svg" alt="Prime Shipping" className="h-24 w-auto object-contain" />
+            <span className="font-black text-forest-foreground">{name}</span>
           </Link>
 
           {s?.slogan && <p className="text-forest-foreground/80 text-sm max-w-md">{s.slogan}</p>}

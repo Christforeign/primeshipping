@@ -128,8 +128,8 @@ function Index() {
             className="absolute inset-0 h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/80 to-transparent" />
-          <div className="absolute right-4 top-4 rounded-lg bg-card/95 p-2 shadow-xs border border-border backdrop-blur">
-            <PrimeShippingLogo className="h-10 w-auto sm:h-12" />
+          <div className="absolute right-4 top-4">
+            <PrimeShippingLogo className="h-14 w-auto sm:h-20" />
           </div>
           <div className="relative max-w-2xl p-6 py-12 sm:p-10 md:py-16">
             <span className="inline-flex rounded-md bg-primary/20 text-orange-400 border border-primary/30 px-2.5 py-1 text-xs font-bold uppercase tracking-wider">
@@ -180,7 +180,7 @@ function Index() {
           <div className="rounded-xl bg-gradient-to-br from-[#1c1917] via-[#0f172a] to-[#c2410c] text-white p-7 sm:p-8 shadow-xs border border-orange-500/30 flex flex-col justify-between relative overflow-hidden group">
             <div className="relative z-10">
               <div className="flex items-center justify-between gap-3 mb-4">
-                <div className="h-10 w-28 sm:w-36 flex-shrink-0 bg-white/95 rounded-md p-1 border">
+                <div className="h-24 w-28 sm:w-36 flex-shrink-0">
                   <PrimeShippingLogo className="h-full w-auto object-contain" />
                 </div>
                 {s?.shipping_rate_per_lb ? (
@@ -240,7 +240,7 @@ function Index() {
           <div className="rounded-xl bg-gradient-to-br from-[#090d16] via-[#1e293b] to-[#b45309]/40 text-white p-7 sm:p-8 shadow-xs border border-amber-500/30 flex flex-col justify-between relative overflow-hidden group">
             <div className="relative z-10">
               <div className="flex items-center justify-between gap-3 mb-4">
-                <div className="h-10 w-28 sm:w-36 flex-shrink-0 bg-white/95 rounded-md p-1 border">
+                <div className="h-24 w-28 sm:w-36 flex-shrink-0">
                   <PrimeStoreLogo className="h-full w-auto object-contain" />
                 </div>
                 <span className="rounded-md bg-amber-500 text-slate-950 px-2.5 py-1 text-xs font-black uppercase tracking-wider">

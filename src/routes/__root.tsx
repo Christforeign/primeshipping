@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
   type ErrorComponentProps,
@@ -22,6 +23,8 @@ import { WhatsAppSupportButton } from "@/components/WhatsAppSupportButton";
 import { InteractiveTutorial } from "@/components/InteractiveTutorial";
 import { useSettings } from "@/lib/settings";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 function NotFoundComponent() {
   return (
@@ -171,6 +174,8 @@ function RootComponent() {
 
 function AppShellContent() {
   const s = useSettings();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const isCheckout = pathname.replace(/\/$/, "") === "/boutique/commande";
 
   // Dynamic background style
   const getBackgroundStyle = () => {
@@ -181,6 +186,24 @@ function AppShellContent() {
       return { backgroundImage: `url(${s.bg_value})`, backgroundRepeat: "repeat" };
     return undefined;
   };
+
+  if (isCheckout) {
+    return (
+      <div className="flex min-h-dvh w-full flex-col bg-background text-foreground">
+        <header className="border-b bg-background">
+          <div className="mx-auto flex h-20 max-w-3xl items-center justify-between px-4">
+            <Link to="/boutique" aria-label="Prime Store">
+              <img src="/logos/prime-store-logo.svg" alt="Prime Store" className="h-16 w-auto object-contain" />
+            </Link>
+            <Button asChild variant="ghost" size="icon" aria-label="Fermer le checkout">
+              <Link to="/boutique"><X className="h-5 w-5" /></Link>
+            </Button>
+          </div>
+        </header>
+        <main className="min-w-0 flex-1"><Outlet /></main>
+      </div>
+    );
+  }
 
   return (
     <div

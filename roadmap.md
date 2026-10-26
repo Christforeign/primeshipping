@@ -16,6 +16,9 @@
 - [x] Envoi manuel d'e-mail, paiement/recharge en pleine page avec X
 
 ## À faire
+- [x] Déclaration : erreur réseau lisible, nouvelle tentative avec identifiant stable et estimation au tarif administré (tests du calcul et message réseau réussis)
+- [x] Checkout mobile sans éléments flottants et logos sans fond (affichage public vérifié à 390 et 1280 px)
+- [ ] Tester la déclaration et le checkout connecté — connexion du demandeur nécessaire dans l’aperçu, aucun compte correspondant disponible pour le test
 - [x] Modèles des six e-mails d’authentification et envoi personnalisé configurés
 - [ ] Activation des e-mails d’authentification — attend vérification DNS et mise en ligne des nouvelles routes
 - [x] Catalogue réel et navigation « Commander » vers la fiche produit (tests ordinateur/mobile)
