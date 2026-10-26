@@ -338,7 +338,7 @@ function Index() {
             className="rounded-lg font-bold self-start md:self-auto"
           >
             <Link to="/boutique">
-              Visiter notre boutique <ArrowRight className="h-4 w-4 ml-1.5" />
+              Voir toute la boutique <ArrowRight className="h-4 w-4 ml-1.5" />
             </Link>
           </Button>
         </div>
@@ -469,7 +469,7 @@ function Index() {
             >
               <div>
                 <div className="flex items-center justify-between">
-                  <span className="grid h-10 w-10 place-items-center rounded-lg bg-muted text-primary">
+                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-primary/10 text-primary">
                     <st.icon className="h-5 w-5" />
                   </span>
                   <span className="font-mono text-2xl font-extrabold text-muted-foreground/60">
@@ -486,27 +486,37 @@ function Index() {
 
       {/* Agences & Retrait */}
       <section className="mx-auto grid max-w-7xl gap-6 px-4 md:grid-cols-2">
-        <div className="glass rounded-2xl p-6 md:p-8">
-          <Warehouse className="h-8 w-8 text-primary" />
-          <h3 className="mt-3 text-xl font-bold text-foreground">Retrait en Succursale</h3>
-          <p className="mt-1.5 text-muted-foreground text-xs leading-relaxed">
-            {s?.pickup_address || ""}
-          </p>
-          <div className="mt-4 flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
-            <CheckCircle2 className="h-4 w-4" />
-            <span>Retrait sans frais de remise au guichet</span>
+        <div className="glass flex items-center gap-4 rounded-2xl p-5 md:p-6">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+            <Warehouse className="h-6 w-6" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base font-bold text-foreground">Retrait en Succursale</h3>
+            <p className="mt-0.5 text-muted-foreground text-xs leading-relaxed">
+              {s?.pickup_address || ""}
+            </p>
+            <div className="mt-2 flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              <span>Retrait sans frais de remise au guichet</span>
+            </div>
           </div>
+          <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
         </div>
-        <div className="glass rounded-2xl p-6 md:p-8">
-          <Truck className="h-8 w-8 text-primary" />
-          <h3 className="mt-3 text-xl font-bold text-foreground">Livraison à Domicile en Haïti</h3>
-          <p className="mt-1.5 text-muted-foreground text-xs leading-relaxed">
-            {s?.delivery_zones ? `Zones desservies : ${s.delivery_zones.split(/\n|,/).map((z) => z.trim()).filter(Boolean).join(", ")}` : ""}
-          </p>
-          <div className="mt-4 flex items-center gap-2 text-xs text-primary font-semibold">
-            <CheckCircle2 className="h-4 w-4" />
-            <span>Remis en main propre à votre porte ou bureau</span>
+        <div className="glass flex items-center gap-4 rounded-2xl p-5 md:p-6">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">
+            <Truck className="h-6 w-6" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base font-bold text-foreground">Livraison à Domicile en Haïti</h3>
+            <p className="mt-0.5 text-muted-foreground text-xs leading-relaxed">
+              {s?.delivery_zones ? `Zones desservies : ${s.delivery_zones.split(/\n|,/).map((z) => z.trim()).filter(Boolean).join(", ")}` : ""}
+            </p>
+            <div className="mt-2 flex items-center gap-1.5 text-xs text-primary font-semibold">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              <span>Remis en main propre à votre porte ou bureau</span>
+            </div>
           </div>
+          <ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
         </div>
       </section>
 
