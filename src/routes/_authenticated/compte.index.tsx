@@ -45,14 +45,14 @@ function Dashboard() {
           .select("*")
           .eq("user_id", user.id)
           .maybeSingle();
-        if (!error && data) return (data.balance_usd || 0) as number;
+        if (!error && data) return Number(data.balance_usd) || 0;
       } catch {
         // fallback
       }
       return clientStore.getWalletBalance(user.id);
     },
   });
-  const walletBalance = walletQuery.data ?? clientStore.getWalletBalance(user.id);
+  const walletBalance = Number(walletQuery.data ?? clientStore.getWalletBalance(user.id)) || 0;
 
   const pk =
     useQuery({
