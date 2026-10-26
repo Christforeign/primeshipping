@@ -20,7 +20,6 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { formatDate } from "@/lib/labels";
 import { clientStore } from "@/lib/store";
 import { WalletTopupModal } from "@/components/WalletTopupModal";
-import { UsaAddressCard } from "@/components/UsaAddressCard";
 import { PushNotificationPrompt } from "@/components/PushNotificationPrompt";
 import type { OrderItem } from "@/lib/types-store";
 
@@ -92,7 +91,6 @@ function Dashboard() {
     <div className="space-y-6">
       <PushNotificationPrompt />
 
-      {profile?.client_code && <UsaAddressCard fullName={profile.full_name} code={profile.client_code} />}
 
       {/* Profile & Wallet Banner */}
       <div className="rounded-3xl bg-forest p-5 sm:p-7 text-forest-foreground flex flex-col md:flex-row items-start md:items-center justify-between gap-6 shadow-soft">
