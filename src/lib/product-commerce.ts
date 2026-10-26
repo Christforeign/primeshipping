@@ -21,5 +21,5 @@ export function fixedProductTotals(amount: number, quantity: number, extra: Extr
   const feeUsd = round(feeHtg / rate);
   const totalHtg = round(subtotalHtg + taxHtg + delivery.feeHtg + feeHtg);
   const totalUsd = htg ? round(totalHtg / rate) : round(subtotalUsd + taxUsd + round(delivery.feeHtg / rate) + feeUsd);
-  return { subtotalUsd, subtotalHtg, taxUsd, taxHtg, feeUsd, feeHtg, totalUsd, totalHtg, ...delivery };
+  return { subtotalUsd, subtotalHtg, taxUsd, taxHtg, feeUsd, feeHtg, totalUsd, totalHtg, quote: delivery.quote, deliveryFeeHtg: delivery.feeHtg };
 }

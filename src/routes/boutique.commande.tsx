@@ -293,7 +293,7 @@ function CheckoutPage() {
               <Input value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Rue, numéro, ville" />
             </div>
           )}
-          {deliveryMode === "home" && <p className="text-sm text-muted-foreground">{quoteDelivery ? deliveryQuoteNotice : `Livraison : ${formatNumber(fixed.feeHtg)} GDS`}</p>}
+          {deliveryMode === "home" && <p className="text-sm text-muted-foreground">{quoteDelivery ? deliveryQuoteNotice : `Livraison : ${formatNumber(fixed.deliveryFeeHtg)} GDS`}</p>}
         </section>
       )}
 
@@ -353,7 +353,7 @@ function CheckoutPage() {
         <div className="flex justify-between"><span>Sous-total</span><span>{displayMoney(lineSubtotal, freeAmount ? amountPrice.totalHtg : fixed.subtotalHtg)}</span></div>
         {tax > 0 && <div className="flex justify-between"><span>Taxe ({taxRate}%)</span><span>{displayMoney(tax, freeAmount ? undefined : fixed.taxHtg)}</span></div>}
         {fee > 0 && <div className="flex justify-between"><span>Frais de paiement</span><span>{displayMoney(fee, freeAmount ? undefined : fixed.feeHtg)}</span></div>}
-        {!freeAmount && fixed.feeHtg >= 0 && needsShipping && <div className="flex justify-between gap-3"><span>Livraison / retrait</span><span>{quoteDelivery ? "À confirmer, non inclus" : deliveryMode === "pickup" ? "Gratuit" : `${formatNumber(fixed.feeHtg)} GDS`}</span></div>}
+        {!freeAmount && needsShipping && <div className="flex justify-between gap-3"><span>Livraison / retrait</span><span>{quoteDelivery ? "À confirmer, non inclus" : deliveryMode === "pickup" ? "Gratuit" : `${formatNumber(fixed.deliveryFeeHtg)} GDS`}</span></div>}
         <div className="flex justify-between font-black text-base border-t pt-2">
           <span>{quoteDelivery ? "Total hors livraison" : "Total"}</span>
           <span className="text-right">{displayMoney(total, totalHtg)}</span>

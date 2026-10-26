@@ -567,9 +567,9 @@ export function ProductDetailPage() {
                             <span className="font-black text-foreground block">
                               {vPrice.toFixed(2)} {productCurrency(product.extra)}
                             </span>
-                            <span className="text-[10px] text-muted-foreground font-mono">
+                            {productCurrency(product.extra) === "USD" && <span className="text-[10px] text-muted-foreground font-mono">
                               ≈ {formatNumber(Math.round(vPrice * rate))} HTG
-                            </span>
+                            </span>}
                           </div>
                         </button>
                       );
