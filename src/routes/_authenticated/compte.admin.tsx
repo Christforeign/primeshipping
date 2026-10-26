@@ -767,45 +767,9 @@ function AdminHubPage() {
   };
 
   const handleDeleteAchat = (id: string) => {
-    if (confirm("Supprimer cette demande d'achat ?")) {
-      clientStore.deleteAssistedPurchase(id);
-      qc.invalidateQueries({ queryKey: ["admin-assisted-purchases"] });
-      qc.invalidateQueries({ queryKey: ["my-assisted-purchases"] });
-      toast.success("Demande d'achat supprimée.");
-    }
-  };
-
   // -------------------------------------------------------------
-  // TAB 6: Support Threads & Chat Dossiers
+  // TAB 6: Support Threads & Chat Dossiers — retired
   // -------------------------------------------------------------
-  const adminThreadsQuery = useQuery({
-    queryKey: ["admin-support-threads"],
-    queryFn: async () => clientStore.getSupportThreads(),
-  });
-
-  const [selectedThreadId, setSelectedThreadId] = useState<string>("thread-default");
-  const [adminReplyText, setAdminReplyText] = useState<string>("");
-
-  const currentSelectedThread =
-    adminThreadsQuery.data?.find((t) => t.id === selectedThreadId) || adminThreadsQuery.data?.[0];
-
-  const handleSendAdminReply = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!adminReplyText.trim() || !currentSelectedThread) return;
-
-    clientStore.sendChatMessage(currentSelectedThread.id, {
-      sender: "agent",
-      sender_name: "Gestionnaire Admin (Prime)",
-      sender_role: "Support & Suivi de dossier",
-      message: adminReplyText.trim(),
-      dossier_id: currentSelectedThread.dossier_id,
-      dossier_title: currentSelectedThread.dossier_title,
-    });
-
-    setAdminReplyText("");
-    qc.invalidateQueries({ queryKey: ["admin-support-threads"] });
-    toast.success("Réponse envoyée au client !");
-  };
 
   return (
     <div className="space-y-6">
