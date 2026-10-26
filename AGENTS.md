@@ -22,3 +22,6 @@
 - Cart emails are explicitly requested by the signed-in customer, use Brevo, and derive item names from active database products rather than browser-supplied copy.
 - Support and footer share the same enabled social links and configurable icon selection; official payment and messaging logo assets are reused from the shared brand modules.
 - Vercel proxies only `/__l5e/assets-v1/*` to this project's verified Lovable asset host; asset pointers stay unchanged because external hosting does not provide Lovable's asset-serving infrastructure.
+- The package lifecycle uses shared canonical mappings over the existing enum for backward compatibility; payment never advances physical shipping status.
+- Tracking privacy is enforced by `track_package` in the database: only the owner gets private details or event notes, regardless of UI visibility.
+- Package email calls derive recipient, current status and variables from the stored package and use its event ID for Brevo idempotency; all app creation and staff transition paths invoke the sender.

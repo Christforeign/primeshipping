@@ -127,14 +127,7 @@ export function PackagePaymentModal({
           })
           .eq("id", packageData.id);
 
-        await supabase.from("package_events").insert({
-          package_id: packageData.id,
-          status: newStatus === "paid" ? "disponible_retrait" : "preparation",
-          note: isNowFullyPaid
-            ? `Frais de transport 100% soldés via Portefeuille (${amountToPay} USD). Prêt pour retrait/livraison.`
-            : `Paiement d'acompte de ${amountToPay} USD reçu via Portefeuille. Reste dû : ${(totalFeeUsd - newPaidAmount).toFixed(2)} USD.`,
-          is_internal: false,
-        });
+        // A payment never advances the physical shipping lifecycle; staff controls it.
       } catch (e) {
         console.warn("Supabase package payment update fallback:", e);
       }
