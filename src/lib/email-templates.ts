@@ -1,8 +1,9 @@
-export type EmailKind = "transit" | "arrivee" | "facture" | "commande" | "achat" | "support" | "colis_recu" | "portefeuille";
+export type EmailKind = "transit" | "arrivee" | "facture" | "commande" | "achat" | "support" | "colis_recu" | "portefeuille" | "panier";
 
 export type EmailTemplate = { enabled: boolean; subject: string; body: string; color: string };
 
 export const EMAIL_KINDS: { kind: EmailKind; label: string }[] = [
+  { kind: "panier", label: "Panier demandé par le client" },
   { kind: "colis_recu", label: "Colis reçu à l'entrepôt" },
   { kind: "transit", label: "Colis en transit" },
   { kind: "arrivee", label: "Colis arrivé / prêt au retrait" },
@@ -14,6 +15,7 @@ export const EMAIL_KINDS: { kind: EmailKind; label: string }[] = [
 ];
 
 export const DEFAULT_TEMPLATES: Record<EmailKind, EmailTemplate> = {
+  panier: { enabled: true, color: "#0f766e", subject: "Votre panier Prime Shipping", body: "Bonjour {{nom}},\n\nVoici le panier que vous avez demandé à recevoir par e-mail.\n{{details}}\n\nRetrouvez votre panier sur le même appareil : {{reference}}\nLes prix et disponibilités sont confirmés au paiement." },
   colis_recu: { enabled: true, color: "#0f766e", subject: "Votre colis {{tracking}} est arrivé à notre entrepôt", body: "Bonjour {{nom}},\n\nNous avons reçu votre colis {{tracking}} à notre entrepôt USA.\n{{details}}\n\nCode client : {{code}}" },
   transit: { enabled: true, color: "#1d4ed8", subject: "Votre colis {{tracking}} est en route vers Haïti", body: "Bonjour {{nom}},\n\nVotre colis {{tracking}} est en transit.\n{{details}}" },
   arrivee: { enabled: true, color: "#15803d", subject: "Votre colis {{tracking}} est disponible", body: "Bonjour {{nom}},\n\nBonne nouvelle : votre colis {{tracking}} est arrivé et peut être retiré.\n{{details}}" },
