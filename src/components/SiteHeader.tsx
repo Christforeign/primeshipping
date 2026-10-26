@@ -128,7 +128,7 @@ export function SiteHeader() {
                 <Button
                   asChild
                   size="sm"
-                  className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-slate-950 font-black rounded-xl text-xs h-9 shadow-sm"
+                  className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-[#1F150C] font-black rounded-xl text-xs h-9 shadow-sm"
                 >
                   <Link to="/compte">Mon espace</Link>
                 </Button>
@@ -154,7 +154,7 @@ export function SiteHeader() {
                 <Button
                   asChild
                   size="sm"
-                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black rounded-xl text-xs h-9 shadow-md"
+                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-[#1F150C] font-black rounded-xl text-xs h-9 shadow-md"
                 >
                   <Link to="/auth" search={{ mode: "signup" }}>
                     Créer un compte
@@ -217,7 +217,7 @@ export function SiteHeader() {
                 </Button>
                 <Button
                   asChild
-                  className="rounded-xl font-black bg-gradient-to-r from-orange-500 to-amber-500 text-slate-950"
+                  className="rounded-xl font-black bg-gradient-to-r from-orange-500 to-amber-500 text-[#1F150C]"
                 >
                   <Link to="/compte" onClick={() => setOpen(false)}>
                     Mon espace
@@ -244,7 +244,7 @@ export function SiteHeader() {
                 </Button>
                 <Button
                   asChild
-                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-black rounded-xl"
+                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-[#1F150C] font-black rounded-xl"
                 >
                   <Link to="/auth" search={{ mode: "signup" }} onClick={() => setOpen(false)}>
                     Créer un compte

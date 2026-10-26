@@ -16,7 +16,6 @@ import {
   Zap,
   Globe,
   Headphones,
-  Package,
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -154,23 +153,6 @@ function Index() {
             <div className="glass-strong absolute right-0 top-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-foreground">
               <Plane className="h-3.5 w-3.5 text-primary" /> Haïti plus proche que jamais
             </div>
-            <div className="glass-strong absolute bottom-3 left-1/2 w-[86%] max-w-xs -translate-x-1/2 rounded-2xl p-3.5">
-              <p className="flex items-center gap-1.5 text-xs font-black text-foreground">
-                <Package className="h-3.5 w-3.5 text-primary" /> Colis en route
-              </p>
-              <div className="mt-2.5 flex items-center gap-1">
-                <span className="h-2 w-2 shrink-0 rounded-full bg-primary" />
-                <span className="h-0.5 flex-1 rounded bg-primary" />
-                <span className="h-2 w-2 shrink-0 rounded-full bg-primary" />
-                <span className="h-0.5 flex-1 rounded bg-primary/40" />
-                <span className="h-2 w-2 shrink-0 rounded-full bg-primary/40" />
-                <span className="h-0.5 flex-1 rounded bg-border" />
-                <span className="h-2 w-2 shrink-0 rounded-full bg-border" />
-              </div>
-              <p className="mt-2 text-[11px] font-semibold text-muted-foreground">
-                Miami → Port-au-Prince
-              </p>
-            </div>
           </div>
         </div>
 
@@ -203,18 +185,18 @@ function Index() {
       <section className="mx-auto max-w-7xl px-4">
         <div className="grid gap-6 md:grid-cols-2">
           {/* Module 1: PRIME SHIPPING */}
-          <div className="rounded-3xl bg-gradient-to-br from-[#1c1917] via-[#0f172a] to-[#c2410c] text-white p-7 sm:p-8 shadow-glass border border-orange-500/30 flex flex-col justify-between relative overflow-hidden group">
+          <div className="rounded-3xl bg-gradient-to-br from-[#2A1A0C] via-[#1A1008] to-[#c2410c] text-white p-7 sm:p-8 shadow-glass border border-orange-500/30 flex flex-col justify-between relative overflow-hidden group">
             <div className="relative z-10">
               <div className="flex items-center justify-between gap-3 mb-4">
                 <div className="h-24 w-28 sm:w-36 flex-shrink-0">
                   <PrimeShippingLogo className="h-full w-auto object-contain" />
                 </div>
                 {s?.shipping_rate_per_lb ? (
-                  <span className="rounded-md bg-orange-500 text-slate-950 px-2.5 py-1 text-xs font-black uppercase tracking-wider">
+                  <span className="rounded-md bg-orange-500 text-[#1F150C] px-2.5 py-1 text-xs font-black uppercase tracking-wider">
                     {Number(s.shipping_rate_per_lb).toFixed(2)}$ / lb
                   </span>
                 ) : (
-                  <span className="rounded-md bg-orange-500 text-slate-950 px-2.5 py-1 text-xs font-black uppercase tracking-wider">
+                  <span className="rounded-md bg-orange-500 text-[#1F150C] px-2.5 py-1 text-xs font-black uppercase tracking-wider">
                     Tarif sur demande
                   </span>
                 )}
@@ -223,7 +205,7 @@ function Index() {
               <h3 className="text-2xl font-black text-white tracking-tight">
                 Prime Express Shipping
               </h3>
-              <p className="mt-2 text-slate-300 text-sm leading-relaxed max-w-md">
+              <p className="mt-2 text-orange-100/80 text-sm leading-relaxed max-w-md">
                 Expédition internationale de colis depuis Miami vers Haïti. Consolidation de
                 plusieurs colis et poids dans un seul paquet pour une facture unique.
               </p>
@@ -245,7 +227,7 @@ function Index() {
               <Button
                 asChild
                 size="default"
-                className="rounded-lg font-bold bg-orange-500 hover:bg-orange-600 text-slate-950 shadow-xs"
+                className="rounded-lg font-bold bg-orange-500 hover:bg-orange-600 text-[#1F150C] shadow-xs"
               >
                 <Link to="/suivi">
                   Suivre un colis <ArrowRight className="h-4 w-4 ml-1.5" />
@@ -263,19 +245,19 @@ function Index() {
           </div>
 
           {/* Module 2: PRIME STORE */}
-          <div className="rounded-3xl bg-gradient-to-br from-[#090d16] via-[#1e293b] to-[#b45309]/40 text-white p-7 sm:p-8 shadow-glass border border-amber-500/30 flex flex-col justify-between relative overflow-hidden group">
+          <div className="rounded-3xl bg-gradient-to-br from-[#160D05] via-[#2A1C0E] to-[#b45309]/40 text-white p-7 sm:p-8 shadow-glass border border-amber-500/30 flex flex-col justify-between relative overflow-hidden group">
             <div className="relative z-10">
               <div className="flex items-center justify-between gap-3 mb-4">
                 <div className="h-24 w-28 sm:w-36 flex-shrink-0">
                   <PrimeStoreLogo className="h-full w-auto object-contain" />
                 </div>
-                <span className="rounded-md bg-amber-500 text-slate-950 px-2.5 py-1 text-xs font-black uppercase tracking-wider">
+                <span className="rounded-md bg-amber-500 text-[#1F150C] px-2.5 py-1 text-xs font-black uppercase tracking-wider">
                   BOUTIQUE OFFICIELLE
                 </span>
               </div>
 
               <h3 className="text-2xl font-black text-white tracking-tight">Prime Store</h3>
-              <p className="mt-2 text-slate-200 text-sm leading-relaxed max-w-md">
+              <p className="mt-2 text-amber-100/80 text-sm leading-relaxed max-w-md">
                 Boutique en ligne intégrée : téléphones, ordinateurs, accessoires et cartes cadeaux
                 numériques disponibles immédiatement en Haïti.
               </p>
@@ -297,7 +279,7 @@ function Index() {
               <Button
                 asChild
                 size="default"
-                className="rounded-lg font-bold bg-amber-400 hover:bg-amber-500 text-slate-950 shadow-xs"
+                className="rounded-lg font-bold bg-amber-400 hover:bg-amber-500 text-[#1F150C] shadow-xs"
               >
                 <Link to="/boutique">
                   Visiter la boutique <ArrowRight className="h-4 w-4 ml-1.5" />
@@ -357,7 +339,7 @@ function Index() {
                   <Link
                     to="/boutique/$id"
                     params={{ id: p.id }}
-                    className="block relative aspect-[4/3] bg-slate-900 overflow-hidden"
+                    className="block relative aspect-[4/3] bg-[#1A1008] overflow-hidden"
                   >
                     {p.media_urls?.[0] ? (
                       <img
@@ -366,7 +348,7 @@ function Index() {
                         className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     ) : (
-                      <div className="grid h-full w-full place-items-center bg-slate-900 text-slate-500">
+                      <div className="grid h-full w-full place-items-center bg-[#1A1008] text-muted-foreground">
                         <ShoppingBag className="h-10 w-10 opacity-40" />
                       </div>
                     )}
@@ -377,7 +359,7 @@ function Index() {
                           Numérique
                         </span>
                       ) : (
-                        <span className="rounded-md bg-orange-500 text-slate-950 text-[10px] font-black px-2 py-0.5 backdrop-blur shadow-xs">
+                        <span className="rounded-md bg-orange-500 text-[#1F150C] text-[10px] font-black px-2 py-0.5 backdrop-blur shadow-xs">
                           En stock Haïti
                         </span>
                       )}
@@ -424,7 +406,7 @@ function Index() {
         </div>
 
         {/* Dedicated "Achetez pour moi" Banner Highlight */}
-        <div className="mt-8 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border border-slate-800 text-white p-6 md:p-8 shadow-glass relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="mt-8 rounded-3xl bg-gradient-to-br from-[#2A1A0C] via-[#140D06] to-[#2A1A0C] border border-orange-500/20 text-white p-6 md:p-8 shadow-glass relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="max-w-xl z-10">
             <span className="inline-flex items-center gap-1.5 rounded-md bg-primary/20 text-orange-400 border border-primary/30 px-2.5 py-0.5 text-xs font-extrabold mb-2.5">
               Service Achetez Pour Moi
@@ -432,7 +414,7 @@ function Index() {
             <h3 className="text-xl md:text-2xl font-extrabold text-white">
               Vous avez vu un article sur Amazon, Shein, eBay ou AliExpress ?
             </h3>
-            <p className="mt-2 text-slate-300 text-sm leading-relaxed">
+            <p className="mt-2 text-orange-100/80 text-sm leading-relaxed">
               Ne vous souciez pas des cartes de crédit internationales : collez le lien de votre
               article ou envoyez la photo. Nous achetons pour vous et vous livrons directement en
               Haïti.
