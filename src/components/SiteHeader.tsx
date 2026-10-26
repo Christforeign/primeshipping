@@ -46,8 +46,9 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/50 bg-background/70 text-foreground backdrop-blur-xl shadow-sm">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4">
+    <header className="sticky top-2 z-40 mx-auto w-full max-w-7xl px-2 text-foreground sm:px-4">
+      <div className="glass-strong rounded-2xl">
+      <div className="flex h-16 items-center justify-between gap-4 px-4">
         {/* Brand Logo & Name */}
         <Link
           to="/"
@@ -176,7 +177,7 @@ export function SiteHeader() {
 
       {/* Mobile Drawer */}
       {open && (
-        <div className="border-t border-border/50 bg-background/95 px-4 pb-6 pt-2 backdrop-blur-xl lg:hidden animate-in fade-in slide-in-from-top-2 duration-150">
+        <div className="rounded-b-2xl border-t border-border/50 px-4 pb-6 pt-2 lg:hidden animate-in fade-in slide-in-from-top-2 duration-150">
           <nav className="divide-y divide-border/60">
             {NAV.map((n) => (
               <Link
@@ -254,6 +255,7 @@ export function SiteHeader() {
           </div>
         </div>
       )}
+      </div>
     </header>
   );
 }
