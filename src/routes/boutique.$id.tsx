@@ -5,15 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import {
   ShoppingBag,
   ArrowLeft,
-  ShieldCheck,
   CheckCircle2,
-  Truck,
   MapPin,
   Warehouse,
   Wallet,
   Play,
   Share2,
-  Phone,
   Clock,
   ArrowRight,
   Package,
@@ -44,7 +41,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatNumber } from "@/lib/utils";
 import { HAITI_CITIES, PRIME_PICKUP_AGENCIES } from "@/lib/cities-haiti";
-import { PaymentMethodsBar } from "@/components/BrandLogos";
 
 export const Route = createFileRoute("/boutique/$id")({
   head: () => ({
@@ -448,35 +444,6 @@ export function ProductDetailPage() {
               </div>
             </div>
 
-            {/* Guarantees & Service in Haiti */}
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div className="rounded-2xl border bg-card p-4 shadow-sm space-y-1">
-                <ShieldCheck className="h-5 w-5 text-emerald-500" />
-                <h4 className="font-bold text-xs text-foreground">Authenticité Certifiée</h4>
-                <p className="text-[11px] text-muted-foreground">
-                  Articles 100% neufs et officiels sous garantie constructeur.
-                </p>
-              </div>
-              <div className="rounded-2xl border bg-card p-4 shadow-sm space-y-1">
-                <Truck className="h-5 w-5 text-amber-500" />
-                <h4 className="font-bold text-xs text-foreground">Livraison Partout en Haïti</h4>
-                <p className="text-[11px] text-muted-foreground">
-                  Retrait sécurisé en agence ou livraison à votre porte.
-                </p>
-              </div>
-              <div className="rounded-2xl border bg-card p-4 shadow-sm space-y-1">
-                <Phone className="h-5 w-5 text-blue-500" />
-                <h4 className="font-bold text-xs text-foreground">Support Local Dédié</h4>
-                <p className="text-[11px] text-muted-foreground">
-                  Équipe joignable du lundi au samedi sur WhatsApp.
-                </p>
-              </div>
-            </div>
-
-            {/* Payment Methods Info */}
-            <div className="rounded-3xl border bg-card p-6 shadow-sm">
-              <PaymentMethodsBar />
-            </div>
           </div>
 
           {/* ======================================================== */}
