@@ -13,6 +13,11 @@ import {
   ArrowRight,
   ShieldCheck,
   CheckCircle2,
+  Zap,
+  Globe,
+  Headphones,
+  Package,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +31,7 @@ import {
   PrimeStoreLogo,
   PartnerBrandsBar,
 } from "@/components/BrandLogos";
-import hero from "@/assets/hero.jpg";
+import heroPlane from "@/assets/hero-plane.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
