@@ -266,9 +266,9 @@ export function renderInvoiceHtml(d: InvoiceData): string {
   <button class="print-btn" onclick="window.print()">IMPRIMER LE TICKET</button>
   
   <div class="text-center">
-    <div class="bold" style="font-size: 14px; text-transform: uppercase;">${esc(c.name || "PRIME ENTREPRISE")}</div>
-    <div>${esc(c.address || "Delmas 33 & Pétion-Ville")}</div>
-    <div>Tél: ${esc(c.phone || "+509 3700-1122")}</div>
+    <div class="bold" style="font-size: 14px; text-transform: uppercase;">${esc(c.name || "Prime Shipping")}</div>
+    <div>${esc(c.address || "")}</div>
+    <div>Tél: ${esc(c.phone || "")}</div>
     <div class="divider"></div>
     <div class="bold" style="font-size: 12px;">TICKET DE CAISSE</div>
     <div>N° ${esc(d.number)}</div>
@@ -389,7 +389,7 @@ export function renderInvoiceHtml(d: InvoiceData): string {
   <div class="header">
     <div>
       <img src="${esc(logo)}" alt="" class="logo">
-      <div style="font-weight: 600; font-size: 14px; margin-top: 8px;">${esc(c.name || "PRIME ENTREPRISE")}</div>
+      <div style="font-weight: 600; font-size: 14px; margin-top: 8px;">${esc(c.name || "Prime Shipping")}</div>
       <div style="color: #6b7280;">${esc(c.address || "Haïti")}</div>
       <div style="color: #6b7280;">${esc(c.phone || "")} ${esc(c.email || "")}</div>
     </div>
@@ -834,8 +834,8 @@ export function renderInvoiceHtml(d: InvoiceData): string {
     <div class="brand-block">
       <img src="${esc(logo)}" alt="Logo" class="brand-logo">
       <div>
-        <div class="company-title">${esc(c.name || "PRIME ENTREPRISE")}</div>
-        <div class="company-sub">${esc(c.address || "Delmas 33 & Pétion-Ville, Haïti")}</div>
+        <div class="company-title">${esc(c.name || "Prime Shipping")}</div>
+        <div class="company-sub">${esc(c.address || "")}</div>
         <div class="company-sub">
           ${c.phone ? `Tél : ${esc(c.phone)} · ` : ""}
           ${c.whatsapp ? `WhatsApp : ${esc(c.whatsapp)} · ` : ""}
@@ -1032,8 +1032,30 @@ export function renderInvoiceHtml(d: InvoiceData): string {
 </html>`;
 }
 
+const RESPONSIVE_CSS = `<meta name="viewport" content="width=device-width, initial-scale=1"><style>
+*,*::before,*::after{box-sizing:border-box}
+html,body{max-width:100%;overflow-x:hidden}
+img{max-width:100%;height:auto}
+body *{overflow-wrap:anywhere;word-break:normal}
+table{width:100%!important;table-layout:auto}
+@media screen and (max-width:720px){
+  body{padding:12px!important;font-size:12px!important;width:auto!important}
+  body>div,body>section,body>header,body>footer,body>main{max-width:100%!important;width:auto!important}
+  [class*="header"],[class*="grid"],[class*="row"]:not(tr),[class*="flex"]{flex-wrap:wrap!important;gap:12px!important}
+  [class*="grid"]{grid-template-columns:1fr!important}
+  [class*="header"]>*,[class*="grid"]>*{min-width:0!important;max-width:100%!important;text-align:left!important}
+  [class*="totals"],[class*="summary"],[class*="box"]{width:100%!important;max-width:100%!important;margin-left:0!important}
+  table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:11px!important}
+  th,td{padding:6px 4px!important;width:auto!important}
+  th{white-space:nowrap;overflow-wrap:normal!important}
+  h1{font-size:20px!important}
+  button{float:none!important;width:100%!important;margin-bottom:10px}
+}
+</style>`;
+
 export function openInvoice(d: InvoiceData) {
-  const html = renderInvoiceHtml(d);
+  const raw = renderInvoiceHtml(d);
+  const html = raw.includes("</head>") ? raw.replace("</head>", `${RESPONSIVE_CSS}</head>`) : RESPONSIVE_CSS + raw;
   const w = window.open("", "_blank");
   if (!w) {
     if (typeof window !== "undefined") {
@@ -1080,5 +1102,5 @@ ${totals.serviceFee > 0 ? `• Frais de service : +$${totals.serviceFee.toFixed(
 👉 *SOLDE DÛ : $${totals.balance.toFixed(2)} USD* (≈ *${totals.balanceHtg.toLocaleString("fr-FR")} HTG*)
 
 ${d.warning_box_text ? `⚠️ ${d.warning_box_text}\n\n` : ""}Merci pour votre confiance !
-Pour toute question : ${d.company?.phone || "+509 3700-1122"}`;
+Pour toute question : ${d.company?.phone || ""}`;
 }
