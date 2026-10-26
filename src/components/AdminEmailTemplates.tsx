@@ -83,6 +83,39 @@ function CartReminder() {
   );
 }
 
+function AdminPromoter() {
+  const [client, setClient] = useState<ClientHit | null>(null);
+  const [role, setRole] = useState<"admin" | "super_admin">("admin");
+  const [busy, setBusy] = useState(false);
+  const go = async () => {
+    if (!client?.email) { toast.error("Choisis un compte avec e-mail"); return; }
+    setBusy(true);
+    const { data, error } = await supabase.rpc("add_staff_by_email", { _email: client.email, _role: role });
+    setBusy(false);
+    if (error) { toast.error("Impossible de nommer cet administrateur"); console.error(error); return; }
+    if (data === "not_found") { toast.error("Compte introuvable"); return; }
+    toast.success(`${client.full_name || client.email} est maintenant administrateur`);
+    setClient(null);
+  };
+  return (
+    <div className="space-y-2">
+      {client ? (
+        <div className="flex items-center justify-between gap-2 rounded-md border border-border px-3 py-2 text-sm min-w-0">
+          <span className="truncate">{client.full_name || client.email} · {client.client_code}</span>
+          <Button type="button" variant="ghost" size="sm" onClick={() => setClient(null)}>Changer</Button>
+        </div>
+      ) : <ClientPicker onPick={setClient} />}
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <select className="rounded-md border border-input bg-background px-3 py-2 text-sm" value={role} onChange={(e) => setRole(e.target.value as "admin" | "super_admin")}>
+          <option value="admin">Administrateur</option>
+          <option value="super_admin">Super admin</option>
+        </select>
+        <Button type="button" disabled={busy || !client} onClick={go}>Nommer administrateur</Button>
+      </div>
+    </div>
+  );
+}
+
 export function AdminEmailTemplates() {
   const qc = useQueryClient();
   const send = useServerFn(sendClientEmail);
@@ -160,7 +193,9 @@ export function AdminEmailTemplates() {
 
       <div className="rounded-lg border border-border bg-card p-4 space-y-3">
         <h3 className="font-semibold">Alertes administrateurs</h3>
-        <p className="text-xs text-muted-foreground">Tous les comptes ayant le rôle Administrateur ou Super admin reçoivent automatiquement une alerte (commande, colis, recharge, support), à l'e-mail de leur compte. Le client reçoit séparément son propre e-mail. Pour ajouter un administrateur, donne-lui le rôle dans Gestion colis → « Rôles & Accès Administrateur ».</p>
+        <p className="text-xs text-muted-foreground">Tous les comptes ayant le rôle Administrateur ou Super admin reçoivent automatiquement une alerte (commande, colis, recharge, support), à l'e-mail de leur compte. Le client reçoit séparément son propre e-mail.</p>
+        <h4 className="text-sm font-medium">Ajouter un administrateur</h4>
+        <AdminPromoter />
         <input className={inp} type="url" placeholder="Logo Prime Store des e-mails (facultatif)" value={storeLogoUrl} onChange={(e) => setStoreLogoUrl(e.target.value)} />
         <Button disabled={busy} onClick={save}>Enregistrer</Button>
       </div>
