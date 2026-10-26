@@ -1,11 +1,11 @@
 import React from "react";
 import amazonAsset from "@/assets/platforms/amazon.svg.asset.json";
-import walmartAsset from "@/assets/platforms/walmart.svg.asset.json";
+import walmartAsset from "@/assets/platforms/walmart-compact.svg.asset.json";
 import nikeAsset from "@/assets/platforms/nike.svg.asset.json";
-import ebayAsset from "@/assets/platforms/ebay.svg.asset.json";
-import aliexpressAsset from "@/assets/platforms/aliexpress.svg.asset.json";
+import ebayAsset from "@/assets/platforms/ebay-compact.svg.asset.json";
+import aliexpressAsset from "@/assets/platforms/aliexpress-compact.svg.asset.json";
 import appleAsset from "@/assets/platforms/apple.svg.asset.json";
-import zaraAsset from "@/assets/platforms/zara.svg.asset.json";
+import zaraAsset from "@/assets/platforms/zara-compact.svg.asset.json";
 import targetAsset from "@/assets/platforms/target.svg.asset.json";
 
 import { clientStore } from "@/lib/store";
