@@ -83,6 +83,14 @@ import type {
 } from "@/lib/types-store";
 
 export const Route = createFileRoute("/_authenticated/compte/admin")({
+  head: () => ({ meta: [
+    { title: "Administration — Prime Shipping" },
+    { name: "description", content: "Gestion des commandes, produits et e-mails Prime Shipping." },
+    { property: "og:title", content: "Administration — Prime Shipping" },
+    { property: "og:description", content: "Espace de gestion sécurisé Prime Shipping." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: AdminGate,
 });
 
