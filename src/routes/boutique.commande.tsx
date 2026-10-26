@@ -258,18 +258,18 @@ function CheckoutPage() {
       {needsShipping && (
         <section className="rounded-3xl border bg-card p-5 space-y-3">
           <h2 className="text-xs font-black uppercase">Réception en Haïti</h2>
-          <div className={`grid gap-2 ${pickupAddress ? "grid-cols-2" : "grid-cols-1"}`}>
-            <button type="button" className={opt(deliveryMode === "home")} onClick={() => setDeliveryMode("home")}>
+          <div className={`grid gap-2 ${choices.home && choices.pickup ? "sm:grid-cols-2" : "grid-cols-1"}`}>
+            {choices.home && <Button type="button" variant="outline" className={`${opt(deliveryMode === "home")} h-auto whitespace-normal justify-start`} onClick={() => setDeliveryMode("home")}>
               <MapPin className="h-4 w-4 mb-1" /> Livraison à mon adresse
-            </button>
-            {pickupAddress && (
-              <button type="button" className={opt(deliveryMode === "pickup")} onClick={() => setDeliveryMode("pickup")}>
-                <Warehouse className="h-4 w-4 mb-1" /> Retrait au bureau
-              </button>
+            </Button>}
+            {choices.pickup && (
+              <Button type="button" variant="outline" className={`${opt(deliveryMode === "pickup")} h-auto whitespace-normal justify-start`} onClick={() => setDeliveryMode("pickup")}>
+                <Warehouse className="h-4 w-4 mb-1" /> Retrait en succursale
+              </Button>
             )}
           </div>
           {deliveryMode === "pickup" ? (
-            <p className="text-sm text-muted-foreground">{pickupAddress}</p>
+            <p className={`text-sm ${pickupAddress ? "text-muted-foreground" : "text-destructive"}`}>{pickupAddress || "L'adresse de retrait n'est pas encore renseignée. Contactez l'équipe."}</p>
           ) : (
             <div className="space-y-1">
               <Label className="text-xs">Adresse de livraison *</Label>
