@@ -16,6 +16,10 @@
 - [x] Envoi manuel d'e-mail, paiement/recharge en pleine page avec X
 
 ## À faire
+- [ ] Diagnostiquer et corriger les e-mails de déclaration de colis
+- [ ] Enrichir les e-mails des commandes : image, détails et étapes selon paiement
+- [ ] Montant USD libre et taux par produit, conversion sécurisée du débit portefeuille
+- [ ] Adresses d’alerte administrateurs configurables et lien vers validation sécurisée
 - [x] Simplifier Mes colis et retirer le faux message d’adresse non attribuée
 - [x] Restreindre le suivi public/non-propriétaire au statut, date et prochaine étape (contrôle dans la base)
 - [x] Ordonner les sept statuts français et enrichir les e-mails de chaque transition (7 tests réussis)
