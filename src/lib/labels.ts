@@ -9,25 +9,27 @@ export const PACKAGE_STATUSES: {
   label: string;
   tone: "muted" | "progress" | "ready" | "done" | "alert";
 }[] = [
-  { value: "declare", label: "Déclaré", tone: "muted" },
-  { value: "attente_reception", label: "En attente de réception", tone: "muted" },
-  { value: "recu_entrepot", label: "Reçu à l'entrepôt", tone: "progress" },
-  { value: "preparation", label: "En préparation", tone: "progress" },
-  { value: "expedie", label: "Expédié", tone: "progress" },
+  { value: "declare", label: "En attente", tone: "muted" },
+  { value: "recu_entrepot", label: "Reçu", tone: "progress" },
   { value: "en_transit", label: "En transit", tone: "progress" },
-  { value: "arrive_haiti", label: "Arrivé en Haïti", tone: "progress" },
-  { value: "douane", label: "En traitement douanier", tone: "progress" },
-  { value: "disponible_retrait", label: "Disponible au retrait", tone: "ready" },
-  { value: "livraison_locale", label: "En cours de livraison locale", tone: "ready" },
+  { value: "livraison_locale", label: "En transit vers la succursale", tone: "progress" },
+  { value: "arrive_haiti", label: "En stock", tone: "progress" },
+  { value: "disponible_retrait", label: "Disponible", tone: "ready" },
   { value: "livre", label: "Livré", tone: "done" },
-  { value: "incident", label: "Incident", tone: "alert" },
-  { value: "retourne", label: "Retourné", tone: "alert" },
 ];
 
+// Keep historical database values readable without altering existing records.
+export const canonicalStatus = (s: PackageStatus): PackageStatus =>
+  ({ attente_reception: "declare", preparation: "recu_entrepot", expedie: "en_transit", douane: "arrive_haiti" } as Partial<Record<PackageStatus, PackageStatus>>)[s] ?? s;
 export const statusLabel = (s: PackageStatus) =>
-  PACKAGE_STATUSES.find((x) => x.value === s)?.label ?? s;
+  PACKAGE_STATUSES.find((x) => x.value === canonicalStatus(s))?.label ?? ({ incident: "Incident", retourne: "Retourné" } as Partial<Record<PackageStatus, string>>)[s] ?? s;
 export const statusTone = (s: PackageStatus) =>
-  PACKAGE_STATUSES.find((x) => x.value === s)?.tone ?? "muted";
+  PACKAGE_STATUSES.find((x) => x.value === canonicalStatus(s))?.tone ?? (s === "incident" || s === "retourne" ? "alert" : "muted");
+
+export function nextPackageStep(s: PackageStatus): string {
+  const index = PACKAGE_STATUSES.findIndex((step) => step.value === canonicalStatus(s));
+  return index < 0 ? "Contactez notre équipe pour la suite" : PACKAGE_STATUSES[index + 1]?.label ?? "Acheminement terminé";
+}
 
 export const ROLE_LABELS: Record<AppRole, string> = {
   super_admin: "Administrateur principal",
