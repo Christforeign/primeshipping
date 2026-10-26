@@ -826,11 +826,6 @@ function AdminHubPage() {
               icon: CreditCard,
             },
             {
-              key: "customer_fields",
-              label: "4. Exigences Client Checkout",
-              icon: CheckSquare,
-            },
-            {
               key: "pos",
               label: "5. Facturation",
               icon: Printer,
@@ -1347,138 +1342,6 @@ function AdminHubPage() {
             </div>
           </div>
 
-          {/* Card: Manual Payment Details (MonCash, Natcash, Bank) */}
-          <div className="rounded-3xl border bg-card p-6 shadow-soft space-y-4">
-            <h3 className="text-base font-bold text-forest flex items-center gap-2">
-              <CreditCard className="h-5 w-5 text-primary" /> Coordonnées de paiement manuel
-            </h3>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold text-red-600">
-                  Numéro MonCash marchand / particulier
-                </Label>
-                <Input
-                  value={moncashMerchant}
-                  onChange={(e) => setMoncashMerchant(e.target.value)}
-                  placeholder="Numéro"
-                  className="font-mono text-xs"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold text-blue-600">Numéro Natcash</Label>
-                <Input
-                  value={natcashPhone}
-                  onChange={(e) => setNatcashPhone(e.target.value)}
-                  placeholder="Numéro"
-                  className="font-mono text-xs"
-                />
-              </div>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Instructions MonCash</Label>
-                <Textarea
-                  value={moncashInstructions}
-                  onChange={(e) => setMoncashInstructions(e.target.value)}
-                  placeholder="Instructions spécifiques pour MonCash..."
-                  rows={2}
-                  className="text-xs"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Instructions Natcash</Label>
-                <Textarea
-                  value={natcashInstructions}
-                  onChange={(e) => setNatcashInstructions(e.target.value)}
-                  placeholder="Instructions spécifiques pour Natcash..."
-                  rows={2}
-                  className="text-xs"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-xs font-semibold">
-                Comptes bancaires & Instructions de virement
-              </Label>
-              <Textarea
-                value={bankAccounts}
-                onChange={(e) => setBankAccounts(e.target.value)}
-                placeholder="Unibank USD : ...\nSogebank HTG : ..."
-                rows={3}
-                className="font-mono text-xs"
-              />
-            </div>
-          </div>
-
-          {/* Card: IA Assistante dans le Chat (Configurable par l'Admin) */}
-          <div className="rounded-3xl border bg-card p-6 shadow-soft space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-base font-bold text-forest flex items-center gap-2">
-                  <Bot className="h-5 w-5 text-accent" /> IA Assistante dans le Chat (« Définir son
-                  travail »)
-                </h3>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Définissez précisément les consignes, le rôle et le travail que l'IA doit
-                  effectuer lorsqu'elle converse avec vos clients dans la bulle de chat.
-                </p>
-              </div>
-              <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={aiEnabled}
-                  onChange={(e) => setAiEnabled(e.target.checked)}
-                  className="rounded text-primary h-4 w-4"
-                />
-                <span>IA Active</span>
-              </label>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Nom de l'assistant IA</Label>
-                <Input
-                  value={aiName}
-                  onChange={(e) => setAiName(e.target.value)}
-                  placeholder="Ex : Prime Assistant IA"
-                  className="text-xs font-bold"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Rôle affiché au client</Label>
-                <Input
-                  value={aiRole}
-                  onChange={(e) => setAiRole(e.target.value)}
-                  placeholder="Ex : Conseiller Clientèle & Logistique Haïti"
-                  className="text-xs"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-xs font-bold text-forest flex items-center gap-1.5">
-                <Sparkles className="h-4 w-4 text-accent" />
-                Instructions système / Consignes de travail de l'IA (Prompt Admin)
-              </Label>
-              <Textarea
-                value={aiPrompt}
-                onChange={(e) => setAiPrompt(e.target.value)}
-                placeholder="Indiquez ici ce que l'IA doit faire, comment elle doit répondre, quelles informations douanières ou tarifs donner aux clients..."
-                rows={6}
-                className="text-xs leading-relaxed"
-              />
-              <p className="text-[11px] text-muted-foreground">
-                L'IA appliquera strictement ces instructions lors de ses échanges avec les clients
-                sur leurs colis, achats assistés, tarifs et livraisons.
-              </p>
-            </div>
-          </div>
 
           {/* Card: Conditions d'utilisation & Politiques (Modifiables dans l'Admin) */}
           <div className="rounded-3xl border bg-card p-6 shadow-soft space-y-4">
@@ -1920,7 +1783,30 @@ function AdminHubPage() {
               <div className="space-y-3 border-t pt-4">
                 <h4 className="text-sm font-bold text-foreground">Galerie Photos & Vidéo</h4>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">URLs d'images (une par ligne)</Label>
+                  <Label className="text-xs font-semibold">Photos du produit</Label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    aria-label="Ajouter des photos"
+                    className="block w-full text-xs file:mr-3 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:text-primary-foreground"
+                    onChange={async (e) => {
+                      const files = Array.from(e.target.files || []);
+                      e.target.value = "";
+                      if (!files.length) return;
+                      try {
+                        toast.info("Envoi des photos…");
+                        const { uploadImage } = await import("@/lib/upload");
+                        const urls = [];
+                        for (const file of files) urls.push(await uploadImage("products/all", file));
+                        setProdMediaUrls((prev) => [prev.trim(), ...urls].filter(Boolean).join("\n"));
+                        toast.success("Photos ajoutées");
+                      } catch (err) {
+                        toast.error(err instanceof Error ? err.message : "Envoi impossible");
+                      }
+                    }}
+                  />
+                  <Label className="text-xs text-muted-foreground">Ou liens d'images (un par ligne)</Label>
                   <Textarea
                     value={prodMediaUrls}
                     onChange={(e) => setProdMediaUrls(e.target.value)}
@@ -2260,87 +2146,6 @@ function AdminHubPage() {
         </div>
       )}
 
-      {/* ================================================================= */}
-      {/* TAB 4: INFORMATIONS CLIENT DEMANDÉES (CHECKOUT) */}
-      {/* ================================================================= */}
-      {tab === "customer_fields" && (
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-              <CheckSquare className="h-5 w-5 text-amber-500" /> Exigences d'Informations Client au
-              Checkout
-            </h3>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Choisissez précisément quelles informations vos clients doivent renseigner lors de la
-              validation d'une commande.
-            </p>
-          </div>
-
-          <div className="rounded-3xl border bg-card p-6 shadow-soft space-y-4 max-w-2xl">
-            {[
-              {
-                key: "require_first_name" as const,
-                label: "Prénom du client",
-                desc: "Exiger le prénom du destinataire.",
-              },
-              {
-                key: "require_last_name" as const,
-                label: "Nom de famille",
-                desc: "Exiger le nom de famille officiel.",
-              },
-              {
-                key: "require_phone" as const,
-                label: "Numéro de Téléphone / WhatsApp",
-                desc: "Pour les confirmations et le suivi de livraison.",
-              },
-              {
-                key: "require_email" as const,
-                label: "Adresse E-mail",
-                desc: "Pour l'envoi du reçu et des accès numériques.",
-              },
-              {
-                key: "require_city" as const,
-                label: "Ville de résidence en Haïti",
-                desc: "Permet de cibler la livraison ou l'agence de retrait.",
-              },
-              {
-                key: "require_address" as const,
-                label: "Adresse de livraison détaillée",
-                desc: "Rue, quartier, numéro de porte pour les articles physiques.",
-              },
-              {
-                key: "require_country" as const,
-                label: "Pays",
-                desc: "Généralement Haïti ou USA pour les expéditions.",
-              },
-              {
-                key: "require_postal_code" as const,
-                label: "Code Postal",
-                desc: "Optionnel selon les communes haïtiennes.",
-              },
-            ].map((f) => (
-              <div
-                key={f.key}
-                className="flex items-center justify-between p-3 rounded-2xl border bg-muted/20"
-              >
-                <div>
-                  <p className="font-bold text-sm text-foreground">{f.label}</p>
-                  <p className="text-xs text-muted-foreground">{f.desc}</p>
-                </div>
-                <label className="flex items-center gap-2 font-bold text-xs cursor-pointer bg-card border px-3 py-1.5 rounded-xl">
-                  <input
-                    type="checkbox"
-                    checked={customerFieldsConfig[f.key]}
-                    onChange={() => handleToggleCustomerField(f.key)}
-                    className="rounded text-primary h-4 w-4"
-                  />
-                  <span>{customerFieldsConfig[f.key] ? "Obligatoire" : "Facultatif"}</span>
-                </label>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* ================================================================= */}
       {/* TAB 5: POINT OF SALE (POS) & INVOICING */}

@@ -409,6 +409,7 @@ export type Database = {
         Row: {
           address_line: string | null
           address_line2: string | null
+          avatar_url: string | null
           city: string | null
           client_code: string
           country: string | null
@@ -423,6 +424,7 @@ export type Database = {
         Insert: {
           address_line?: string | null
           address_line2?: string | null
+          avatar_url?: string | null
           city?: string | null
           client_code?: string
           country?: string | null
@@ -437,6 +439,7 @@ export type Database = {
         Update: {
           address_line?: string | null
           address_line2?: string | null
+          avatar_url?: string | null
           city?: string | null
           client_code?: string
           country?: string | null

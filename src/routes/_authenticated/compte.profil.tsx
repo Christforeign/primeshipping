@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/PageHeader";
 import { profileQuery } from "@/lib/session";
 import { clientStore } from "@/lib/store";
+import { uploadImage } from "@/lib/upload";
 
 export const Route = createFileRoute("/_authenticated/compte/profil")({
   component: Profile,
@@ -40,6 +41,7 @@ function Profile() {
   const qc = useQueryClient();
   const profile = useQuery(profileQuery(user.id)).data;
   const [f, setF] = useState<Record<string, string>>({});
+  const [uploading, setUploading] = useState(false);
   useEffect(() => {
     if (profile)
       setF(Object.fromEntries(FIELDS.map(([k]) => [k, (profile[k] as string | null) ?? ""])));
@@ -75,6 +77,45 @@ function Profile() {
         title="Mon profil"
         subtitle={`Identifiant client : ${profile?.client_code ?? "…"} · ${user.email}`}
       />
+      <div className="mb-4 flex flex-wrap items-center gap-4 rounded-2xl border bg-card p-6">
+        <div className="h-20 w-20 shrink-0 overflow-hidden rounded-full border bg-muted">
+          {profile?.avatar_url ? (
+            <img src={profile.avatar_url} alt="Photo de profil" className="h-full w-full object-cover" />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-2xl font-bold text-muted-foreground">
+              {(profile?.full_name || user.email || "?").charAt(0).toUpperCase()}
+            </div>
+          )}
+        </div>
+        <div className="min-w-0 space-y-1">
+          <Label htmlFor="avatar">Photo de profil</Label>
+          <input
+            id="avatar"
+            type="file"
+            accept="image/*"
+            disabled={uploading}
+            className="block w-full text-xs file:mr-3 file:rounded-full file:border-0 file:bg-primary file:px-4 file:py-2 file:text-primary-foreground"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              e.target.value = "";
+              if (!file) return;
+              setUploading(true);
+              try {
+                const url = await uploadImage(`avatars/${user.id}`, file);
+                const { error } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", user.id);
+                if (error) throw new Error("Photo envoyée mais non enregistrée. Réessayez.");
+                qc.invalidateQueries({ queryKey: ["profile", user.id] });
+                toast.success("Photo de profil mise à jour");
+              } catch (err) {
+                toast.error(err instanceof Error ? err.message : "Envoi impossible");
+              } finally {
+                setUploading(false);
+              }
+            }}
+          />
+          <p className="text-xs text-muted-foreground">JPG, PNG ou WEBP · 5 Mo maximum</p>
+        </div>
+      </div>
       <form onSubmit={save} className="grid gap-4 rounded-2xl border bg-card p-6 sm:grid-cols-2">
         {FIELDS.map(([k, l]) => (
           <div key={k} className="space-y-1.5">

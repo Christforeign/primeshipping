@@ -159,9 +159,21 @@ export function AdminEmailTemplates() {
       </div>
 
       <div className="rounded-lg border border-border bg-card p-4 space-y-3">
-        <h3 className="font-semibold">Alertes administrateurs</h3>
-        <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={adminEnabled} onChange={(e) => setAdminEnabled(e.target.checked)} /> Recevoir les alertes d’activité</label>
-        <textarea className={inp} rows={3} aria-label="E-mails administrateurs" placeholder="Adresses e-mail séparées par une virgule ou une ligne" value={adminRecipients} onChange={(e) => setAdminRecipients(e.target.value)} />
+        <h3 className="font-semibold">Administrateurs qui reçoivent les alertes</h3>
+        <p className="text-xs text-muted-foreground">Chaque administrateur reçoit sa propre alerte (commande, colis, recharge, support). Le client reçoit séparément son e-mail.</p>
+        <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={adminEnabled} onChange={(e) => setAdminEnabled(e.target.checked)} /> Alertes activées</label>
+        <ul className="space-y-2">
+          {adminRecipients.split(/[\s,;]+/).filter(Boolean).map((email) => (
+            <li key={email} className="flex items-center justify-between gap-2 rounded-md border border-border px-3 py-2 text-sm min-w-0">
+              <span className="truncate">{email}</span>
+              <Button type="button" variant="ghost" size="sm" onClick={() => setAdminRecipients(adminRecipients.split(/[\s,;]+/).filter((x) => x && x !== email).join(", "))}>Retirer</Button>
+            </li>
+          ))}
+        </ul>
+        <form className="flex flex-col gap-2 sm:flex-row" onSubmit={(e) => { e.preventDefault(); const input = (e.currentTarget.elements.namedItem("newAdmin") as HTMLInputElement); const v = input.value.trim().toLowerCase(); if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { toast.error("Adresse e-mail invalide"); return; } const list = adminRecipients.split(/[\s,;]+/).filter(Boolean); if (!list.includes(v)) setAdminRecipients([...list, v].join(", ")); setAdminEnabled(true); input.value = ""; toast.info("Ajouté — pense à cliquer Enregistrer"); }}>
+          <input name="newAdmin" type="email" className={inp} placeholder="email-admin@exemple.com" aria-label="Nouvel administrateur" />
+          <Button type="submit" variant="outline">Ajouter un administrateur</Button>
+        </form>
         <input className={inp} type="url" placeholder="Logo Prime Store des e-mails (facultatif)" value={storeLogoUrl} onChange={(e) => setStoreLogoUrl(e.target.value)} />
         <Button disabled={busy} onClick={save}>Enregistrer</Button>
       </div>
