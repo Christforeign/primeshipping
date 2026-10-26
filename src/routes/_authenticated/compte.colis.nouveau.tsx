@@ -54,9 +54,8 @@ function NewPackage() {
       if (!saved) throw new Error("La confirmation du colis est indisponible. Réessayez.");
       toast.success(`Colis déclaré : ${saved.tracking_number}`);
       try {
-        const result = await sendClientEmail({ data: { kind: "colis_attente", packageId: saved.id } });
-        if (!result.sent) toast.warning(`Colis enregistré. E-mail non envoyé : ${result.reason}`);
-      } catch (error) { toast.warning(`Colis enregistré. E-mail non envoyé : ${error instanceof Error ? error.message : "Connexion au service indisponible"}`); }
+        await sendClientEmail({ data: { kind: "colis_attente", packageId: saved.id } });
+      } catch { /* journalisé côté serveur */ }
       navigate({ to: "/compte/colis/$id", params: { id: saved.id } });
     } catch (err) {
       setFailure(packageSubmissionError(err, navigator.onLine));
