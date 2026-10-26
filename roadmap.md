@@ -16,7 +16,7 @@
 - [x] Envoi manuel d'e-mail, paiement/recharge en pleine page avec X
 
 ## À faire
-- [ ] Ajouter devise USD/GDS au produit, retrait gratuit, livraison fixe ou sur devis et notification client.
+- [x] Devise USD/GDS au produit, retrait gratuit, livraison fixe ou à confirmer séparément et notification client ; 23 tests, sauvegarde connectée et produit → paiement vérifiés sur produit temporaire supprimé. Aucun achat ni nouvel e-mail réel envoyé pendant le test.
 - [x] Prix libres sans prix de base, coordonnées dédupliquées, totaux gourdes hors Prime et USD pour Prime ; carte bancaire retirée. 14 tests réussis et parcours connecté produit libre → MonCash → Prime vérifié sans achat.
 - [x] Minimum montant/quantité par produit et conditions administrables : 8 tests réussis, sauvegarde et parcours jusqu’au paiement vérifiés connecté sans achat réel.
 - [x] Suppression des comptes sans clé privée et suppression confirmée des colis : parcours connectés vérifiés sur données temporaires, protections testées ; redéploiement Vercel requis.
