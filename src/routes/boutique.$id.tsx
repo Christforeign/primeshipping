@@ -348,7 +348,7 @@ export function ProductDetailPage() {
         ];
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-24">
+    <div className="min-h-screen bg-transparent pb-24">
       {/* Breadcrumb Bar */}
       <div className="border-b bg-card/60 backdrop-blur-sm">
         <div className="mx-auto max-w-7xl px-4 py-3 flex items-center gap-2 text-xs text-muted-foreground">
@@ -381,7 +381,7 @@ export function ProductDetailPage() {
 
                 {/* Badge Kind */}
                 <div className="absolute top-4 left-4">
-                  <span className="rounded-full bg-slate-950/80 backdrop-blur text-amber-400 border border-amber-400/30 px-3 py-1 text-xs font-black uppercase tracking-wider shadow-sm">
+                  <span className="rounded-full liquid text-foreground px-3 py-1 text-xs font-black uppercase tracking-wider shadow-sm">
                     {product.kind === "topup"
                       ? "Top Up Direct"
                       : product.kind === "numerique"
@@ -486,7 +486,7 @@ export function ProductDetailPage() {
             ) : (
             <form
               onSubmit={handleOrderSubmit}
-              className="rounded-3xl border bg-card p-6 sm:p-8 shadow-xl space-y-6 border-slate-200"
+              className="rounded-3xl border bg-card p-6 sm:p-8 shadow-xl space-y-6 border-border"
             >
               {/* Header Pricing Card */}
               <div className="pb-4 border-b">
@@ -539,7 +539,7 @@ export function ProductDetailPage() {
                           <div className="flex items-center gap-2.5">
                             <div
                               className={`h-4 w-4 rounded-full border flex items-center justify-center flex-shrink-0 ${
-                                isSelected ? "border-amber-500 bg-amber-500" : "border-slate-400"
+                                isSelected ? "border-amber-500 bg-amber-500" : "border-border"
                               }`}
                             >
                               {isSelected && <div className="h-1.5 w-1.5 rounded-full bg-white" />}

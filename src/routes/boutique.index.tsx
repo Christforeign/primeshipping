@@ -60,7 +60,7 @@ function BoutiquePage() {
     <div className="mx-auto max-w-7xl px-4 py-12">
       <div className="flex justify-end mb-4"><Button asChild variant="outline"><Link to="/boutique/panier"><ShoppingCart className="h-4 w-4 mr-2" /> Mon panier</Link></Button></div>
       {/* Header Banner with Prime Store Visual Identity */}
-      <div className="rounded-3xl bg-gradient-to-br from-[#090d16] via-[#1e293b] to-[#ca8a04]/40 p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden mb-8 border border-amber-500/30">
+      <div className="rounded-3xl glass-strong p-6 sm:p-12 text-foreground shadow-2xl relative overflow-hidden mb-8 border border-amber-500/30">
 
         <div className="max-w-2xl relative z-10">
           <div className="flex items-center gap-3 mb-4">
@@ -80,7 +80,7 @@ function BoutiquePage() {
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white">
             Prime Store Haïti
           </h1>
-          <p className="mt-3 text-base sm:text-lg text-slate-200 leading-relaxed font-normal">
+          <p className="mt-3 text-base sm:text-lg text-muted-foreground leading-relaxed font-normal">
             Commandez directement vos articles certifiés, électroniques, cosmétiques et services
             numériques payables en Gourdes (MonCash / Natcash) ou par Portefeuille client.
           </p>
@@ -161,7 +161,7 @@ function BoutiquePage() {
           </p>
         </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
           {filteredProducts.map((prod) => {
             const htgPrice = Math.round(prod.price_usd * rate);
             const coverImg =
@@ -177,15 +177,15 @@ function BoutiquePage() {
                 <Link
                   to="/boutique/$id"
                   params={{ id: prod.id }}
-                  className="block relative aspect-square w-full overflow-hidden bg-slate-900 group/img"
+                  className="block relative aspect-square w-full overflow-hidden bg-muted group/img"
                 >
                   <img
                     src={coverImg}
                     alt={prod.title}
                     className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-                    <span className="rounded-full bg-slate-900/90 text-amber-400 border border-slate-700 text-[10px] font-black px-2.5 py-1 backdrop-blur-sm">
+                  <div className="absolute top-2 left-2 flex flex-col gap-1.5">
+                    <span className="rounded-full liquid text-foreground text-[10px] font-black px-2.5 py-1 backdrop-blur-sm">
                       {prod.category}
                     </span>
                     {prod.apply_tax && s?.tax_enabled && (
@@ -202,21 +202,21 @@ function BoutiquePage() {
                 </Link>
 
                 {/* Details */}
-                <div className="p-5 flex-1 flex flex-col justify-between">
+                <div className="p-3 sm:p-5 flex-1 flex flex-col justify-between">
                   <div>
                     <Link to="/boutique/$id" params={{ id: prod.id }}>
-                      <h3 className="font-bold text-base text-foreground group-hover:text-amber-500 transition-colors line-clamp-2">
+                      <h3 className="font-bold text-sm sm:text-base text-foreground group-hover:text-amber-500 transition-colors line-clamp-2">
                         {prod.title}
                       </h3>
                     </Link>
-                    <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">
+                    <p className="hidden sm:block text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">
                       {prod.description}
                     </p>
                   </div>
 
-                  <div className="mt-4 pt-4 border-t flex items-center justify-between">
+                  <div className="mt-3 pt-3 border-t flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <p className="text-lg font-extrabold text-foreground">{prod.price_usd} USD</p>
+                      <p className="text-base sm:text-lg font-extrabold text-foreground">{prod.price_usd} USD</p>
                       <p className="text-xs font-semibold text-muted-foreground">
                         ≈ {formatNumber(htgPrice)} HTG
                       </p>
@@ -225,7 +225,7 @@ function BoutiquePage() {
                     <Button
                       size="sm"
                       asChild
-                      className="rounded-full text-xs font-black bg-amber-500 hover:bg-amber-600 text-slate-950"
+                      className="w-full sm:w-auto rounded-full text-xs font-black bg-amber-500 hover:bg-amber-600 text-slate-950"
                     >
                       <Link to="/boutique/$id" params={{ id: prod.id }}>
                         <ShoppingCart className="h-3.5 w-3.5 mr-1" /> Commander
@@ -240,9 +240,9 @@ function BoutiquePage() {
       )}
 
       {/* Partner Brands & B2B Showcase */}
-      <div className="mt-16 p-8 rounded-3xl bg-[#090f1e] border border-slate-800 shadow-xl space-y-8">
+      <div className="mt-16 p-8 rounded-3xl glass border shadow-xl space-y-8">
         <PartnerBrandsBar />
-        <div className="pt-6 border-t border-slate-800">
+        <div className="pt-6 border-t border-border">
           <PaymentMethodsBar />
         </div>
       </div>
