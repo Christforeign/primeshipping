@@ -154,23 +154,6 @@ function Index() {
             <div className="glass-strong absolute right-0 top-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold text-foreground">
               <Plane className="h-3.5 w-3.5 text-primary" /> Haïti plus proche que jamais
             </div>
-            <div className="glass-strong absolute bottom-3 left-1/2 w-[86%] max-w-xs -translate-x-1/2 rounded-2xl p-3.5">
-              <p className="flex items-center gap-1.5 text-xs font-black text-foreground">
-                <Package className="h-3.5 w-3.5 text-primary" /> Colis en route
-              </p>
-              <div className="mt-2.5 flex items-center gap-1">
-                <span className="h-2 w-2 shrink-0 rounded-full bg-primary" />
-                <span className="h-0.5 flex-1 rounded bg-primary" />
-                <span className="h-2 w-2 shrink-0 rounded-full bg-primary" />
-                <span className="h-0.5 flex-1 rounded bg-primary/40" />
-                <span className="h-2 w-2 shrink-0 rounded-full bg-primary/40" />
-                <span className="h-0.5 flex-1 rounded bg-border" />
-                <span className="h-2 w-2 shrink-0 rounded-full bg-border" />
-              </div>
-              <p className="mt-2 text-[11px] font-semibold text-muted-foreground">
-                Miami → Port-au-Prince
-              </p>
-            </div>
           </div>
         </div>
 
@@ -203,7 +186,7 @@ function Index() {
       <section className="mx-auto max-w-7xl px-4">
         <div className="grid gap-6 md:grid-cols-2">
           {/* Module 1: PRIME SHIPPING */}
-          <div className="rounded-3xl bg-gradient-to-br from-[#1c1917] via-[#0f172a] to-[#c2410c] text-white p-7 sm:p-8 shadow-glass border border-orange-500/30 flex flex-col justify-between relative overflow-hidden group">
+          <div className="rounded-3xl bg-gradient-to-br from-[#2A1A0C] via-[#1A1008] to-[#c2410c] text-white p-7 sm:p-8 shadow-glass border border-orange-500/30 flex flex-col justify-between relative overflow-hidden group">
             <div className="relative z-10">
               <div className="flex items-center justify-between gap-3 mb-4">
                 <div className="h-24 w-28 sm:w-36 flex-shrink-0">
@@ -263,7 +246,7 @@ function Index() {
           </div>
 
           {/* Module 2: PRIME STORE */}
-          <div className="rounded-3xl bg-gradient-to-br from-[#090d16] via-[#1e293b] to-[#b45309]/40 text-white p-7 sm:p-8 shadow-glass border border-amber-500/30 flex flex-col justify-between relative overflow-hidden group">
+          <div className="rounded-3xl bg-gradient-to-br from-[#160D05] via-[#2A1C0E] to-[#b45309]/40 text-white p-7 sm:p-8 shadow-glass border border-amber-500/30 flex flex-col justify-between relative overflow-hidden group">
             <div className="relative z-10">
               <div className="flex items-center justify-between gap-3 mb-4">
                 <div className="h-24 w-28 sm:w-36 flex-shrink-0">
@@ -424,7 +407,7 @@ function Index() {
         </div>
 
         {/* Dedicated "Achetez pour moi" Banner Highlight */}
-        <div className="mt-8 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border border-slate-800 text-white p-6 md:p-8 shadow-glass relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="mt-8 rounded-3xl bg-gradient-to-br from-[#2A1A0C] via-[#140D06] to-[#2A1A0C] border border-orange-500/20 text-white p-6 md:p-8 shadow-glass relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="max-w-xl z-10">
             <span className="inline-flex items-center gap-1.5 rounded-md bg-primary/20 text-orange-400 border border-primary/30 px-2.5 py-0.5 text-xs font-extrabold mb-2.5">
               Service Achetez Pour Moi
