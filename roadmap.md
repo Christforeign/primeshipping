@@ -16,10 +16,12 @@
 - [x] Envoi manuel d'e-mail, paiement/recharge en pleine page avec X
 
 ## À faire
-- [ ] Diagnostiquer et corriger les e-mails de déclaration de colis
-- [ ] Enrichir les e-mails des commandes : image, détails et étapes selon paiement
-- [ ] Montant USD libre et taux par produit, conversion sécurisée du débit portefeuille
-- [ ] Adresses d’alerte administrateurs configurables et lien vers validation sécurisée
+- [ ] Confirmer l’envoi du nouveau colis depuis Vercel — clé Brevo valide et expéditeur configuré, mais aucune requête pour ce colis dans Brevo ; absence de compte du demandeur pour reproduire. Erreurs précises et renvoi manuel ajoutés.
+- [x] E-mails commandes enrichis : photo, détails, étapes selon paiement, logos PNG transparents
+- [x] Montant USD libre et taux par produit, conversion recalculée dans la base et taux conservés avec la commande (17 tests réussis)
+- [x] Alertes administrateurs configurables : commandes, colis, recharges et support ; lien vers validation après connexion
+- [ ] Tester débit réel, livraison e-mail et sauvegarde admin — compte du demandeur absent ; connexion dans l’aperçu requise, puis redéploiement Vercel
+- [ ] Alertes achats assistés/factures — leurs parcours ne conservent pas encore les opérations dans la base, contrairement aux commandes ; stockage réel nécessaire avant alertes fiables
 - [x] Simplifier Mes colis et retirer le faux message d’adresse non attribuée
 - [x] Restreindre le suivi public/non-propriétaire au statut, date et prochaine étape (contrôle dans la base)
 - [x] Ordonner les sept statuts français et enrichir les e-mails de chaque transition (7 tests réussis)
