@@ -86,7 +86,8 @@ export function AdminEmailTemplates() {
 
   const t = tpls[kind];
   const upd = (p: Partial<EmailTemplate>) => setTpls({ ...tpls, [kind]: { ...t, ...p } });
-  const preview = renderEmail(t, SAMPLE, senderName, logoUrl || undefined);
+  const isOrder = kind.startsWith("commande");
+  const preview = renderEmail(t, isOrder ? { ...SAMPLE, brand: "store", produit: "Article commandé", quantite: "1", paiement: "Portefeuille Prime", statut: "Commande en traitement", tracking: "" } : SAMPLE, senderName, (isOrder ? storeLogoUrl : logoUrl) || undefined);
 
   async function resendPackage() {
     setBusy(true);
@@ -94,6 +95,7 @@ export function AdminEmailTemplates() {
   }
 
   async function save() {
+    if (adminEnabled && adminRecipients.split(/[\s,;]+/).filter(Boolean).some((email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) return toast.error("Une adresse administrateur est invalide.");
     setBusy(true);
     try {
       await saveExtraSettings({ email_templates: tpls, email_sender: sender.trim(), email_sender_name: senderName.trim(), email_logo_url: logoUrl.trim(), email_store_logo_url: storeLogoUrl.trim(), email_admin_recipients: adminRecipients.trim(), email_admin_alerts_enabled: adminEnabled });

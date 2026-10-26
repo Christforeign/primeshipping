@@ -1,3 +1,4 @@
+import { sendClientEmail } from "@/lib/email.functions";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -44,8 +45,9 @@ export function AdminSupportInbox() {
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!sel || !text.trim()) return;
-    const { error } = await supabase.from("support_messages").insert({ user_id: sel, sender: "staff", body: text.trim() });
+    const { data: saved, error } = await supabase.from("support_messages").insert({ user_id: sel, sender: "staff", body: text.trim() }).select("id").single();
     if (error) return void toast.error(error.message);
+    if (saved) { try { const r = await sendClientEmail({ data: { kind: "support", supportMessageId: saved.id } }); if (!r.sent) toast.warning(r.reason); } catch (e) { toast.warning(e instanceof Error ? e.message : "Message enregistré, e-mail non envoyé"); } }
     setText("");
     qc.invalidateQueries({ queryKey: ["support-all"] });
   };

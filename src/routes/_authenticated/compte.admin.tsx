@@ -1,4 +1,5 @@
 // @ts-nocheck — legacy pages pending migration to real tables
+import { saveExtraSettings } from "@/lib/admin-settings";
 import { sendClientEmail } from "@/lib/email.functions";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -357,10 +358,12 @@ function AdminHubPage() {
     clientStore.getPaymentConfigs(),
   );
 
-  const handleUpdatePayment = (id: string, updates: Partial<AdminPaymentConfig>) => {
+  useEffect(() => { if (Array.isArray(s?.payment_configs)) { clientStore.savePaymentConfigs(s.payment_configs); setPaymentConfigs(s.payment_configs); } }, [s?.payment_configs]);
+
+  const handleUpdatePayment = async (id: string, updates: Partial<AdminPaymentConfig>) => {
     clientStore.updatePaymentConfig(id, updates);
     setPaymentConfigs([...clientStore.getPaymentConfigs()]);
-    toast.success("Moyen de paiement mis à jour !");
+    try { await saveExtraSettings({ payment_configs: clientStore.getPaymentConfigs() }); qc.invalidateQueries({ queryKey: ["company_settings"] }); toast.success("Moyen de paiement mis à jour !"); } catch (e) { toast.error(e instanceof Error ? e.message : "Enregistrement impossible"); }
   };
 
   // Customer Checkout fields management state

@@ -79,8 +79,9 @@ function CheckoutPage() {
 
   const [payments, setPayments] = useState<any[]>([]);
   useEffect(() => {
-    setPayments(clientStore.getPaymentConfigs().filter((p) => p.is_enabled && p.id !== "wallet"));
-  }, []);
+    const configured = Array.isArray(s?.payment_configs) ? s.payment_configs : clientStore.getPaymentConfigs();
+    setPayments(configured.filter((p) => p.is_enabled && p.id !== "wallet"));
+  }, [s?.payment_configs]);
   const [method, setMethod] = useState<string>("wallet");
   const [deliveryMode, setDeliveryMode] = useState<"pickup" | "home">("home");
   const [address, setAddress] = useState("");

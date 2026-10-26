@@ -5,7 +5,7 @@ import { packageEmailKind } from "./package-email";
 import { formatDate, nextPackageStep, statusLabel } from "./labels";
 import { orderEmailStage } from "./order-email";
 
-type Input = { kind: EmailKind; packageId?: string; orderId?: string; userId?: string; toEmail?: string; vars?: EmailVars; test?: boolean; cart?: { productId: string; variantId: string | null; quantity: number }[] };
+type Input = { kind: EmailKind; packageId?: string; orderId?: string; walletTxId?: string; supportMessageId?: string; userId?: string; toEmail?: string; vars?: EmailVars; test?: boolean; cart?: { productId: string; variantId: string | null; quantity: number }[] };
 
 export const sendClientEmail = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -23,6 +23,18 @@ export const sendClientEmail = createServerFn({ method: "POST" })
     let eventId: string | undefined;
     let adminLink = "/compte/admin";
     if (!staff && (data.test || data.kind === "alerte_admin")) throw new Error("Non autorisé");
+    if (data.walletTxId) {
+      const { data: tx, error } = await supabase.from("wallet_transactions").select("*").eq("id", data.walletTxId).single();
+      if (error || !tx || (!staff && tx.user_id !== userId)) throw new Error("Recharge inaccessible");
+      target = tx.user_id; kind = "portefeuille"; eventId = `wallet-${tx.id}-${tx.status}`;
+      data.vars = { reference: tx.id, montant: `${Number(tx.amount_usd).toFixed(2)} USD`, details: `Recharge ${tx.method} : ${tx.status === "pending" ? "en attente d’approbation" : tx.status === "approved" ? "approuvée" : "refusée"}` };
+    }
+    if (data.supportMessageId) {
+      const { data: message, error } = await supabase.from("support_messages").select("*").eq("id", data.supportMessageId).single();
+      if (error || !message || (!staff && message.user_id !== userId)) throw new Error("Message inaccessible");
+      target = message.user_id; kind = "support"; eventId = `support-${message.id}`;
+      data.vars = { reference: "Support", details: message.sender === "staff" ? message.body : `Votre message a bien été reçu. Notre équipe vous répondra dès que possible.\n\nVotre message : ${message.body}` };
+    }
     if (data.orderId) {
       const { data: order, error } = await supabase.from("shop_orders").select("*").eq("id", data.orderId).single();
       if (error || !order || (!staff && order.user_id !== userId)) throw new Error("Commande inaccessible");
