@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { saveExtraSettings } from "@/lib/admin-settings";
 import { EMAIL_KINDS, mergeTemplates, renderEmail, type EmailKind, type EmailTemplate } from "@/lib/email-templates";
 import { sendClientEmail } from "@/lib/email.functions";
+import { deleteCustomerAccount } from "@/lib/account.functions";
 import { Button } from "@/components/ui/button";
 import { ClientPicker } from "@/components/ClientPicker";
 import type { ClientHit } from "@/lib/admin-settings";
@@ -79,6 +80,31 @@ function CartReminder() {
       <h3 className="text-lg font-bold">Rappel des paniers</h3>
       <p className="text-sm text-muted-foreground">{carts.isLoading ? "Chargement…" : carts.isError ? "Impossible de lire les paniers." : `${carts.data?.length || 0} client(s) connecté(s) ont un panier non validé.`}</p>
       <Button size="lg" className="w-full text-base" disabled={busy || carts.isLoading} onClick={notifyAll}>{busy ? "Envoi en cours…" : "Notifier les clients de valider leur panier"}</Button>
+    </div>
+  );
+}
+
+function AccountDeleter() {
+  const del = useServerFn(deleteCustomerAccount);
+  const [client, setClient] = useState<ClientHit | null>(null);
+  const [busy, setBusy] = useState(false);
+  const go = async () => {
+    if (!client) return;
+    if (!window.confirm(`Supprimer définitivement le compte de ${client.full_name || client.email} ? Cette action est irréversible.`)) return;
+    setBusy(true);
+    try { await del({ data: { userId: client.id } }); toast.success("Compte supprimé"); setClient(null); }
+    catch (e) { toast.error(e instanceof Error ? e.message : "Suppression impossible"); }
+    finally { setBusy(false); }
+  };
+  return (
+    <div className="space-y-2">
+      {client ? (
+        <div className="flex items-center justify-between gap-2 rounded-md border border-border px-3 py-2 text-sm min-w-0">
+          <span className="truncate">{client.full_name || client.email} · {client.client_code}</span>
+          <Button type="button" variant="ghost" size="sm" onClick={() => setClient(null)}>Changer</Button>
+        </div>
+      ) : <ClientPicker onPick={setClient} />}
+      <Button type="button" variant="destructive" disabled={busy || !client} onClick={go}>{busy ? "Suppression…" : "Supprimer ce compte"}</Button>
     </div>
   );
 }
@@ -196,6 +222,8 @@ export function AdminEmailTemplates() {
         <p className="text-xs text-muted-foreground">Tous les comptes ayant le rôle Administrateur ou Super admin reçoivent automatiquement une alerte (commande, colis, recharge, support), à l'e-mail de leur compte. Le client reçoit séparément son propre e-mail.</p>
         <h4 className="text-sm font-medium">Ajouter un administrateur</h4>
         <AdminPromoter />
+        <h4 className="text-sm font-medium">Supprimer un compte client</h4>
+        <AccountDeleter />
         <input className={inp} type="url" placeholder="Logo Prime Store des e-mails (facultatif)" value={storeLogoUrl} onChange={(e) => setStoreLogoUrl(e.target.value)} />
         <Button disabled={busy} onClick={save}>Enregistrer</Button>
       </div>
