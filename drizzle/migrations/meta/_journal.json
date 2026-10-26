@@ -113,6 +113,13 @@
       "when": 1793056358682,
       "tag": "0015_product_currency_delivery",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1793059162845,
+      "tag": "0016_gourdes_wallet_debit_ceil_cent",
+      "breakpoints": true
     }
   ]
 }
