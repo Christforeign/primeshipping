@@ -108,7 +108,7 @@ async function run(data: Input & { vars: EmailVars }, context: { supabase: any; 
       const { data: products, error } = await supabase.from("products").select("id, title, variants").eq("is_active", true).in("id", cart.map((item) => item.productId));
       if (error) throw error;
       const lines = cart.map((item) => {
-        const product = products?.find((entry) => entry.id === item.productId);
+        const product = products?.find((entry: { id: string }) => entry.id === item.productId);
         if (!product) return "";
         const variants = Array.isArray(product.variants) ? product.variants as { id?: string; name?: string }[] : [];
         const variant = variants.find((entry) => entry.id === item.variantId);
