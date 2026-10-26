@@ -598,6 +598,7 @@ function AdminHubPage() {
     try {
       const { error } = await supabase.rpc("review_wallet_topup", { _tx_id: tx.id, _approve: true });
       if (error) throw new Error(error.message);
+      try { const r = await sendClientEmail({ data: { kind: "portefeuille", walletTxId: tx.id } }); if (!r.sent) toast.warning(r.reason); } catch (e) { toast.warning(e instanceof Error ? e.message : "Recharge enregistrée, e-mail non envoyé"); }
       qc.invalidateQueries({ queryKey: ["admin-wallet-approvals"] });
       qc.invalidateQueries({ queryKey: ["my-wallet"] });
       qc.invalidateQueries({ queryKey: ["wallet-balance"] });
@@ -611,6 +612,7 @@ function AdminHubPage() {
     try {
       const { error } = await supabase.rpc("review_wallet_topup", { _tx_id: tx.id, _approve: false });
       if (error) throw new Error(error.message);
+      try { const r = await sendClientEmail({ data: { kind: "portefeuille", walletTxId: tx.id } }); if (!r.sent) toast.warning(r.reason); } catch (e) { toast.warning(e instanceof Error ? e.message : "Recharge enregistrée, e-mail non envoyé"); }
       qc.invalidateQueries({ queryKey: ["admin-wallet-approvals"] });
       toast.error(`Recharge de ${tx.amount_usd} USD rejetée.`);
     } catch (err: unknown) {

@@ -95,7 +95,7 @@ export function AdminEmailTemplates() {
   }
 
   async function save() {
-    if (adminEnabled && adminRecipients.split(/[\s,;]+/).filter(Boolean).some((email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) return toast.error("Une adresse administrateur est invalide.");
+    if (adminEnabled && adminRecipients.split(/[\s,;]+/).filter(Boolean).some((email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) { toast.error("Une adresse administrateur est invalide."); return; }
     setBusy(true);
     try {
       await saveExtraSettings({ email_templates: tpls, email_sender: sender.trim(), email_sender_name: senderName.trim(), email_logo_url: logoUrl.trim(), email_store_logo_url: storeLogoUrl.trim(), email_admin_recipients: adminRecipients.trim(), email_admin_alerts_enabled: adminEnabled });
