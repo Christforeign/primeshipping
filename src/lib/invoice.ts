@@ -1047,6 +1047,7 @@ table{width:100%!important;table-layout:auto}
   [class*="totals"],[class*="summary"],[class*="box"]{width:100%!important;max-width:100%!important;margin-left:0!important}
   table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:11px!important}
   th,td{padding:6px 4px!important;width:auto!important}
+  th{white-space:nowrap;overflow-wrap:normal!important}
   h1{font-size:20px!important}
   button{float:none!important;width:100%!important;margin-bottom:10px}
 }
