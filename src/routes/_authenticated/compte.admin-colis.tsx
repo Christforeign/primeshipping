@@ -236,10 +236,16 @@ function AdminColis() {
       const { data: created, error } = await supabase
         .from("packages")
         .insert(rows)
-        .select("tracking_number");
+        .select("id,tracking_number");
 
       setBusy(false);
       if (error) return toast.error("Erreur : " + error.message);
+      for (const pkg of created ?? []) {
+        try {
+          const result = await sendClientEmail({ data: { kind: "colis_recu", packageId: pkg.id } });
+          if (!result.sent) toast.warning(`Colis enregistré. E-mail non envoyé : ${result.reason}`);
+        } catch (e) { toast.error(e instanceof Error ? e.message : "E-mail non envoyé"); }
+      }
       const data = { tracking_number: (created || []).map((r: any) => r.tracking_number).join(", ") };
 
       toast.success(`${validItems.length} colis enregistrés pour ce client : ${data.tracking_number}`);
@@ -296,12 +302,16 @@ function AdminColis() {
           status: (f.status as PackageStatus) || "recu_entrepot",
           created_by: user!.id,
         })
-        .select("tracking_number")
+        .select("id,tracking_number")
         .single();
 
       setBusy(false);
       if (error) return toast.error("Erreur : " + error.message);
 
+      try {
+        const result = await sendClientEmail({ data: { kind: "colis_recu", packageId: data.id } });
+        if (!result.sent) toast.warning(`Colis enregistré. E-mail non envoyé : ${result.reason}`);
+      } catch (e) { toast.error(e instanceof Error ? e.message : "E-mail non envoyé"); }
       toast.success(`Colis ${data.tracking_number} créé — le client est notifié`);
       notifyNewPackage(data.tracking_number, {
         userId: f.user_id,
@@ -314,9 +324,11 @@ function AdminColis() {
   };
 
   const changeStatus = async (id: string, status: PackageStatus): Promise<unknown> => {
+    const existing = (pkgs.data ?? []).find((p: any) => p.id === id);
+    if (!user || existing?.status === status) return;
     const { error } = await supabase
       .from("package_events")
-      .insert({ package_id: id, status, note: statusLabel(status), created_by: user!.id });
+      .insert({ package_id: id, status, note: statusLabel(status), created_by: user.id });
     if (error) return toast.error(error.message);
     const targetPkg = (pkgs.data ?? []).find((p: any) => p.id === id);
     if (targetPkg) {
@@ -326,25 +338,10 @@ function AdminColis() {
       });
     }
     if (targetPkg) {
-      const kind =
-        status === "recu_entrepot"
-          ? "colis_recu"
-          : status === "expedie" || status === "en_transit"
-            ? "transit"
-            : status === "arrive_haiti" || status === "disponible_retrait"
-              ? "arrivee"
-              : null;
-      if (kind) {
-        sendClientEmail({
-          data: {
-            kind,
-            userId: targetPkg.user_id,
-            vars: { tracking: targetPkg.tracking_number, details: targetPkg.description },
-          },
-        })
-          .then((r: any) => !r?.sent && r?.reason && toast.info(`E-mail non envoyé : ${r.reason}`))
-          .catch((e: any) => toast.error(e?.message ?? "E-mail non envoyé"));
-      }
+      try {
+        const result = await sendClientEmail({ data: { kind: "colis_recu", packageId: id } });
+        if (!result.sent) toast.warning(`Statut enregistré. E-mail non envoyé : ${result.reason}`);
+      } catch (e) { toast.error(e instanceof Error ? e.message : "E-mail non envoyé"); }
     }
     toast.success("Statut mis à jour — client notifié");
     qc.invalidateQueries({ queryKey: ["admin-packages"] });

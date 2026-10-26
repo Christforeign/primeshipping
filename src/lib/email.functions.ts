@@ -1,8 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { EMAIL_KINDS, mergeTemplates, renderEmail, type EmailKind, type EmailVars } from "./email-templates";
+import { packageEmailKind } from "./package-email";
+import { formatDate, nextPackageStep, statusLabel } from "./labels";
 
-type Input = { kind: EmailKind; userId?: string; toEmail?: string; vars?: EmailVars; test?: boolean; cart?: { productId: string; variantId: string | null; quantity: number }[] };
+type Input = { kind: EmailKind; packageId?: string; userId?: string; toEmail?: string; vars?: EmailVars; test?: boolean; cart?: { productId: string; variantId: string | null; quantity: number }[] };
 
 export const sendClientEmail = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -15,12 +17,24 @@ export const sendClientEmail = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: staff } = await supabase.rpc("is_staff", { _user_id: userId });
-    const target = data.userId || userId;
+    let target = data.userId || userId;
+    let kind = data.kind;
+    let eventId: string | undefined;
+    if (data.packageId) {
+      const { data: pkg, error } = await supabase.from("packages").select("id,user_id,tracking_number,status,description,updated_at").eq("id", data.packageId).single();
+      if (error || !pkg || (!staff && pkg.user_id !== userId)) throw new Error("Colis inaccessible");
+      if (data.toEmail || data.test) throw new Error("Envoi colis invalide");
+      target = pkg.user_id;
+      kind = packageEmailKind(pkg.status);
+      const { data: event } = await supabase.from("package_events").select("id,created_at").eq("package_id", pkg.id).eq("status", pkg.status).order("created_at", { ascending: false }).limit(1).maybeSingle();
+      eventId = event?.id || `${pkg.id}-${pkg.updated_at}`;
+      data.vars = { tracking: pkg.tracking_number, statut: statusLabel(pkg.status), prochaine_etape: nextPackageStep(pkg.status), date: formatDate(event?.created_at || pkg.updated_at), details: pkg.description };
+    }
     if (!staff && (target !== userId || data.toEmail)) throw new Error("Non autorisé");
 
     const { data: st } = await supabase.from("company_settings").select("*").eq("id", 1).maybeSingle();
     const extra = ((st as { extra?: Record<string, unknown> } | null)?.extra || {}) as Record<string, unknown>;
-    const tpl = mergeTemplates(extra["email_templates"])[data.kind];
+    const tpl = mergeTemplates(extra["email_templates"])[kind];
     if (!tpl.enabled && !data.test) return { sent: false, reason: "désactivé" };
     const senderEmail = String(extra["email_sender"] || "");
     const senderName = String(extra["email_sender_name"] || "Prime Express Shipping");
@@ -54,11 +68,15 @@ export const sendClientEmail = createServerFn({ method: "POST" })
 
     const key = process.env["BREVO_API_KEY"];
     if (!key) throw new Error("Clé Brevo manquante");
-    const { subject, html } = renderEmail(tpl, vars, senderName, String(extra["email_logo_url"] || "") || undefined);
+    const configuredSite = String(extra["site_url"] || "https://primeshipping.net");
+    const siteUrl = /^https:\/\//.test(configuredSite) ? configuredSite.replace(/\/$/, "") : "https://primeshipping.net";
+    const configuredLogo = String(extra["email_logo_url"] || "");
+    const logoUrl = configuredLogo.startsWith("/") ? `${siteUrl}${configuredLogo}` : configuredLogo;
+    const { subject, html } = renderEmail(tpl, vars, senderName, logoUrl || undefined, siteUrl);
     const res = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: { "api-key": key, "content-type": "application/json", accept: "application/json" },
-      body: JSON.stringify({ sender: { name: senderName, email: senderEmail }, to: [{ email: to, name: vars.nom || undefined }], subject, htmlContent: html }),
+      body: JSON.stringify({ sender: { name: senderName, email: senderEmail }, to: [{ email: to, name: vars.nom || undefined }], subject, htmlContent: html, ...(eventId ? { headers: { idempotencyKey: `package-${eventId}` } } : {}) }),
     });
     if (!res.ok) {
       const t = await res.text();

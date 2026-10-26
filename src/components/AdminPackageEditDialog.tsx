@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { notifyPackageStatusChange } from "@/lib/push-notifications";
 import { statusLabel } from "@/lib/labels";
 import { useSettings } from "@/lib/settings";
+import { sendClientEmail } from "@/lib/email.functions";
 
 type Pkg = Record<string, any>;
 
@@ -70,11 +71,16 @@ export function AdminPackageEditDialog({
         created_by: userId,
       });
       if (e2) toast.error(e2.message);
-      else
+      else {
         notifyPackageStatusChange(pkg.tracking_number, statusLabel("recu_entrepot"), {
           userId: pkg.user_id,
           description: f.description,
         });
+        try {
+          const result = await sendClientEmail({ data: { kind: "colis_recu", packageId: pkg.id } });
+          if (!result.sent) toast.warning(`Colis validé. E-mail non envoyé : ${result.reason}`);
+        } catch (e) { toast.error(e instanceof Error ? e.message : "E-mail non envoyé"); }
+      }
     }
     setSaving(false);
     toast.success(validate ? "Colis validé — client notifié" : "Colis mis à jour");

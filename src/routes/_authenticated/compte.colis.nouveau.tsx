@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/PageHeader";
 import { usePackageFields } from "@/components/PackageForm";
 import { packageSubmissionError } from "@/lib/package-estimate";
+import { sendClientEmail } from "@/lib/email.functions";
 
 export const Route = createFileRoute("/_authenticated/compte/colis/nouveau")({
   head: () => ({ meta: [
@@ -52,6 +53,10 @@ function NewPackage() {
       } else if (error) throw error;
       if (!saved) throw new Error("La confirmation du colis est indisponible. Réessayez.");
       toast.success(`Colis déclaré : ${saved.tracking_number}`);
+      try {
+        const result = await sendClientEmail({ data: { kind: "colis_attente", packageId: saved.id } });
+        if (!result.sent) toast.warning(`Colis enregistré. E-mail non envoyé : ${result.reason}`);
+      } catch { toast.warning("Votre colis est enregistré, mais son e-mail n’a pas pu être envoyé."); }
       navigate({ to: "/compte/colis/$id", params: { id: saved.id } });
     } catch (err) {
       setFailure(packageSubmissionError(err, navigator.onLine));
