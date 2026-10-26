@@ -4,6 +4,8 @@ import { Bell } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/lib/session";
 
+const TTL = 10 * 60 * 1000;
+
 type Notif = {
   id: string;
   title: string;
@@ -28,9 +30,16 @@ export function NotificationBell() {
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(30);
-      if (active) setItems((data as Notif[]) ?? []);
+      const cutoff = Date.now() - TTL;
+      const fresh = ((data as Notif[]) ?? []).filter((n) => !n.is_read && new Date(n.created_at).getTime() > cutoff);
+      if (active) setItems(fresh);
+      await supabase.from("user_notifications").delete().eq("user_id", user.id).or(`is_read.eq.true,created_at.lt.${new Date(cutoff).toISOString()}`);
     };
     load();
+    const timer = setInterval(() => {
+      const cutoff = Date.now() - TTL;
+      setItems((p) => p.filter((n) => new Date(n.created_at).getTime() > cutoff));
+    }, 30000);
     if (typeof Notification !== "undefined" && Notification.permission === "default") {
       Notification.requestPermission().catch(() => {});
     }
@@ -59,6 +68,7 @@ export function NotificationBell() {
       .subscribe();
     return () => {
       active = false;
+      clearInterval(timer);
       supabase.removeChannel(ch);
     };
   }, [user]);
@@ -67,12 +77,8 @@ export function NotificationBell() {
   const unread = items.filter((i) => !i.is_read).length;
 
   const markAll = async () => {
-    await supabase
-      .from("user_notifications")
-      .update({ is_read: true })
-      .eq("user_id", user.id)
-      .eq("is_read", false);
-    setItems((p) => p.map((i) => ({ ...i, is_read: true })));
+    setItems([]);
+    await supabase.from("user_notifications").delete().eq("user_id", user.id);
   };
 
   return (
@@ -96,7 +102,7 @@ export function NotificationBell() {
             <span className="text-sm font-bold">Notifications</span>
             {unread > 0 && (
               <button onClick={markAll} className="text-xs text-primary hover:underline">
-                Tout marquer lu
+                Tout effacer
               </button>
             )}
           </div>
@@ -110,7 +116,11 @@ export function NotificationBell() {
               <Link
                 key={n.id}
                 to={(n.link ?? "/compte") as "/compte"}
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  setOpen(false);
+                  setItems((p) => p.filter((x) => x.id !== n.id));
+                  void supabase.from("user_notifications").delete().eq("id", n.id);
+                }}
                 className={`block rounded-xl px-3 py-2 text-sm hover:bg-muted ${n.is_read ? "" : "bg-secondary/60"}`}
               >
                 <div className="font-semibold">{n.title}</div>
