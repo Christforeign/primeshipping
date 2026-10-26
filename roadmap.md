@@ -16,7 +16,7 @@
 - [x] Envoi manuel d'e-mail, paiement/recharge en pleine page avec X
 
 ## À faire
-- [ ] Corriger les prix libres, coordonnées répétées et totaux selon paiement ; retirer la carte bancaire du checkout.
+- [x] Prix libres sans prix de base, coordonnées dédupliquées, totaux gourdes hors Prime et USD pour Prime ; carte bancaire retirée. 14 tests réussis et parcours connecté produit libre → MonCash → Prime vérifié sans achat.
 - [x] Minimum montant/quantité par produit et conditions administrables : 8 tests réussis, sauvegarde et parcours jusqu’au paiement vérifiés connecté sans achat réel.
 - [x] Suppression des comptes sans clé privée et suppression confirmée des colis : parcours connectés vérifiés sur données temporaires, protections testées ; redéploiement Vercel requis.
 - [ ] Confirmer l’envoi du nouveau colis depuis Vercel — clé Brevo valide et expéditeur configuré, mais aucune requête pour ce colis dans Brevo ; absence de compte du demandeur pour reproduire. Erreurs précises et renvoi manuel ajoutés.
