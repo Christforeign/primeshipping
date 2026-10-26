@@ -559,7 +559,9 @@ function AdminHubPage() {
       variants: prodVariants,
       media_urls: mediaArray,
       video_url: prodVideoUrl.trim() || null,
-      custom_fields: prodCustomFields,
+      custom_fields: prodCustomFields.map((f) =>
+        f.options ? { ...f, options: f.options.map((o) => o.trim()).filter(Boolean) } : f,
+      ),
       is_active: true,
       extra: { ...(editingProduct?.extra || {}), price_currency: prodAmountMode ? "USD" : prodCurrency, delivery_pricing: prodDeliveryPricing, delivery_fee_htg: Number(prodDeliveryFee), order_mode: prodOrderMode, order_link: prodOrderLink.trim(), amount_mode: prodAmountMode ? "custom_usd" : "fixed", product_rate_htg: prodAmountMode ? Number(prodSpecificRate) : null, minimum_quantity: prodAmountMode ? 1 : minimumQty, minimum_order_usd: minimumUsd, order_notice: prodOrderNotice.trim() },
     };
