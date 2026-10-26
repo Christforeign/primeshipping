@@ -17,7 +17,8 @@ export function SiteFooter() {
   const socials = activeSocialLinks(s);
 
   return (
-    <footer className="mt-24 bg-forest text-forest-foreground">
+    <footer className="relative mt-24 bg-forest text-forest-foreground">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-4">
         {/* Company Identity & Logo */}
         <div className="md:col-span-2 space-y-4">
