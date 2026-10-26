@@ -9,7 +9,7 @@ import { sendClientEmail } from "@/lib/email.functions";
 import { ClientPicker } from "@/components/ClientPicker";
 import type { ClientHit } from "@/lib/admin-settings";
 
-const SAMPLE = { nom: "Jean Exemple", code: "PS-0001", tracking: "1Z999AA10123456784", reference: "F-0042", montant: "45.00 USD", details: "Poids : 6 lbs" };
+const SAMPLE = { nom: "Jean Exemple", code: "PS-0001", tracking: "1Z999AA10123456784", reference: "F-0042", montant: "45.00 USD", details: "Poids : 6 lbs", statut: "Reçu", prochaine_etape: "En transit", date: "26 octobre 2026 à 12:43" };
 
 function ManualSend() {
   const send = useServerFn(sendClientEmail);
@@ -63,6 +63,7 @@ export function AdminEmailTemplates() {
   const [tpls, setTpls] = useState<Record<EmailKind, EmailTemplate>>(mergeTemplates({}));
   const [sender, setSender] = useState("");
   const [senderName, setSenderName] = useState("Prime Express Shipping");
+  const [logoUrl, setLogoUrl] = useState("");
   const [kind, setKind] = useState<EmailKind>("colis_recu");
   const [testTo, setTestTo] = useState("");
   const [busy, setBusy] = useState(false);
@@ -72,16 +73,17 @@ export function AdminEmailTemplates() {
     setTpls(mergeTemplates(data["email_templates"]));
     setSender(String(data["email_sender"] || ""));
     setSenderName(String(data["email_sender_name"] || "Prime Express Shipping"));
+    setLogoUrl(String(data["email_logo_url"] || ""));
   }, [data]);
 
   const t = tpls[kind];
   const upd = (p: Partial<EmailTemplate>) => setTpls({ ...tpls, [kind]: { ...t, ...p } });
-  const preview = renderEmail(t, SAMPLE, senderName);
+  const preview = renderEmail(t, SAMPLE, senderName, logoUrl || undefined);
 
   async function save() {
     setBusy(true);
     try {
-      await saveExtraSettings({ email_templates: tpls, email_sender: sender.trim(), email_sender_name: senderName.trim() });
+      await saveExtraSettings({ email_templates: tpls, email_sender: sender.trim(), email_sender_name: senderName.trim(), email_logo_url: logoUrl.trim() });
       qc.invalidateQueries({ queryKey: ["email_settings"] });
       toast.success("Emails enregistrés");
     } catch (e) { toast.error((e as Error).message); } finally { setBusy(false); }
@@ -90,7 +92,7 @@ export function AdminEmailTemplates() {
     if (!testTo) { toast.error("Saisis un email de test"); return; }
     setBusy(true);
     try {
-      await saveExtraSettings({ email_templates: tpls, email_sender: sender.trim(), email_sender_name: senderName.trim() });
+      await saveExtraSettings({ email_templates: tpls, email_sender: sender.trim(), email_sender_name: senderName.trim(), email_logo_url: logoUrl.trim() });
       const r = await send({ data: { kind, toEmail: testTo.trim(), vars: SAMPLE, test: true } });
       r.sent ? toast.success("Email de test envoyé") : toast.error(r.reason);
     } catch (e) { toast.error((e as Error).message); } finally { setBusy(false); }
@@ -106,6 +108,7 @@ export function AdminEmailTemplates() {
           <input className={inp} placeholder="Nom affiché" value={senderName} onChange={(e) => setSenderName(e.target.value)} />
           <input className={inp} type="email" placeholder="ton-email@exemple.com" value={sender} onChange={(e) => setSender(e.target.value)} />
         </div>
+        <input className={inp} type="url" placeholder="Logo des e-mails — adresse https (facultatif)" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} />
       </div>
 
       <div className="rounded-lg border border-border bg-card p-4 space-y-3">
@@ -118,7 +121,7 @@ export function AdminEmailTemplates() {
         <input className={inp} value={t.subject} onChange={(e) => upd({ subject: e.target.value })} placeholder="Sujet" />
         <textarea className={inp} rows={6} value={t.body} onChange={(e) => upd({ body: e.target.value })} />
         <label className="flex items-center gap-2 text-sm">Couleur <input type="color" value={t.color} onChange={(e) => upd({ color: e.target.value })} /></label>
-        <p className="text-xs text-muted-foreground">Variables : {"{{nom}} {{code}} {{tracking}} {{reference}} {{montant}} {{details}}"}</p>
+        <p className="text-xs text-muted-foreground">Variables : {"{{nom}} {{code}} {{tracking}} {{reference}} {{montant}} {{details}} {{statut}} {{prochaine_etape}} {{date}}"}</p>
         <div className="rounded-md border border-border overflow-hidden">
           <div className="text-xs px-3 py-2 bg-muted">Aperçu — {preview.subject}</div>
           <div className="max-w-full overflow-x-auto" dangerouslySetInnerHTML={{ __html: preview.html }} />

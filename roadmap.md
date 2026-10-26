@@ -16,6 +16,10 @@
 - [x] Envoi manuel d'e-mail, paiement/recharge en pleine page avec X
 
 ## À faire
+- [x] Simplifier Mes colis et retirer le faux message d’adresse non attribuée
+- [x] Restreindre le suivi public/non-propriétaire au statut, date et prochaine étape (contrôle dans la base)
+- [x] Ordonner les sept statuts français et enrichir les e-mails de chaque transition (7 tests réussis)
+- [ ] Vérifier les pages connectées, la confidentialité sur un colis réel et la réception de chaque e-mail — aucun compte du demandeur disponible pour les tests ; connexion dans l’aperçu nécessaire
 - [x] Bandeau supérieur de paiements remplacé par un seul bandeau de marques ; paiements du pied de page conservés
 - [x] Logos authentiques MonCash, Natcash, PayPal et WhatsApp ; bouton WhatsApp unique (images chargées, mobile sans débordement)
 - [x] Réseaux et e-mail du support affichés depuis les réglages existants ; sélection d’icône ajoutée dans l’administration (sauvegarde connectée non testée)

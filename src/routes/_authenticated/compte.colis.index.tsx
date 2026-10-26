@@ -6,10 +6,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageHeader } from "@/components/PageHeader";
 import { StatusBadge } from "@/components/StatusBadge";
 import { formatDate } from "@/lib/labels";
-import { profileQuery } from "@/lib/session";
-import { UsaAddressCard } from "@/components/UsaAddressCard";
 
 export const Route = createFileRoute("/_authenticated/compte/colis/")({
+  head: () => ({ meta: [
+    { title: "Mes colis — Prime Shipping" },
+    { name: "description", content: "Retrouvez et déclarez vos colis Prime Shipping." },
+    { property: "og:title", content: "Mes colis — Prime Shipping" },
+    { property: "og:description", content: "Vos colis et leurs étapes de livraison." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
   component: MyPackages,
 });
 
@@ -27,17 +33,15 @@ function MyPackages() {
       return data;
     },
   });
-  const profile = useQuery(profileQuery(user.id)).data;
   return (
     <div className="space-y-6">
-      <PageHeader title="Prime Shipping — Mes colis">
+      <PageHeader title="Mes colis">
         <Button asChild>
           <Link to="/compte/colis/nouveau">
             <PackagePlus /> Déclarer un colis
           </Link>
         </Button>
       </PageHeader>
-      {profile?.client_code && <UsaAddressCard fullName={profile.full_name} code={profile.client_code} />}
       {q.isLoading ? (
         <p>Chargement…</p>
       ) : (q.data ?? []).length === 0 ? (
@@ -46,7 +50,7 @@ function MyPackages() {
         </p>
       ) : (
         <div className="grid gap-3">
-          {q.data!.map((p) => (
+          {(q.data ?? []).map((p) => (
             <Link
               key={p.id}
               to="/compte/colis/$id"
