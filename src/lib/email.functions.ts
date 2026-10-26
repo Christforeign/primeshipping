@@ -16,6 +16,25 @@ export const sendClientEmail = createServerFn({ method: "POST" })
     return { ...d, vars };
   })
   .handler(async ({ data, context }) => {
+    const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
+    const log = async (message: string) => { console.error("email", data.kind, message); await context.supabase.from("app_error_logs").insert({ user_id: context.userId, source: `email:${data.kind}`, message: message.slice(0, 2000), context: { packageId: data.packageId, orderId: data.orderId, walletTxId: data.walletTxId } as never }); };
+    try {
+      const r = await run(data, context);
+      if (r.reason) await log(r.reason);
+      return isStaff ? r : { ...r, reason: "" };
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      await log(message);
+      return { sent: false, reason: isStaff ? message : "", messageId: undefined };
+    }
+  });
+
+async function shortKey(raw: string) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw));
+  return [...new Uint8Array(buf)].slice(0, 16).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function run(data: Input & { vars: EmailVars }, context: { supabase: any; userId: string; claims: { email?: unknown } }): Promise<{ sent: boolean; reason: string; messageId?: string | undefined }> {
     const { supabase, userId } = context;
     const { data: staff } = await supabase.rpc("is_staff", { _user_id: userId });
     let target = data.userId || userId;
@@ -116,7 +135,7 @@ export const sendClientEmail = createServerFn({ method: "POST" })
     const res = await fetch(endpoint, {
       method: "POST",
       headers: { ...authHeaders, "content-type": "application/json", accept: "application/json" },
-      body: JSON.stringify({ sender: { name: senderName, email: senderEmail }, to: [{ email: to, name: vars.nom || undefined }], subject, htmlContent: html, ...(eventId ? { headers: { idempotencyKey: `event-${eventId}` } } : {}) }),
+      body: JSON.stringify({ sender: { name: senderName, email: senderEmail }, to: [{ email: to, name: vars.nom || undefined }], subject, htmlContent: html, ...(eventId ? { headers: { idempotencyKey: await shortKey(`event-${eventId}`) } } : {}) }),
     });
     if (!res.ok) {
       const t = await res.text();
@@ -133,10 +152,10 @@ export const sendClientEmail = createServerFn({ method: "POST" })
         const adminVars = { ...vars, lien: `${siteUrl}${adminLink}`, details: `Client : ${vars.nom || ""} (${vars.code || ""})\n${vars.produit || ""}\n${vars.details || ""}`, produit: "" };
         const rendered = renderEmail(adminTemplate, adminVars, senderName, logoUrl || undefined, siteUrl);
         for (const email of recipients) {
-          const alert = await fetch(endpoint, { method: "POST", headers: { ...authHeaders, "content-type": "application/json" }, body: JSON.stringify({ sender: { name: senderName, email: senderEmail }, to: [{ email }], subject: rendered.subject, htmlContent: rendered.html, ...(eventId ? { headers: { idempotencyKey: `admin-${eventId}-${email}` } } : {}) }) });
+          const alert = await fetch(endpoint, { method: "POST", headers: { ...authHeaders, "content-type": "application/json" }, body: JSON.stringify({ sender: { name: senderName, email: senderEmail }, to: [{ email }], subject: rendered.subject, htmlContent: rendered.html, ...(eventId ? { headers: { idempotencyKey: await shortKey(`admin-${eventId}-${email}`) } } : {}) }) });
           if (!alert.ok) { const body = await alert.text(); console.error(`Brevo admin [${alert.status}]: ${body}`); adminWarning = `Alerte administrateur refusée (${alert.status}) : ${body.slice(0, 200)}`; }
         }
       }
     }
     return { sent: true, reason: adminWarning, messageId: receipt.messageId };
-  });
+  }
