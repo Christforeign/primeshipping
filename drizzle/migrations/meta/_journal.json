@@ -22,6 +22,13 @@
       "when": 1792965326977,
       "tag": "0002_wallet_topup_rpcs",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792982482693,
+      "tag": "0003_shop_orders",
+      "breakpoints": true
     }
   ]
 }

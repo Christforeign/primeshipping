@@ -402,6 +402,99 @@ export type Database = {
         }
         Relationships: []
       }
+      shop_orders: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          custom_field_responses: Json
+          customer_city: string | null
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
+          delivery_address: string | null
+          id: string
+          order_number: string
+          payment_method: string
+          payment_proof_url: string | null
+          payment_reference: string | null
+          product_id: string | null
+          product_kind: string | null
+          product_title: string
+          quantity: number
+          service_fee_usd: number
+          status: string
+          subtotal_usd: number
+          tax_amount_usd: number
+          total_htg: number
+          total_usd: number
+          unit_price_usd: number
+          updated_at: string
+          user_id: string
+          variant_id: string | null
+          variant_name: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          custom_field_responses?: Json
+          customer_city?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          delivery_address?: string | null
+          id?: string
+          order_number?: string
+          payment_method: string
+          payment_proof_url?: string | null
+          payment_reference?: string | null
+          product_id?: string | null
+          product_kind?: string | null
+          product_title: string
+          quantity?: number
+          service_fee_usd?: number
+          status?: string
+          subtotal_usd?: number
+          tax_amount_usd?: number
+          total_htg?: number
+          total_usd?: number
+          unit_price_usd?: number
+          updated_at?: string
+          user_id: string
+          variant_id?: string | null
+          variant_name?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          custom_field_responses?: Json
+          customer_city?: string | null
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
+          delivery_address?: string | null
+          id?: string
+          order_number?: string
+          payment_method?: string
+          payment_proof_url?: string | null
+          payment_reference?: string | null
+          product_id?: string | null
+          product_kind?: string | null
+          product_title?: string
+          quantity?: number
+          service_fee_usd?: number
+          status?: string
+          subtotal_usd?: number
+          tax_amount_usd?: number
+          total_htg?: number
+          total_usd?: number
+          unit_price_usd?: number
+          updated_at?: string
+          user_id?: string
+          variant_id?: string | null
+          variant_name?: string | null
+        }
+        Relationships: []
+      }
       support_messages: {
         Row: {
           body: string
@@ -583,6 +676,7 @@ export type Database = {
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      place_shop_order: { Args: { _order: Json }; Returns: Json }
       request_wallet_topup: {
         Args: {
           _amount_htg: number
