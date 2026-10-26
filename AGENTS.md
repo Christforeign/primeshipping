@@ -10,3 +10,6 @@
 > the editor, so keep the branch in a working state.
 
 <!-- LOVABLE:END -->
+
+- Keep the boutique catalogue in `boutique.index.tsx` and product details in `boutique.$id.tsx` as sibling leaves; otherwise the catalogue hides checkout without an Outlet.
+- Public boutique pages read active products from Lovable Cloud and show query failures explicitly; browser-local sample products must not replace the real catalogue.

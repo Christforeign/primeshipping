@@ -15,7 +15,6 @@ import { Route as AchatRouteImport } from './routes/achat'
 import { Route as AchatAssisteRouteImport } from './routes/achat-assiste'
 import { Route as AssisterAchatRouteImport } from './routes/assister-achat'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as BoutiqueRouteImport } from './routes/boutique'
 import { Route as ConditionsRouteImport } from './routes/conditions'
 import { Route as DemandeAchatRouteImport } from './routes/demande-achat'
 import { Route as FaqRouteImport } from './routes/faq'
@@ -25,6 +24,7 @@ import { Route as ServicesRouteImport } from './routes/services'
 import { Route as SuiviRouteImport } from './routes/suivi'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as AuthenticatedCompteRouteImport } from './routes/_authenticated/compte'
+import { Route as BoutiqueIndexRouteImport } from './routes/boutique.index'
 import { Route as BoutiqueIdRouteImport } from './routes/boutique.$id'
 import { Route as AuthenticatedCompteIndexRouteImport } from './routes/_authenticated/compte.index'
 import { Route as AuthenticatedCompteAdminRouteImport } from './routes/_authenticated/compte.admin'
@@ -64,11 +64,6 @@ const AssisterAchatRoute = AssisterAchatRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BoutiqueRoute = BoutiqueRouteImport.update({
-  id: '/boutique',
-  path: '/boutique',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConditionsRoute = ConditionsRouteImport.update({
@@ -116,10 +111,15 @@ const AuthenticatedCompteRoute = AuthenticatedCompteRouteImport.update({
   path: '/compte',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const BoutiqueIndexRoute = BoutiqueIndexRouteImport.update({
+  id: '/boutique/',
+  path: '/boutique/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BoutiqueIdRoute = BoutiqueIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => BoutiqueRoute,
+  id: '/boutique/$id',
+  path: '/boutique/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedCompteIndexRoute =
   AuthenticatedCompteIndexRouteImport.update({
@@ -188,7 +188,6 @@ export interface FileRoutesByFullPath {
   '/achat-assiste': typeof AchatAssisteRoute
   '/assister-achat': typeof AssisterAchatRoute
   '/auth': typeof AuthRoute
-  '/boutique': typeof BoutiqueRouteWithChildren
   '/conditions': typeof ConditionsRoute
   '/demande-achat': typeof DemandeAchatRoute
   '/faq': typeof FaqRoute
@@ -199,6 +198,7 @@ export interface FileRoutesByFullPath {
   '/support': typeof SupportRoute
   '/compte': typeof AuthenticatedCompteRouteWithChildren
   '/boutique/$id': typeof BoutiqueIdRoute
+  '/boutique/': typeof BoutiqueIndexRoute
   '/compte/admin': typeof AuthenticatedCompteAdminRoute
   '/compte/admin-colis': typeof AuthenticatedCompteAdminColisRoute
   '/compte/adresses': typeof AuthenticatedCompteAdressesRoute
@@ -216,7 +216,6 @@ export interface FileRoutesByTo {
   '/achat-assiste': typeof AchatAssisteRoute
   '/assister-achat': typeof AssisterAchatRoute
   '/auth': typeof AuthRoute
-  '/boutique': typeof BoutiqueRouteWithChildren
   '/conditions': typeof ConditionsRoute
   '/demande-achat': typeof DemandeAchatRoute
   '/faq': typeof FaqRoute
@@ -226,6 +225,7 @@ export interface FileRoutesByTo {
   '/suivi': typeof SuiviRoute
   '/support': typeof SupportRoute
   '/boutique/$id': typeof BoutiqueIdRoute
+  '/boutique': typeof BoutiqueIndexRoute
   '/compte/admin': typeof AuthenticatedCompteAdminRoute
   '/compte/admin-colis': typeof AuthenticatedCompteAdminColisRoute
   '/compte/adresses': typeof AuthenticatedCompteAdressesRoute
@@ -245,7 +245,6 @@ export interface FileRoutesById {
   '/achat-assiste': typeof AchatAssisteRoute
   '/assister-achat': typeof AssisterAchatRoute
   '/auth': typeof AuthRoute
-  '/boutique': typeof BoutiqueRouteWithChildren
   '/conditions': typeof ConditionsRoute
   '/demande-achat': typeof DemandeAchatRoute
   '/faq': typeof FaqRoute
@@ -256,6 +255,7 @@ export interface FileRoutesById {
   '/support': typeof SupportRoute
   '/_authenticated/compte': typeof AuthenticatedCompteRouteWithChildren
   '/boutique/$id': typeof BoutiqueIdRoute
+  '/boutique/': typeof BoutiqueIndexRoute
   '/_authenticated/compte/admin': typeof AuthenticatedCompteAdminRoute
   '/_authenticated/compte/admin-colis': typeof AuthenticatedCompteAdminColisRoute
   '/_authenticated/compte/adresses': typeof AuthenticatedCompteAdressesRoute
@@ -275,7 +275,6 @@ export interface FileRouteTypes {
     | '/achat-assiste'
     | '/assister-achat'
     | '/auth'
-    | '/boutique'
     | '/conditions'
     | '/demande-achat'
     | '/faq'
@@ -286,6 +285,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/compte'
     | '/boutique/$id'
+    | '/boutique/'
     | '/compte/admin'
     | '/compte/admin-colis'
     | '/compte/adresses'
@@ -303,7 +303,6 @@ export interface FileRouteTypes {
     | '/achat-assiste'
     | '/assister-achat'
     | '/auth'
-    | '/boutique'
     | '/conditions'
     | '/demande-achat'
     | '/faq'
@@ -313,6 +312,7 @@ export interface FileRouteTypes {
     | '/suivi'
     | '/support'
     | '/boutique/$id'
+    | '/boutique'
     | '/compte/admin'
     | '/compte/admin-colis'
     | '/compte/adresses'
@@ -331,7 +331,6 @@ export interface FileRouteTypes {
     | '/achat-assiste'
     | '/assister-achat'
     | '/auth'
-    | '/boutique'
     | '/conditions'
     | '/demande-achat'
     | '/faq'
@@ -342,6 +341,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/_authenticated/compte'
     | '/boutique/$id'
+    | '/boutique/'
     | '/_authenticated/compte/admin'
     | '/_authenticated/compte/admin-colis'
     | '/_authenticated/compte/adresses'
@@ -361,7 +361,6 @@ export interface RootRouteChildren {
   AchatAssisteRoute: typeof AchatAssisteRoute
   AssisterAchatRoute: typeof AssisterAchatRoute
   AuthRoute: typeof AuthRoute
-  BoutiqueRoute: typeof BoutiqueRouteWithChildren
   ConditionsRoute: typeof ConditionsRoute
   DemandeAchatRoute: typeof DemandeAchatRoute
   FaqRoute: typeof FaqRoute
@@ -370,6 +369,8 @@ export interface RootRouteChildren {
   ServicesRoute: typeof ServicesRoute
   SuiviRoute: typeof SuiviRoute
   SupportRoute: typeof SupportRoute
+  BoutiqueIdRoute: typeof BoutiqueIdRoute
+  BoutiqueIndexRoute: typeof BoutiqueIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -414,13 +415,6 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/boutique': {
-      id: '/boutique'
-      path: '/boutique'
-      fullPath: '/boutique'
-      preLoaderRoute: typeof BoutiqueRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/conditions': {
@@ -486,12 +480,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCompteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/boutique/': {
+      id: '/boutique/'
+      path: '/boutique'
+      fullPath: '/boutique/'
+      preLoaderRoute: typeof BoutiqueIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/boutique/$id': {
       id: '/boutique/$id'
-      path: '/$id'
+      path: '/boutique/$id'
       fullPath: '/boutique/$id'
       preLoaderRoute: typeof BoutiqueIdRouteImport
-      parentRoute: typeof BoutiqueRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/compte/': {
       id: '/_authenticated/compte/'
@@ -606,18 +607,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
-interface BoutiqueRouteChildren {
-  BoutiqueIdRoute: typeof BoutiqueIdRoute
-}
-
-const BoutiqueRouteChildren: BoutiqueRouteChildren = {
-  BoutiqueIdRoute: BoutiqueIdRoute,
-}
-
-const BoutiqueRouteWithChildren = BoutiqueRoute._addFileChildren(
-  BoutiqueRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -625,7 +614,6 @@ const rootRouteChildren: RootRouteChildren = {
   AchatAssisteRoute: AchatAssisteRoute,
   AssisterAchatRoute: AssisterAchatRoute,
   AuthRoute: AuthRoute,
-  BoutiqueRoute: BoutiqueRouteWithChildren,
   ConditionsRoute: ConditionsRoute,
   DemandeAchatRoute: DemandeAchatRoute,
   FaqRoute: FaqRoute,
@@ -634,6 +622,8 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesRoute: ServicesRoute,
   SuiviRoute: SuiviRoute,
   SupportRoute: SupportRoute,
+  BoutiqueIdRoute: BoutiqueIdRoute,
+  BoutiqueIndexRoute: BoutiqueIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

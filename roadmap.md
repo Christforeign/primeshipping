@@ -16,4 +16,5 @@
 - [x] Envoi manuel d'e-mail, paiement/recharge en pleine page avec X
 
 ## À faire
+- [x] Catalogue réel et navigation « Commander » vers la fiche produit (tests ordinateur/mobile)
 - [ ] Chasse aux erreurs « Cette page n'a pas pu s'afficher »
