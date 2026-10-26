@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { formatNumber } from "@/lib/utils";
 import { readCart, writeCart } from "@/lib/cart";
 import { topupPrice } from "@/lib/product-pricing";
+import { DEFAULT_ORDER_NOTICE, orderMinimumError } from "@/lib/order-minimums";
 import { deliveryChoices } from "@/lib/delivery-options";
 
 export const Route = createFileRoute("/boutique/commande")({
@@ -157,6 +158,7 @@ function CheckoutPage() {
   if (freeAmount) { try { amountPrice = topupPrice(Number(sel.requestedAmountUsd), Number(product.extra?.product_rate_htg), rate); } catch { /* invalid selection cannot be submitted */ } }
   const qty = freeAmount ? 1 : Math.max(1, Number(sel.quantity) || 1);
   const subtotal = freeAmount ? amountPrice.walletUsd : +(unit * qty).toFixed(2);
+  const minimumError = orderMinimumError(product.extra, qty, freeAmount ? Number(sel.requestedAmountUsd) : subtotal, freeAmount);
   const taxRate = product.apply_tax ? Number(product.tax_rate_override ?? (s?.tax_enabled ? s?.tax_rate || 0 : 0)) : 0;
   const tax = +((subtotal * taxRate) / 100).toFixed(2);
   const pay = payments.find((p) => p.id === method);
@@ -176,6 +178,7 @@ function CheckoutPage() {
   };
 
   const submit = async () => {
+    if (minimumError) return toast.error(minimumError);
     if (freeAmount && !amountPrice.walletUsd) return toast.error("Revenez au produit pour saisir le montant à recharger.");
     if (needsShipping && deliveryMode === "pickup" && !pickupAddress) return toast.error("L'adresse de la succursale doit être renseignée par l'équipe avant de commander en retrait.");
     if (needsShipping && deliveryMode === "home" && !address.trim()) return toast.error("Indiquez votre adresse de livraison en Haïti.");
@@ -341,7 +344,9 @@ function CheckoutPage() {
           <span>Total</span>
           <span className="text-right">{total.toFixed(2)} USD<br /><span className="text-xs font-normal text-muted-foreground">≈ {formatNumber(totalHtg)} HTG</span></span>
         </div>
-        <Button className="w-full h-12 mt-2 font-black" disabled={submitting || walletShort} onClick={submit}>
+        {minimumError && <div role="alert" className="text-sm text-destructive">{minimumError} <Link to="/boutique/$id" params={{ id: product.id }} className="underline">Modifier ma sélection</Link></div>}
+        <p className="text-sm text-muted-foreground whitespace-pre-line pt-3">{product.extra?.order_notice ?? DEFAULT_ORDER_NOTICE}</p>
+        <Button className="w-full h-12 mt-2 font-black" disabled={submitting || walletShort || !!minimumError} onClick={submit}>
           {submitting ? "Validation…" : "Valider ma commande"}
         </Button>
       </section>

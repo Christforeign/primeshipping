@@ -1,5 +1,6 @@
 // @ts-nocheck — legacy pages pending migration to real tables
 import { saveExtraSettings } from "@/lib/admin-settings";
+import { DEFAULT_ORDER_NOTICE } from "@/lib/order-minimums";
 import { sendClientEmail } from "@/lib/email.functions";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -358,6 +359,9 @@ function AdminHubPage() {
   const [prodOrderLink, setProdOrderLink] = useState("");
   const [prodAmountMode, setProdAmountMode] = useState(false);
   const [prodSpecificRate, setProdSpecificRate] = useState("");
+  const [prodMinimumQuantity, setProdMinimumQuantity] = useState("1");
+  const [prodMinimumOrderUsd, setProdMinimumOrderUsd] = useState("");
+  const [prodOrderNotice, setProdOrderNotice] = useState(DEFAULT_ORDER_NOTICE);
   const [prodVariants, setProdVariants] = useState<ProductVariant[]>([]);
   const [prodCustomFields, setProdCustomFields] = useState<CustomFormField[]>([]);
 
@@ -407,6 +411,9 @@ function AdminHubPage() {
     setProdOrderLink("");
     setProdAmountMode(false);
     setProdSpecificRate("");
+    setProdMinimumQuantity("1");
+    setProdMinimumOrderUsd("");
+    setProdOrderNotice(DEFAULT_ORDER_NOTICE);
     setProdVariants([
       { id: `v-${Date.now()}-1`, name: "Option Standard", price_usd: 15, stock: 100 },
     ]);
@@ -458,6 +465,9 @@ function AdminHubPage() {
     setProdOrderLink(prod.extra?.order_link ?? "");
     setProdAmountMode(prod.extra?.amount_mode === "custom_usd");
     setProdSpecificRate(String(prod.extra?.product_rate_htg || ""));
+    setProdMinimumQuantity(String(prod.extra?.minimum_quantity || 1));
+    setProdMinimumOrderUsd(String(prod.extra?.minimum_order_usd || ""));
+    setProdOrderNotice(prod.extra?.order_notice ?? DEFAULT_ORDER_NOTICE);
     setProdVariants(prod.variants || []);
     setProdCustomFields(prod.custom_fields || []);
   };
@@ -521,6 +531,9 @@ function AdminHubPage() {
       .filter((u) => u.length > 0);
 
     if (prodAmountMode && !(Number(prodSpecificRate) > 0)) return toast.error("Indiquez le taux spécifique du produit.");
+    const minimumQty = Number(prodMinimumQuantity);
+    const minimumUsd = Number(prodMinimumOrderUsd);
+    if (!Number.isInteger(minimumQty) || minimumQty < 1 || minimumQty > 999 || !Number.isFinite(minimumUsd) || minimumUsd < 0 || Math.abs(minimumUsd * 100 - Math.round(minimumUsd * 100)) > 0.000001) return toast.error("Indiquez une quantité minimum de 1 à 999 et un montant positif à deux décimales maximum.");
     const payload = {
       title: prodTitle,
       short_description: prodShortDesc.trim() || undefined,
@@ -539,7 +552,7 @@ function AdminHubPage() {
       video_url: prodVideoUrl.trim() || null,
       custom_fields: prodCustomFields,
       is_active: true,
-      extra: { ...(editingProduct?.extra || {}), order_mode: prodOrderMode, order_link: prodOrderLink.trim(), amount_mode: prodAmountMode ? "custom_usd" : "fixed", product_rate_htg: prodAmountMode ? Number(prodSpecificRate) : null },
+      extra: { ...(editingProduct?.extra || {}), order_mode: prodOrderMode, order_link: prodOrderLink.trim(), amount_mode: prodAmountMode ? "custom_usd" : "fixed", product_rate_htg: prodAmountMode ? Number(prodSpecificRate) : null, minimum_quantity: prodAmountMode ? 1 : minimumQty, minimum_order_usd: minimumUsd, order_notice: prodOrderNotice.trim() },
     };
 
     try {
@@ -1608,6 +1621,11 @@ function AdminHubPage() {
                   {prodAmountMode && <div className="space-y-2"><Label>Taux de vente de ce produit (HTG pour 1 USD)</Label><Input type="number" min="0.01" step="0.01" required value={prodSpecificRate} onChange={(e) => setProdSpecificRate(e.target.value)} /></div>}
                 </div>
                 {/* Exigence adresse de livraison (configurable admin) */}
+                <div className="sm:col-span-2 grid gap-3 sm:grid-cols-2 border-t pt-4">
+                  {!prodAmountMode && <div className="space-y-2"><Label htmlFor="minimum-quantity">Quantité minimum</Label><Input id="minimum-quantity" type="number" min="1" max="999" step="1" required value={prodMinimumQuantity} onChange={(e) => setProdMinimumQuantity(e.target.value)} /></div>}
+                  <div className="space-y-2"><Label htmlFor="minimum-order">{prodAmountMode ? "Montant minimum à recharger (USD)" : "Montant minimum de commande (USD, hors frais)"}</Label><Input id="minimum-order" type="number" min="0" step="0.01" value={prodMinimumOrderUsd} onChange={(e) => setProdMinimumOrderUsd(e.target.value)} placeholder="Aucun minimum" /></div>
+                  <div className="space-y-2 sm:col-span-2"><Label htmlFor="order-notice">Conditions et délais affichés avant commande</Label><Textarea id="order-notice" rows={4} value={prodOrderNotice} onChange={(e) => setProdOrderNotice(e.target.value)} /></div>
+                </div>
                 <div className="space-y-1.5 sm:col-span-2 rounded-2xl border p-4 bg-muted/40">
                   <div className="flex items-start justify-between gap-4">
                     <div>

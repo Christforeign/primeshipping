@@ -29,6 +29,7 @@ import { useUser } from "@/lib/session";
 import { clientStore } from "@/lib/store";
 import { supabase } from "@/integrations/supabase/client";
 import { topupPrice } from "@/lib/product-pricing";
+import { DEFAULT_ORDER_NOTICE, minimumQuantity, orderMinimumError } from "@/lib/order-minimums";
 import { addCartItem } from "@/lib/cart";
 import { DynamicProductForm } from "@/components/DynamicProductForm";
 import type {
@@ -138,6 +139,9 @@ export function ProductDetailPage() {
       setSelectedVariant(null);
     }
   }, [product]);
+  useEffect(() => {
+    if (product) setQuantity(minimumQuantity(product.extra));
+  }, [product?.id, product?.extra?.minimum_quantity]);
 
   if (productLoading) {
     return <div className="mx-auto max-w-4xl px-4 py-24 text-center text-muted-foreground">Chargement…</div>;
@@ -179,6 +183,7 @@ export function ProductDetailPage() {
     : (product.promo_price_usd ?? product.price_usd));
 
   const freeAmount = product.extra?.amount_mode === "custom_usd";
+  const minQty = minimumQuantity(product.extra);
   let amountPrice = { totalHtg: 0, walletUsd: 0 };
   if (freeAmount && Number(requestedAmount) > 0) { try { amountPrice = topupPrice(Number(requestedAmount), Number(product.extra?.product_rate_htg), Number(rate)); } catch { /* invalid input is checked at submission */ } }
   const subtotalUsd = freeAmount ? amountPrice.walletUsd : Number((unitPrice * quantity).toFixed(2));
@@ -226,6 +231,8 @@ export function ProductDetailPage() {
   const handleOrderSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (freeAmount) { try { topupPrice(Number(requestedAmount), Number(product.extra?.product_rate_htg), Number(rate)); } catch { return toast.error("Saisissez un montant USD valide (deux décimales maximum)."); } }
+    const minimumError = orderMinimumError(product.extra, freeAmount ? 1 : quantity, freeAmount ? Number(requestedAmount) : subtotalUsd, freeAmount);
+    if (minimumError) return toast.error(minimumError);
     const selection = { productId: product.id, variantId: freeAmount ? null : selectedVariant?.id || null, quantity: freeAmount ? 1 : quantity, formValues, requestedAmountUsd: freeAmount ? Number(requestedAmount) : undefined };
     const newErrors: Record<string, string> = {};
     for (const field of product.custom_fields || []) {
@@ -469,6 +476,7 @@ export function ProductDetailPage() {
             {product.extra?.order_mode && product.extra.order_mode !== "site" && product.extra.order_link ? (
               <div className="rounded-3xl border bg-card p-6 sm:p-8 shadow-xl space-y-4">
                 <h2 className="text-lg font-bold">Commander cet article</h2>
+                <p className="text-sm text-muted-foreground whitespace-pre-line">{product.extra?.order_notice ?? DEFAULT_ORDER_NOTICE}</p>
                 <Button asChild size="lg" className="w-full h-12 rounded-2xl font-black">
                   <a
                     href={
@@ -569,14 +577,14 @@ export function ProductDetailPage() {
                 </div>
               )}
 
-              {freeAmount && <div className="space-y-2"><Label htmlFor="recharge-amount">Montant à recharger (USD)</Label><Input id="recharge-amount" type="number" min="0.01" step="0.01" required value={requestedAmount} onChange={(e) => setRequestedAmount(e.target.value)} /><p className="text-sm text-muted-foreground">Taux : {product.extra?.product_rate_htg} HTG/USD · {amountPrice.totalHtg.toFixed(2)} HTG</p><p className="text-sm font-semibold">Équivalent portefeuille : {amountPrice.walletUsd.toFixed(2)} USD</p></div>}
+              {freeAmount && <div className="space-y-2"><Label htmlFor="recharge-amount">Montant à recharger (USD)</Label><Input id="recharge-amount" type="number" min={Math.max(0.01, Number(product.extra?.minimum_order_usd) || 0)} step="0.01" required value={requestedAmount} onChange={(e) => setRequestedAmount(e.target.value)} /><p className="text-sm text-muted-foreground">Taux : {product.extra?.product_rate_htg} HTG/USD · {amountPrice.totalHtg.toFixed(2)} HTG</p><p className="text-sm font-semibold">Équivalent portefeuille : {amountPrice.walletUsd.toFixed(2)} USD</p></div>}
               {/* 2. QUANTITY SELECTOR */}
               {!freeAmount && <div className="space-y-1.5">
                 <Label className="text-xs font-bold text-foreground">Quantité</Label>
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    onClick={() => setQuantity(Math.max(minQty, quantity - 1))}
                     className="h-9 w-9 rounded-xl border bg-background font-black hover:bg-muted text-base flex items-center justify-center"
                   >
                     -
@@ -584,7 +592,7 @@ export function ProductDetailPage() {
                   <span className="font-black text-base w-8 text-center">{quantity}</span>
                   <button
                     type="button"
-                    onClick={() => setQuantity(quantity + 1)}
+                    onClick={() => setQuantity(Math.min(999, quantity + 1))}
                     className="h-9 w-9 rounded-xl border bg-background font-black hover:bg-muted text-base flex items-center justify-center"
                   >
                     +
@@ -619,6 +627,11 @@ export function ProductDetailPage() {
                     <span className="text-xs font-semibold text-muted-foreground font-mono">≈ {formatNumber(Math.round(subtotalUsd * rate))} HTG</span>
                   </div>
                 </div>
+              </div>
+              <div className="text-sm text-muted-foreground space-y-2">
+                {!freeAmount && minQty > 1 && <p>Quantité minimum : {minQty}</p>}
+                {Number(product.extra?.minimum_order_usd) > 0 && <p>Montant minimum : {Number(product.extra.minimum_order_usd).toFixed(2)} USD{!freeAmount && " (hors frais)"}</p>}
+                <p className="whitespace-pre-line">{product.extra?.order_notice ?? DEFAULT_ORDER_NOTICE}</p>
               </div>
               <Button type="submit" name="action" value="cart" size="lg" variant="outline" className="w-full h-12">
                 <ShoppingBag className="h-4 w-4 mr-2" /> Ajouter au panier
