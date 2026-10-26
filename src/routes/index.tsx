@@ -16,7 +16,6 @@ import {
   Zap,
   Globe,
   Headphones,
-  Package,
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
