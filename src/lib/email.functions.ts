@@ -37,14 +37,14 @@ export const sendClientEmail = createServerFn({ method: "POST" })
       data.vars = { nom: order.customer_name || "", reference: order.order_number, produit: order.product_title, image_produit: order.product_image_url || product?.media_urls?.[0] || "", quantite: String(order.quantity), montant: `${Number(order.total_usd).toFixed(2)} USD · ${Number(order.total_htg).toFixed(2)} HTG`, paiement: order.payment_method === "wallet" ? "Portefeuille Prime — payé" : `${order.payment_method} — ${order.status === "en_attente" ? "à vérifier" : "approuvé"}`, livraison: order.delivery_address || "", statut: stage.label, date: formatDate(order.updated_at), brand: "store", details: [stage.message, order.variant_name ? `Option : ${order.variant_name}` : "", order.requested_amount_usd ? `Montant à recharger : ${order.requested_amount_usd} USD\nTaux produit : ${order.product_rate_htg} HTG/USD\nTaux portefeuille : ${order.site_rate_htg} HTG/USD` : "", ...responses].filter(Boolean).join("\n") };
     }
     if (data.packageId) {
-      const { data: pkg, error } = await supabase.from("packages").select("id,user_id,tracking_number,status,description,updated_at,weight_lbs,shipping_fee").eq("id", data.packageId).single();
+      const { data: pkg, error } = await supabase.from("packages").select("id,user_id,tracking_number,status,description,updated_at,actual_weight_lb,estimated_weight_lb,shipping_fee").eq("id", data.packageId).single();
       if (error || !pkg || (!staff && pkg.user_id !== userId)) throw new Error("Colis inaccessible");
       if (data.toEmail || data.test) throw new Error("Envoi colis invalide");
       target = pkg.user_id;
       kind = packageEmailKind(pkg.status);
       const { data: event } = await supabase.from("package_events").select("id,created_at").eq("package_id", pkg.id).eq("status", pkg.status).order("created_at", { ascending: false }).limit(1).maybeSingle();
       eventId = event?.id || `${pkg.id}-${pkg.updated_at}`;
-      data.vars = { tracking: pkg.tracking_number, reference: pkg.tracking_number, statut: statusLabel(pkg.status), prochaine_etape: nextPackageStep(pkg.status), date: formatDate(event?.created_at || pkg.updated_at), details: `${pkg.description}\nPoids : ${pkg.weight_lbs ?? "À vérifier"} lbs\nTransport estimé : ${Number(pkg.shipping_fee || 0).toFixed(2)} USD (sous réserve de vérification)` };
+      data.vars = { tracking: pkg.tracking_number, reference: pkg.tracking_number, statut: statusLabel(pkg.status), prochaine_etape: nextPackageStep(pkg.status), date: formatDate(event?.created_at || pkg.updated_at), details: `${pkg.description}\nPoids : ${pkg.actual_weight_lb ?? pkg.estimated_weight_lb ?? "À vérifier"} lbs\nTransport estimé : ${Number(pkg.shipping_fee || 0).toFixed(2)} USD (sous réserve de vérification)` };
       adminLink = "/compte/admin-colis";
     }
     if (!staff && (target !== userId || data.toEmail)) throw new Error("Non autorisé");
@@ -114,7 +114,7 @@ export const sendClientEmail = createServerFn({ method: "POST" })
       const recipients = [...new Set(String(extra["email_admin_recipients"] || "").split(/[\s,;]+/).filter((email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)))].slice(0, 10);
       const adminTemplate = mergeTemplates(extra["email_templates"]).alerte_admin;
       if (recipients.length && adminTemplate.enabled) {
-        const adminVars = { ...vars, lien: `${siteUrl}${adminLink}`, details: `Client : ${vars.nom || ""} (${vars.code || ""})\n${vars.details || ""}`, produit: undefined };
+        const adminVars = { ...vars, lien: `${siteUrl}${adminLink}`, details: `Client : ${vars.nom || ""} (${vars.code || ""})\n${vars.produit || ""}\n${vars.details || ""}`, produit: "" };
         const rendered = renderEmail(adminTemplate, adminVars, senderName, logoUrl || undefined, siteUrl);
         for (const email of recipients) {
           const alert = await fetch(endpoint, { method: "POST", headers: { ...authHeaders, "content-type": "application/json" }, body: JSON.stringify({ sender: { name: senderName, email: senderEmail }, to: [{ email }], subject: rendered.subject, htmlContent: rendered.html, ...(eventId ? { headers: { idempotencyKey: `admin-${eventId}-${email}` } } : {}) }) });
