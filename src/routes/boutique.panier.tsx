@@ -5,6 +5,8 @@ import { useState } from "react";
 import { Mail, ShoppingBag, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useSettings } from "@/lib/settings";
+import { topupPrice } from "@/lib/product-pricing";
 import { useCart, type CartSelection } from "@/lib/cart";
 import { useUser } from "@/lib/session";
 import { sendClientEmail } from "@/lib/email.functions";
@@ -26,6 +28,7 @@ export const Route = createFileRoute("/boutique/panier")({
 
 function CartPage() {
   const { items, update } = useCart();
+  const settings = useSettings();
   const { user } = useUser();
   const navigate = useNavigate();
   const sendEmail = useServerFn(sendClientEmail);
@@ -61,14 +64,16 @@ function CartPage() {
         const product = productsQ.data?.find((entry) => entry.id === item.productId);
         const variant = product?.variants?.find((entry) => entry.id === item.variantId);
         const available = Boolean(product) && (!item.variantId || Boolean(variant));
-        const unit = Number(variant ? variant.promo_price_usd ?? variant.price_usd : product?.promo_price_usd ?? product?.price_usd) || 0;
+        let recharge = 0;
+        if (item.requestedAmountUsd && product?.extra?.amount_mode === "custom_usd") { try { recharge = topupPrice(item.requestedAmountUsd, Number(product.extra.product_rate_htg), Number(settings?.usd_to_htg)).walletUsd; } catch { /* invalid prices are rejected at checkout */ } }
+        const unit = recharge || Number(variant ? variant.promo_price_usd ?? variant.price_usd : product?.promo_price_usd ?? product?.price_usd) || 0;
         return <article key={item.key} className="border-b pb-6 space-y-3">
           <div className="flex gap-4 items-start">
             {product?.media_urls?.[0] && <img src={product.media_urls[0]} alt="" className="h-20 w-20 rounded-lg object-contain bg-muted shrink-0" />}
             <div className="min-w-0 flex-1"><h2 className="font-semibold break-words">{product?.title || "Article indisponible"}</h2>{variant && <p className="text-sm text-muted-foreground">{variant.name}</p>}<p className="mt-2 font-semibold">{(unit * item.quantity).toFixed(2)} USD</p></div>
             <Button variant="ghost" size="icon" aria-label="Retirer l'article" onClick={() => update(items.filter((entry) => entry.key !== item.key))}><Trash2 className="h-4 w-4" /></Button>
           </div>
-          <div className="flex flex-wrap gap-3 items-center justify-between"><label className="flex items-center gap-2 text-sm">Quantité<Input aria-label={`Quantité ${product?.title || "article"}`} type="number" min={1} max={999} className="w-20" value={item.quantity} onChange={(event) => { const quantity = Math.max(1, Math.min(999, Math.floor(Number(event.target.value) || 1))); update(items.map((entry) => entry.key === item.key ? { ...entry, quantity } : entry)); }} /></label><Button disabled={!available} onClick={() => checkout(item)}>Commander cet article</Button></div>
+          <div className="flex flex-wrap gap-3 items-center justify-between">{item.requestedAmountUsd ? <span className="text-sm">Recharge : {item.requestedAmountUsd} USD</span> : <label className="flex items-center gap-2 text-sm">Quantité<Input aria-label={`Quantité ${product?.title || "article"}`} type="number" min={1} max={999} className="w-20" value={item.quantity} onChange={(event) => { const quantity = Math.max(1, Math.min(999, Math.floor(Number(event.target.value) || 1))); update(items.map((entry) => entry.key === item.key ? { ...entry, quantity } : entry)); }} /></label>}<Button disabled={!available} onClick={() => checkout(item)}>Commander cet article</Button></div>
           {Object.entries(item.formValues).map(([key, value]) => <p key={key} className="text-sm text-muted-foreground break-words">{product?.custom_fields?.find((field) => field.id === key)?.label || key} : {Array.isArray(value) ? value.join(", ") : String(value)}</p>)}
         </article>;
       })}
