@@ -7,6 +7,9 @@ import aliexpressAsset from "@/assets/platforms/aliexpress-compact.svg.asset.jso
 import appleAsset from "@/assets/platforms/apple.svg.asset.json";
 import zaraAsset from "@/assets/platforms/zara-compact.svg.asset.json";
 import targetAsset from "@/assets/platforms/target.svg.asset.json";
+import moncashAsset from "@/assets/payments/moncash.png.asset.json";
+import natcashAsset from "@/assets/payments/natcash-logo.png.asset.json";
+import paypalAsset from "@/assets/payments/paypal.png.asset.json";
 
 import { clientStore } from "@/lib/store";
 
@@ -59,33 +62,11 @@ export function PrimeEntrepriseLogo({
 // ==========================================
 
 export function MonCashLogo({ className = "h-7" }: { className?: string }) {
-  return (
-    <div
-      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#E31837] text-white font-extrabold text-xs shadow-sm ${className}`}
-      title="MonCash (Digicel Haïti)"
-    >
-      <svg viewBox="0 0 32 32" className="h-4 w-4 fill-current flex-shrink-0">
-        <circle cx="16" cy="16" r="14" fill="#ffffff" />
-        <path d="M10 21V11l4 5 4-5v10h-2.5v-5.5L14 17.5l-1.5-2V21H10z" fill="#E31837" />
-      </svg>
-      <span className="tracking-tight">MonCash</span>
-    </div>
-  );
+  return <img src={moncashAsset.url} alt="MonCash" title="MonCash — Digicel" className={`${className} w-24 object-contain`} loading="lazy" />;
 }
 
 export function NatcashLogo({ className = "h-7" }: { className?: string }) {
-  return (
-    <div
-      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#003B71] to-[#0066B2] text-white font-extrabold text-xs shadow-sm ${className}`}
-      title="Natcash (Natcom Haïti)"
-    >
-      <svg viewBox="0 0 32 32" className="h-4 w-4 flex-shrink-0">
-        <circle cx="16" cy="16" r="14" fill="#F37021" />
-        <path d="M9 21V11h3l4.5 6.5V11H19v10h-3l-4.5-6.5V21H9z" fill="#ffffff" />
-      </svg>
-      <span className="tracking-tight">Natcash</span>
-    </div>
-  );
+  return <img src={natcashAsset.url} alt="Natcash" title="Natcash — Natcom" className={`${className} w-24 object-contain`} loading="lazy" />;
 }
 
 export function SogexpressLogo({ className = "h-7" }: { className?: string }) {
@@ -127,15 +108,7 @@ export function MastercardLogo({ className = "h-7" }: { className?: string }) {
 }
 
 export function PayPalLogo({ className = "h-7" }: { className?: string }) {
-  return (
-    <div
-      className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#003087] text-white font-bold text-xs shadow-sm ${className}`}
-      title="PayPal"
-    >
-      <span className="text-[#0079C1] font-black italic">Pay</span>
-      <span className="text-[#00457C] font-black italic">Pal</span>
-    </div>
-  );
+  return <span className={`${className} inline-flex w-24 items-center justify-center rounded bg-card px-2`}><img src={paypalAsset.url} alt="PayPal" className="h-5 w-full object-contain" loading="lazy" /></span>;
 }
 
 export function ZelleLogo({ className = "h-7" }: { className?: string }) {
@@ -375,7 +348,7 @@ export function HomeB2BLogosShowcase({ className = "" }: { className?: string })
     { name: "Best Buy" },
   ];
   return (
-    <div className={`space-y-3 text-forest-foreground ${className}`}>
+    <div className={`space-y-3 text-foreground ${className}`}>
       <p className="text-xs font-semibold">Plateformes internationales</p>
       <ul aria-label="Plateformes internationales" className="grid grid-cols-4 gap-x-3 gap-y-3 sm:grid-cols-6 lg:grid-cols-12">
         {brands.map(({ name, logo: Logo }) => (

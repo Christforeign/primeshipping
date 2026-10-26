@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useSettings } from "@/lib/settings";
+import { activeSocialLinks, socialIcon } from "@/lib/social-links";
+import { SocialIcon } from "@/components/SocialIcon";
 import {
   MonCashLogo,
   NatcashLogo,
@@ -12,12 +14,7 @@ import {
 export function SiteFooter() {
   const s = useSettings();
   const name = s?.company_name ?? "Prime Shipping";
-  const links = (s as unknown as { social_links?: { label: string; url: string; enabled: boolean }[] })?.social_links;
-  const socials = (
-    Array.isArray(links)
-      ? links.filter((l) => l.enabled && l.url).map((l) => [l.label, l.url])
-      : [["Facebook", s?.facebook_url], ["Instagram", s?.instagram_url], ["TikTok", s?.tiktok_url]].filter(([, u]) => !!u)
-  ) as [string, string][];
+  const socials = activeSocialLinks(s);
 
   return (
     <footer className="mt-24 bg-forest text-forest-foreground">
@@ -47,16 +44,19 @@ export function SiteFooter() {
           </div>
 
           {socials.length > 0 && (
-            <div className="pt-2 flex gap-4 text-sm">
-              {socials.map(([l, u]) => (
+            <div className="pt-2 flex flex-wrap gap-4 text-sm">
+              {socials.map((link) => (
                 <a
-                  key={l}
-                  href={u}
+                  key={link.id || link.url}
+                  href={link.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="underline-offset-4 hover:text-accent hover:underline text-xs"
+                  aria-label={link.label}
+                  title={link.label}
+                  className="inline-flex min-h-10 items-center gap-2 underline-offset-4 hover:text-accent hover:underline text-xs"
                 >
-                  {l}
+                  <SocialIcon link={link} />
+                  {socialIcon(link) !== "whatsapp" && link.label}
                 </a>
               ))}
             </div>
