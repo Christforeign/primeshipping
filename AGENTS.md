@@ -18,3 +18,5 @@
 - Package declaration retries reuse one UUID per mounted form to avoid duplicate inserts after a lost response; shipping estimates use the current settings rate and remain provisional.
 - Checkout uses a dedicated root shell without floating support controls, bottom navigation or the site footer, so its leaf route remains a standalone page.
 - International platform marks use static vector assets in the shared BrandLogos module rather than approximate hand-drawn logos, preserving sharpness at small sizes.
+- Cart selections persist on the current device; checkout re-reads active products and removes only the paid cart line after a successful order, preserving the remaining selections.
+- Cart emails are explicitly requested by the signed-in customer, use Brevo, and derive item names from active database products rather than browser-supplied copy.
