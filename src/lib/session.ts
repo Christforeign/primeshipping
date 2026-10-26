@@ -33,18 +33,15 @@ export const rolesQuery = (userId: string | undefined) =>
   });
 
 export function useRoles(userId: string | undefined) {
-  const { user } = useUser();
   const q = useQuery(rolesQuery(userId));
   const roles = q.data ?? [];
-  const isSuperEmail = user?.email?.toLowerCase() === "blaisechristeveste@gmail.com";
   return {
     roles,
     loading: q.isLoading,
-    isStaff: isSuperEmail || roles.length > 0,
-    isAdmin: isSuperEmail || roles.includes("super_admin") || roles.includes("admin"),
-    isSuper: isSuperEmail || roles.includes("super_admin"),
-    canPackages:
-      isSuperEmail || roles.some((r) => ["super_admin", "admin", "agent_colis"].includes(r)),
+    isStaff: roles.length > 0,
+    isAdmin: roles.includes("super_admin") || roles.includes("admin"),
+    isSuper: roles.includes("super_admin"),
+    canPackages: roles.some((r) => ["super_admin", "admin", "agent_colis"].includes(r)),
   };
 }
 
