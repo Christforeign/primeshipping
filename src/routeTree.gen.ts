@@ -26,6 +26,7 @@ import { Route as SupportRouteImport } from './routes/support'
 import { Route as AuthenticatedCompteRouteImport } from './routes/_authenticated/compte'
 import { Route as BoutiqueIndexRouteImport } from './routes/boutique.index'
 import { Route as BoutiqueIdRouteImport } from './routes/boutique.$id'
+import { Route as BoutiqueCommandeRouteImport } from './routes/boutique.commande'
 import { Route as AuthenticatedCompteIndexRouteImport } from './routes/_authenticated/compte.index'
 import { Route as AuthenticatedCompteAdminRouteImport } from './routes/_authenticated/compte.admin'
 import { Route as AuthenticatedCompteAdminColisRouteImport } from './routes/_authenticated/compte.admin-colis'
@@ -121,6 +122,11 @@ const BoutiqueIdRoute = BoutiqueIdRouteImport.update({
   path: '/boutique/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BoutiqueCommandeRoute = BoutiqueCommandeRouteImport.update({
+  id: '/boutique/commande',
+  path: '/boutique/commande',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedCompteIndexRoute =
   AuthenticatedCompteIndexRouteImport.update({
     id: '/',
@@ -198,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/support': typeof SupportRoute
   '/compte': typeof AuthenticatedCompteRouteWithChildren
   '/boutique/$id': typeof BoutiqueIdRoute
+  '/boutique/commande': typeof BoutiqueCommandeRoute
   '/boutique/': typeof BoutiqueIndexRoute
   '/compte/admin': typeof AuthenticatedCompteAdminRoute
   '/compte/admin-colis': typeof AuthenticatedCompteAdminColisRoute
@@ -225,6 +232,7 @@ export interface FileRoutesByTo {
   '/suivi': typeof SuiviRoute
   '/support': typeof SupportRoute
   '/boutique/$id': typeof BoutiqueIdRoute
+  '/boutique/commande': typeof BoutiqueCommandeRoute
   '/boutique': typeof BoutiqueIndexRoute
   '/compte/admin': typeof AuthenticatedCompteAdminRoute
   '/compte/admin-colis': typeof AuthenticatedCompteAdminColisRoute
@@ -255,6 +263,7 @@ export interface FileRoutesById {
   '/support': typeof SupportRoute
   '/_authenticated/compte': typeof AuthenticatedCompteRouteWithChildren
   '/boutique/$id': typeof BoutiqueIdRoute
+  '/boutique/commande': typeof BoutiqueCommandeRoute
   '/boutique/': typeof BoutiqueIndexRoute
   '/_authenticated/compte/admin': typeof AuthenticatedCompteAdminRoute
   '/_authenticated/compte/admin-colis': typeof AuthenticatedCompteAdminColisRoute
@@ -285,6 +294,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/compte'
     | '/boutique/$id'
+    | '/boutique/commande'
     | '/boutique/'
     | '/compte/admin'
     | '/compte/admin-colis'
@@ -312,6 +322,7 @@ export interface FileRouteTypes {
     | '/suivi'
     | '/support'
     | '/boutique/$id'
+    | '/boutique/commande'
     | '/boutique'
     | '/compte/admin'
     | '/compte/admin-colis'
@@ -341,6 +352,7 @@ export interface FileRouteTypes {
     | '/support'
     | '/_authenticated/compte'
     | '/boutique/$id'
+    | '/boutique/commande'
     | '/boutique/'
     | '/_authenticated/compte/admin'
     | '/_authenticated/compte/admin-colis'
@@ -370,6 +382,7 @@ export interface RootRouteChildren {
   SuiviRoute: typeof SuiviRoute
   SupportRoute: typeof SupportRoute
   BoutiqueIdRoute: typeof BoutiqueIdRoute
+  BoutiqueCommandeRoute: typeof BoutiqueCommandeRoute
   BoutiqueIndexRoute: typeof BoutiqueIndexRoute
 }
 
@@ -492,6 +505,13 @@ declare module '@tanstack/react-router' {
       path: '/boutique/$id'
       fullPath: '/boutique/$id'
       preLoaderRoute: typeof BoutiqueIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/boutique/commande': {
+      id: '/boutique/commande'
+      path: '/boutique/commande'
+      fullPath: '/boutique/commande'
+      preLoaderRoute: typeof BoutiqueCommandeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/compte/': {
@@ -623,6 +643,7 @@ const rootRouteChildren: RootRouteChildren = {
   SuiviRoute: SuiviRoute,
   SupportRoute: SupportRoute,
   BoutiqueIdRoute: BoutiqueIdRoute,
+  BoutiqueCommandeRoute: BoutiqueCommandeRoute,
   BoutiqueIndexRoute: BoutiqueIndexRoute,
 }
 export const routeTree = rootRouteImport

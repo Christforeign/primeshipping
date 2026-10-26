@@ -63,10 +63,10 @@ function MyOrdersPage() {
     queryFn: async () => {
       try {
         const { data, error } = await supabase
-          .from("orders")
+          .from("shop_orders")
           .select("*")
           .order("created_at", { ascending: false });
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           return data as unknown as OrderItem[];
         }
       } catch {

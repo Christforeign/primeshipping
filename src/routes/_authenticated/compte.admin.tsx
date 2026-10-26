@@ -1,4 +1,5 @@
 // @ts-nocheck — legacy pages pending migration to real tables
+import { sendClientEmail } from "@/lib/email.functions";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -615,10 +616,10 @@ function AdminHubPage() {
     queryFn: async () => {
       try {
         const { data, error } = await supabase
-          .from("orders")
+          .from("shop_orders")
           .select("*")
           .order("created_at", { ascending: false });
-        if (!error && data && data.length > 0) {
+        if (!error && data) {
           return data as unknown as OrderItem[];
         }
       } catch {
@@ -632,7 +633,10 @@ function AdminHubPage() {
     try {
       clientStore.updateOrderStatus(orderId, newStatus);
       try {
-        await supabase.from("orders").update({ status: newStatus }).eq("id", orderId);
+        const { data: o } = await supabase.from("shop_orders").update({ status: newStatus, updated_at: new Date().toISOString() }).eq("id", orderId).select("user_id, order_number, total_usd, product_title").maybeSingle();
+        if (o) {
+          sendClientEmail({ data: { kind: "commande", userId: o.user_id, vars: { reference: o.order_number, montant: `${Number(o.total_usd).toFixed(2)} USD`, details: `${o.product_title}\nNouveau statut : ${newStatus}` } } }).catch((e) => console.error(e));
+        }
       } catch (e) {
         console.warn("Supabase update order status fallback:", e);
       }
