@@ -45,7 +45,7 @@ export function PromoBanner() {
   }
 
   return (
-    <div className="relative z-50 bg-gradient-to-r from-forest via-[#1e3d2f] to-forest text-forest-foreground border-b border-accent/30 py-2.5 px-4 shadow-md text-xs sm:text-sm">
+    <div className="relative z-50 bg-gradient-to-r from-forest via-primary/35 to-forest text-forest-foreground border-b border-accent/30 py-2.5 px-4 shadow-md text-xs sm:text-sm">
       <div className="mx-auto max-w-7xl flex items-center justify-between gap-3">
         {/* Left: Badge Taux + Live text */}
         <div className="flex items-center gap-2.5 flex-1 min-w-0">
