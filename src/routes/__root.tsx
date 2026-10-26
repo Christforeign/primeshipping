@@ -135,7 +135,25 @@ function RootComponent() {
   const router = useRouter();
 
   useEffect(() => {
+    const goReset = () => {
+      if (window.location.pathname !== "/reset-password") {
+        router.navigate({ to: "/reset-password" });
+      }
+    };
+    const hash = window.location.hash;
+    if (hash.includes("type=recovery")) goReset();
+    if (hash.includes("error_code=otp_expired") || hash.includes("error=access_denied")) {
+      window.history.replaceState(null, "", window.location.pathname);
+      import("sonner").then(({ toast }) =>
+        toast.error("Ce lien a expiré ou a déjà été utilisé. Demandez un nouveau lien."),
+      );
+      router.navigate({ to: "/auth" });
+    }
     const { data } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") {
+        goReset();
+        return;
+      }
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
       router.invalidate();
       if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
