@@ -3,6 +3,8 @@ import type { ProductItem } from "./types-store";
 type Extra = ProductItem["extra"];
 export const deliveryQuoteNotice = "Un administrateur vous notifiera le tarif de livraison en fonction de votre adresse. Les frais de livraison seront à régler séparément après confirmation.";
 export function productCurrency(extra: Extra) { return extra?.amount_mode !== "custom_usd" && extra?.price_currency === "HTG" ? "GDS" : "USD"; }
+// Gourde prices stay exact; the USD wallet debit is rounded UP to the cent so no centime is ever lost.
+export function htgToUsd(htg: number, rate: number) { return rate > 0 ? Math.ceil((htg / rate) * 100 - 1e-9) / 100 : 0; }
 export function deliveryPricing(extra: Extra, home: boolean) {
   const quote = home && extra?.delivery_pricing !== "fixed";
   return { quote, feeHtg: home && !quote ? Math.max(0, Number(extra?.delivery_fee_htg) || 0) : 0 };
