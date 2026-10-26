@@ -29,7 +29,7 @@ import {
 import { toast } from "sonner";
 import { useSettings } from "@/lib/settings";
 import { useUser } from "@/lib/session";
-import { clientStore, DEFAULT_PRODUCTS } from "@/lib/store";
+import { clientStore } from "@/lib/store";
 import { supabase } from "@/integrations/supabase/client";
 import { DynamicProductForm } from "@/components/DynamicProductForm";
 import type {
@@ -54,6 +54,10 @@ export const Route = createFileRoute("/boutique/$id")({
         name: "description",
         content: "Commandez directement vos articles et services numériques sur Prime Store.",
       },
+      { property: "og:title", content: "Fiche produit — Prime Shipping" },
+      { property: "og:description", content: "Choisissez votre article, ses options et son mode de commande sur Prime Shipping." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: ProductDetailPage,
@@ -67,31 +71,21 @@ export function ProductDetailPage() {
   const rate = s?.usd_to_htg || 132;
   const defaultTaxRate = s?.tax_enabled ? s?.tax_rate || 10 : 0;
 
-  // Load product from clientStore or Supabase
-  const [product, setProduct] = useState<ProductItem | null>(null);
-  const [productLoading, setProductLoading] = useState(true);
-
-  useEffect(() => {
-    let alive = true;
-    setProductLoading(true);
-    (async () => {
-      let p: ProductItem | null = null;
-      try {
-        const { data } = await supabase.from("products").select("*").eq("id", id).maybeSingle();
-        if (data) p = data as unknown as ProductItem;
-      } catch {
-        // ignore
-      }
-      if (!p) p = clientStore.getProduct(id) || DEFAULT_PRODUCTS.find((item) => item.id === id) || null;
-      if (alive) {
-        setProduct(p);
-        setProductLoading(false);
-      }
-    })();
-    return () => {
-      alive = false;
-    };
-  }, [id]);
+  const productQuery = useQuery({
+    queryKey: ["product", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("id", id)
+        .eq("is_active", true)
+        .maybeSingle();
+      if (error) throw error;
+      return data as unknown as ProductItem | null;
+    },
+  });
+  const product = productQuery.data;
+  const productLoading = productQuery.isPending;
 
   // Gallery Active Media
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
@@ -135,7 +129,7 @@ export function ProductDetailPage() {
   const [confirmedOrder, setConfirmedOrder] = useState<OrderItem | null>(null);
 
   // User Wallet Balance
-  const walletBalance = user ? clientStore.getWalletBalance(user.id) : 0;
+  const walletBalance = Number(user ? clientStore.getWalletBalance(user.id) : 0) || 0;
 
   // Set default variant on product change
   useEffect(() => {
@@ -148,6 +142,16 @@ export function ProductDetailPage() {
 
   if (productLoading) {
     return <div className="mx-auto max-w-4xl px-4 py-24 text-center text-muted-foreground">Chargement…</div>;
+  }
+
+  if (productQuery.isError) {
+    return (
+      <div role="alert" className="mx-auto max-w-4xl px-4 py-24 text-center space-y-4">
+        <p className="text-destructive">Impossible de charger cet article pour le moment.</p>
+        <Button variant="outline" onClick={() => productQuery.refetch()}>Réessayer</Button>
+        <Button asChild variant="outline"><Link to="/boutique">Retour à la boutique</Link></Button>
+      </div>
+    );
   }
 
   if (!product) {
@@ -171,9 +175,9 @@ export function ProductDetailPage() {
   }
 
   // Pricing calculations
-  const unitPrice = selectedVariant
+  const unitPrice = Number(selectedVariant
     ? (selectedVariant.promo_price_usd ?? selectedVariant.price_usd)
-    : (product.promo_price_usd ?? product.price_usd);
+    : (product.promo_price_usd ?? product.price_usd));
 
   const subtotalUsd = Number((unitPrice * quantity).toFixed(2));
   const activeTaxRate = product.apply_tax ? (product.tax_rate_override ?? defaultTaxRate) : 0;
@@ -640,7 +644,7 @@ export function ProductDetailPage() {
                   <div className="grid gap-2">
                     {product.variants.map((v) => {
                       const isSelected = selectedVariant?.id === v.id;
-                      const vPrice = v.promo_price_usd ?? v.price_usd;
+                      const vPrice = Number(v.promo_price_usd ?? v.price_usd);
                       return (
                         <button
                           key={v.id}
@@ -965,7 +969,7 @@ export function ProductDetailPage() {
                         <button
                           type="button"
                           onClick={() => {
-                            navigator.clipboard.writeText(activePaymentConfig.phone_number!);
+                            navigator.clipboard.writeText(activePaymentConfig.phone_number || "");
                             toast.success("Numéro copié !");
                           }}
                           className="text-[10px] font-bold text-amber-600 hover:underline flex items-center gap-1"
@@ -982,7 +986,7 @@ export function ProductDetailPage() {
                         <button
                           type="button"
                           onClick={() => {
-                            navigator.clipboard.writeText(activePaymentConfig.account_number!);
+                            navigator.clipboard.writeText(activePaymentConfig.account_number || "");
                             toast.success("Identifiant copié !");
                           }}
                           className="text-[10px] font-bold text-amber-600 hover:underline flex items-center gap-1"
