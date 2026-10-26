@@ -28,3 +28,4 @@
 - Shop-order prices are recalculated atomically from active database products; custom USD amounts snapshot both rates and debit the HTG-equivalent wallet value to prevent client-forged totals.
 - Order emails derive their stage, recipient and details from the saved order ID; Brevo operational alerts use configured staff recipients and link only to authenticated administration pages.
 - Email logos use transparent PNG counterparts of the existing vectors because inbox clients do not reliably render SVG.
+- Cart reminders are staff-triggered only: signed-in carts sync to customer_carts so admins can bulk-remind; customers no longer email their own cart.

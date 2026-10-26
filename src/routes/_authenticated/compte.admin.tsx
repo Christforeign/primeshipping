@@ -1716,14 +1716,15 @@ function AdminHubPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold">Prix de base en USD *</Label>
+                  <Label className="text-xs font-semibold">Prix de base en USD {prodAmountMode ? "(non utilisé en montant libre)" : "*"}</Label>
                   <div className="relative">
                     <Input
                       type="number"
                       step="any"
                       value={prodPriceUsd}
                       onChange={(e) => setProdPriceUsd(e.target.value)}
-                      required
+                      required={!prodAmountMode}
+                      disabled={prodAmountMode}
                       className="font-bold pr-16"
                     />
                     <span className="absolute right-4 top-2 text-xs font-bold text-muted-foreground">

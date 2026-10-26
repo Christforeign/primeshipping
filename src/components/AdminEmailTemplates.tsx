@@ -51,6 +51,38 @@ function ManualSend() {
   );
 }
 
+function CartReminder() {
+  const send = useServerFn(sendClientEmail);
+  const [busy, setBusy] = useState(false);
+  const carts = useQuery({
+    queryKey: ["customer_carts"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("customer_carts").select("user_id, items, updated_at, last_reminded_at");
+      if (error) throw error;
+      return (data || []).filter((c) => Array.isArray(c.items) && c.items.length > 0);
+    },
+  });
+  const notifyAll = async () => {
+    const list = carts.data || [];
+    if (!list.length) { toast.info("Aucun client n'a de panier en attente."); return; }
+    setBusy(true);
+    let ok = 0, fail = 0;
+    for (const c of list) {
+      try { const r = await send({ data: { kind: "panier", userId: c.user_id } }); if (r.sent) ok++; else fail++; } catch { fail++; }
+    }
+    setBusy(false);
+    void carts.refetch();
+    toast.success(`${ok} client(s) notifié(s)${fail ? `, ${fail} échec(s)` : ""}.`);
+  };
+  return (
+    <div className="rounded-lg border-2 border-primary bg-card p-5 space-y-3">
+      <h3 className="text-lg font-bold">Rappel des paniers</h3>
+      <p className="text-sm text-muted-foreground">{carts.isLoading ? "Chargement…" : carts.isError ? "Impossible de lire les paniers." : `${carts.data?.length || 0} client(s) connecté(s) ont un panier non validé.`}</p>
+      <Button size="lg" className="w-full text-base" disabled={busy || carts.isLoading} onClick={notifyAll}>{busy ? "Envoi en cours…" : "Notifier les clients de valider leur panier"}</Button>
+    </div>
+  );
+}
+
 export function AdminEmailTemplates() {
   const qc = useQueryClient();
   const send = useServerFn(sendClientEmail);
@@ -159,6 +191,7 @@ export function AdminEmailTemplates() {
           <button disabled={busy} onClick={test} className="rounded-md border border-border px-4 py-2 text-sm">Envoyer un test</button>
         </div>
       </div>
+      <CartReminder />
       <ManualSend />
     </div>
   );
