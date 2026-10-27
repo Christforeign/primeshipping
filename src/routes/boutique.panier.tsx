@@ -1,16 +1,21 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { ShoppingBag, Trash2, X } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSettings } from "@/lib/settings";
 import { productCurrency } from "@/lib/product-commerce";
 import { topupPrice } from "@/lib/product-pricing";
-import { useCart, type CartSelection } from "@/lib/cart";
+import { readCart, useCart, writeCart, type CartSelection } from "@/lib/cart";
+import { cartShareUrl, decodeCartShare } from "@/lib/share";
+import { ShareButtons } from "@/components/ShareButtons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { ProductItem } from "@/lib/types-store";
 
 export const Route = createFileRoute("/boutique/panier")({
+  validateSearch: (search: Record<string, unknown>) => ({ partage: typeof search.partage === "string" ? search.partage : undefined }),
   head: () => ({ meta: [
     { title: "Mon panier — Prime Shipping" },
     { name: "description", content: "Retrouvez vos articles et finalisez vos commandes Prime Shipping." },
