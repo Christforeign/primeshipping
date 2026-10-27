@@ -17,7 +17,8 @@ import { formatNumber } from "@/lib/utils";
 import { readCart, writeCart } from "@/lib/cart";
 import { fixedProductTotals, deliveryQuoteNotice, productExchangeRate, productCurrency } from "@/lib/product-commerce";
 import { topupPrice } from "@/lib/product-pricing";
-import { DEFAULT_ORDER_NOTICE, orderMinimumError } from "@/lib/order-minimums";
+import { orderMinimumError } from "@/lib/order-minimums";
+import { OrderTermsCheckbox } from "@/components/OrderTermsCheckbox";
 import { deliveryChoices } from "@/lib/delivery-options";
 import { checkoutPayments, paymentCoordinates, paymentDisplayAmount } from "@/lib/checkout-display";
 
@@ -47,6 +48,7 @@ function CheckoutPage() {
 
   const [sel, setSel] = useState<Selection | null>(null);
   const [ready, setReady] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem("prime_checkout");
@@ -364,7 +366,8 @@ function CheckoutPage() {
         {minimumError && <div role="alert" className="text-sm text-destructive">{minimumError} <Link to="/boutique/$id" params={{ id: product.id }} className="underline">Modifier ma sélection</Link></div>}
         {product.extra?.order_notice && <p className="text-sm text-muted-foreground whitespace-pre-line pt-3">{product.extra.order_notice}</p>}
         {!validRate && <p role="alert" className="text-destructive">Le taux de change n’est pas encore disponible.</p>}
-        <Button className="w-full h-12 mt-2 font-black" disabled={submitting || walletShort || !!minimumError || !validRate} onClick={submit}>
+        <OrderTermsCheckbox checked={acceptedTerms} onCheckedChange={setAcceptedTerms} id="accept-order-terms-checkout" />
+        <Button className="w-full h-12 mt-2 font-black" disabled={submitting || walletShort || !!minimumError || !validRate || !acceptedTerms} onClick={submit}>
           {submitting ? "Validation…" : "Valider ma commande"}
         </Button>
       </section>

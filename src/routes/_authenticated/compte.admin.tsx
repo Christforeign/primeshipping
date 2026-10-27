@@ -1,7 +1,6 @@
 // @ts-nocheck — legacy pages pending migration to real tables
 import { orderTotalDisplay } from "@/lib/checkout-display";
 import { saveExtraSettings } from "@/lib/admin-settings";
-import { DEFAULT_ORDER_NOTICE } from "@/lib/order-minimums";
 import { sendClientEmail } from "@/lib/email.functions";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";

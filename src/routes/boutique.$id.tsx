@@ -31,7 +31,7 @@ import { clientStore } from "@/lib/store";
 import { supabase } from "@/integrations/supabase/client";
 import { productCurrency, productExchangeRate } from "@/lib/product-commerce";
 import { topupPrice } from "@/lib/product-pricing";
-import { DEFAULT_ORDER_NOTICE, minimumQuantity, orderMinimumError } from "@/lib/order-minimums";
+import { minimumQuantity, orderMinimumError } from "@/lib/order-minimums";
 import { addCartItem } from "@/lib/cart";
 import { DynamicProductForm } from "@/components/DynamicProductForm";
 import { ShareButtons } from "@/components/ShareButtons";
