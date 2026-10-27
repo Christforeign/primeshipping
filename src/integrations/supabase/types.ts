@@ -833,6 +833,10 @@ export type Database = {
         Returns: boolean
       }
       admin_delete_package: { Args: { _package_id: string }; Returns: boolean }
+      admin_delete_shop_order: {
+        Args: { _order_id: string }
+        Returns: undefined
+      }
       admin_setup_available: { Args: never; Returns: boolean }
       admin_update_assisted_purchase: {
         Args: {
