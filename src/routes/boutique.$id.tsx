@@ -31,11 +31,12 @@ import { clientStore } from "@/lib/store";
 import { supabase } from "@/integrations/supabase/client";
 import { productCurrency, productExchangeRate } from "@/lib/product-commerce";
 import { topupPrice } from "@/lib/product-pricing";
-import { DEFAULT_ORDER_NOTICE, minimumQuantity, orderMinimumError } from "@/lib/order-minimums";
+import { minimumQuantity, orderMinimumError } from "@/lib/order-minimums";
 import { addCartItem } from "@/lib/cart";
 import { DynamicProductForm } from "@/components/DynamicProductForm";
 import { ShareButtons } from "@/components/ShareButtons";
 import { productShareUrl } from "@/lib/share";
+import { OrderTermsCheckbox } from "@/components/OrderTermsCheckbox";
 import type {
   ProductItem,
   ProductVariant,
@@ -130,6 +131,7 @@ export function ProductDetailPage() {
 
   // Order Submission State
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [confirmedOrder, setConfirmedOrder] = useState<OrderItem | null>(null);
 
   // User Wallet Balance
@@ -250,6 +252,7 @@ export function ProductDetailPage() {
       setFormErrors(newErrors);
       return toast.error(Object.values(newErrors)[0]);
     }
+    if (!acceptedTerms) return toast.error("Veuillez accepter les conditions d'utilisation pour continuer.");
     if (e.nativeEvent?.submitter?.value === "cart") {
       try {
         addCartItem(selection);
@@ -489,7 +492,7 @@ export function ProductDetailPage() {
             {product.extra?.order_mode && product.extra.order_mode !== "site" && product.extra.order_link ? (
               <div className="rounded-3xl border bg-card p-6 sm:p-8 shadow-xl space-y-4">
                 <h2 className="text-lg font-bold">Commander cet article</h2>
-                <p className="text-sm text-muted-foreground whitespace-pre-line">{product.extra?.order_notice ?? DEFAULT_ORDER_NOTICE}</p>
+                {product.extra?.order_notice && <p className="text-sm text-muted-foreground whitespace-pre-line">{product.extra.order_notice}</p>}
                 <Button asChild size="lg" className="w-full h-12 rounded-2xl font-black">
                   <a
                     href={
@@ -644,8 +647,9 @@ export function ProductDetailPage() {
               <div className="text-sm text-muted-foreground space-y-2">
                 {!freeAmount && minQty > 1 && <p>Quantité minimum : {minQty}</p>}
                 {Number(product.extra?.minimum_order_usd) > 0 && <p>Montant minimum : {Number(product.extra.minimum_order_usd).toFixed(2)} {productCurrency(product.extra)}{!freeAmount && " (hors frais)"}</p>}
-                <p className="whitespace-pre-line">{product.extra?.order_notice ?? DEFAULT_ORDER_NOTICE}</p>
+                {product.extra?.order_notice && <p className="whitespace-pre-line">{product.extra.order_notice}</p>}
               </div>
+              <OrderTermsCheckbox checked={acceptedTerms} onCheckedChange={setAcceptedTerms} />
               <Button type="submit" name="action" value="cart" size="lg" variant="outline" className="w-full h-12">
                 <ShoppingBag className="h-4 w-4 mr-2" /> Ajouter au panier
               </Button>

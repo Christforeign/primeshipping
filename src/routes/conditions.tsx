@@ -34,7 +34,13 @@ Prime Shipping fournit aux particuliers et entreprises en Haïti des solutions d
 Les expéditions sont facturées au tarif en vigueur par livre (lb), avec un taux de change officiel mis à jour régulièrement. Les clients peuvent approvisionner leur portefeuille électronique via MonCash, Natcash ou virement bancaire. Pour les demandes d'achat assisté, le montant vérifié avec taxes est déduit du solde après approbation par l'administration.
 
 3. RESPONSABILITÉ & CONFORMITÉ
-Tous les paquets transitant par nos entrepôts font l'objet d'un contrôle de conformité conformément aux lois douanières. Les articles prohibés sont strictement interdits.`,
+Tous les paquets transitant par nos entrepôts font l'objet d'un contrôle de conformité conformément aux lois douanières. Les articles prohibés sont strictement interdits.
+
+4. PRODUITS NUMÉRIQUES & EXACTITUDE DES INFORMATIONS
+Les produits numériques (recharges, cartes cadeaux, services en ligne) ne sont pas remboursables. Vérifiez soigneusement vos informations avant de valider : aucune commande ne peut être remboursée en cas d'informations erronées fournies par le client.
+
+5. FRAUDE
+En cas de fraude ou de tentative de fraude, le compte du client sera supprimé et ses commandes annulées, sans remboursement.`,
     },
     {
       title: "Politique de Livraison en Haïti",
@@ -57,7 +63,7 @@ Tous les paquets transitant par nos entrepôts font l'objet d'un contrôle de co
       content:
         s?.return_policy ||
         s?.refund_policy ||
-        `Toute anomalie (colis endommagé ou non conforme) doit être signalée dans un délai de 48 heures au service support avec photographies et numéro de suivi à l'appui.`,
+        `Tout dommage sur un produit physique ou un colis doit être signalé sous 24 heures au service support, avec photographies et numéro de suivi à l'appui. Passé ce délai, aucune réclamation ne pourra être acceptée. Les livraisons peuvent être retardées pour des raisons indépendantes de notre volonté (douane, transport, conditions locales).`,
     },
   ];
 

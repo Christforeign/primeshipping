@@ -46,3 +46,4 @@
 - [x] Catalogue réel et navigation « Commander » vers la fiche produit (tests ordinateur/mobile)
 - [x] Chasse aux erreurs « Cette page n'a pas pu s'afficher » — 25 pages testées (public + connecté), aucune erreur
 - [x] Partage produit (natif, WhatsApp, TikTok/copie) et partage du panier par lien `?partage=` qui recharge les articles chez le destinataire ; 4 tests réussis et parcours mobile vérifié sans achat réel
+- [x] Case « conditions d'utilisation » obligatoire avant commande et paiement (lien cliquable vers /conditions), conditions simplifiées (numérique non remboursable, infos erronées non remboursées, dommage physique sous 24 h, retards possibles, fraude = compte supprimé) ; note spéciale par produit conservée et facultative dans l'admin ; parcours mobile vérifié connecté sans achat réel
