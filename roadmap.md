@@ -16,6 +16,7 @@
 - [x] Envoi manuel d'e-mail, paiement/recharge en pleine page avec X
 
 ## À faire
+- [ ] Corriger les centimes et appliquer le taux facultatif par produit sur fiche, catalogue et paiement, avec validation de la commande.
 - [x] Devise USD/GDS au produit, retrait gratuit, livraison fixe ou à confirmer séparément et notification client ; 23 tests, sauvegarde connectée et produit → paiement vérifiés sur produit temporaire supprimé. Aucun achat ni nouvel e-mail réel envoyé pendant le test.
 - [x] Prix libres sans prix de base, coordonnées dédupliquées, totaux gourdes hors Prime et USD pour Prime ; carte bancaire retirée. 14 tests réussis et parcours connecté produit libre → MonCash → Prime vérifié sans achat.
 - [x] Minimum montant/quantité par produit et conditions administrables : 8 tests réussis, sauvegarde et parcours jusqu’au paiement vérifiés connecté sans achat réel.
