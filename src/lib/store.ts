@@ -6,7 +6,6 @@ import type {
   WalletTransaction,
   EnrichedCompanySettings,
   OrderStatus,
-  AssistedPurchaseStatus,
   ChatMessage,
   SupportThread,
   UserHaitiProfile,

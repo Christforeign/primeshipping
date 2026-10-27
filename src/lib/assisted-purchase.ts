@@ -40,8 +40,8 @@ export function parseAssistedGuestInput(body: unknown): { ok: true; value: Assis
       customer_name: str(b.customer_name, 120) || "Client Prime",
       customer_email,
       customer_phone,
-      delivery_city: str(b.delivery_city, 120),
-      delivery_address: str(b.delivery_address, 400),
+      delivery_city: str(b["delivery_city"], 120),
+      delivery_address: str(b["delivery_address"], 400),
       image_data_url,
     },
   };
