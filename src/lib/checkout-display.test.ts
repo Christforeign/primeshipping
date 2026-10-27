@@ -30,8 +30,7 @@ describe("gourde-priced products stay in GDS", () => {
   });
   it("shows the saved GDS order total with the wallet debit apart", () => {
     const d = orderTotalDisplay({ price_currency: "HTG", payment_method: "wallet", total_usd: 16.67, total_htg: 2250 });
-    expect(d.primary).toContain("2250".replace(/(\d)(?=(\d{3})+$)/g, "$1\u202f").slice(0, 1));
-    expect(d.primary.endsWith("GDS")).toBe(true);
+    expect(d.primary.replace(/\s/g, "")).toBe("2250GDS");
     expect(d.secondary).toBe("Débité : 16.67 USD");
   });
 });
