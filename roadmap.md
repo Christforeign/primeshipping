@@ -26,7 +26,7 @@
 - [x] Montant USD libre et taux par produit, conversion recalculée dans la base et taux conservés avec la commande (17 tests réussis)
 - [x] Alertes administrateurs configurables : commandes, colis, recharges et support ; lien vers validation après connexion
 - [ ] Tester débit réel, livraison e-mail et sauvegarde admin — compte du demandeur absent ; connexion dans l’aperçu requise, puis redéploiement Vercel
-- [ ] Alertes achats assistés/factures — leurs parcours ne conservent pas encore les opérations dans la base, contrairement aux commandes ; stockage réel nécessaire avant alertes fiables
+- [x] Achats assistés enregistrés dans la base (invités et clients connectés), frais/totaux recalculés par la base, débit portefeuille optionnel, gestion admin complète et alertes admin par e-mail ; 5 tests automatisés et parcours invité + connecté + admin vérifiés, lignes de test supprimées
 - [x] Simplifier Mes colis et retirer le faux message d’adresse non attribuée
 - [x] Restreindre le suivi public/non-propriétaire au statut, date et prochaine étape (contrôle dans la base)
 - [x] Ordonner les sept statuts français et enrichir les e-mails de chaque transition (7 tests réussis)
@@ -44,4 +44,4 @@
 - [x] Modèles des six e-mails d’authentification et envoi personnalisé configurés
 - [ ] Activation des e-mails d’authentification — attend vérification DNS et mise en ligne des nouvelles routes
 - [x] Catalogue réel et navigation « Commander » vers la fiche produit (tests ordinateur/mobile)
-- [ ] Chasse aux erreurs « Cette page n'a pas pu s'afficher »
+- [x] Chasse aux erreurs « Cette page n'a pas pu s'afficher » — 25 pages testées (public + connecté), aucune erreur
