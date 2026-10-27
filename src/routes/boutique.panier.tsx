@@ -78,7 +78,14 @@ function CartPage() {
           {Object.entries(item.formValues).map(([key, value]) => <p key={key} className="text-sm text-muted-foreground break-words">{product?.custom_fields?.find((field) => field.id === key)?.label || key} : {Array.isArray(value) ? value.join(", ") : String(value)}</p>)}
         </article>;
       })}
-      <div className="flex flex-wrap gap-3 justify-between"><Button asChild variant="outline"><Link to="/boutique">Continuer mes achats</Link></Button></div>
+      <div className="flex flex-wrap gap-3 justify-between items-center">
+        <Button asChild variant="outline"><Link to="/boutique">Continuer mes achats</Link></Button>
+        <ShareButtons
+          title="Mon panier Prime Store"
+          url={cartShareUrl(items)}
+          whatsappText="Voici mon panier Prime Store — ouvre ce lien pour le retrouver tel quel :"
+        />
+      </div>
     </>}
   </div>;
 }
