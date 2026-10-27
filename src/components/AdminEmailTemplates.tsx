@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { saveExtraSettings } from "@/lib/admin-settings";
 import { EMAIL_KINDS, mergeTemplates, renderEmail, type EmailKind, type EmailTemplate } from "@/lib/email-templates";
 import { sendClientEmail } from "@/lib/email.functions";
+import { sendManualEmail } from "@/lib/admin-actions.functions";
 import { deleteCustomerAccount } from "@/lib/account.functions";
 import { Button } from "@/components/ui/button";
 import { ClientPicker } from "@/components/ClientPicker";
@@ -14,42 +15,41 @@ import type { ClientHit } from "@/lib/admin-settings";
 const SAMPLE = { nom: "Jean Exemple", code: "PS-0001", tracking: "1Z999AA10123456784", reference: "F-0042", montant: "45.00 USD", details: "Poids : 6 lbs", statut: "Reçu", prochaine_etape: "En transit", date: "26 octobre 2026 à 12:43" };
 
 function ManualSend() {
-  const send = useServerFn(sendClientEmail);
+  const send = useServerFn(sendManualEmail);
   const [client, setClient] = useState<ClientHit | null>(null);
-  const [kind, setKind] = useState<EmailKind>("support");
+  const [audience, setAudience] = useState<"client" | "all">("client");
+  const [subject, setSubject] = useState("");
   const [details, setDetails] = useState("");
+  const [confirmed, setConfirmed] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [eventId, setEventId] = useState<string | null>(null);
   const go = async () => {
-    if (!client) { toast.error("Choisis un client"); return; }
-    if (!details.trim()) { toast.error("Écris un message"); return; }
+    if (audience === "client" && !client) { toast.error("Choisis un client"); return; }
+    if (!subject.trim() || !details.trim() || !confirmed) return;
     setBusy(true);
+    const id = eventId || crypto.randomUUID();
+    setEventId(id);
     try {
-      const r = await send({ data: { kind, userId: client.id, vars: { details: details.trim() }, test: true } });
-      if (r.sent) { toast.success(`E-mail envoyé à ${client.full_name || client.email}`); setDetails(""); }
-      else toast.error(r.reason || "Non envoyé");
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Erreur d'envoi");
-    } finally { setBusy(false); }
+      const r = await send({ data: { audience, userId: audience === "client" ? client?.id : undefined, subject, message: details, eventId: id, confirmed } });
+      if (r.sent) toast.success(`${r.sent} e-mail(s) accepté(s) par Brevo`);
+      if (r.failed || r.stopped) toast.warning(`${r.failed} échec(s). Consulte le journal des erreurs avant de réessayer.`);
+      if (!r.sent && !r.failed) toast.info("Aucun destinataire avec une adresse e-mail disponible.");
+      if (!r.failed && !r.stopped) { setDetails(""); setSubject(""); setConfirmed(false); setEventId(null); }
+    } catch { toast.error("Envoi impossible. Vérifie ta connexion et le journal des erreurs."); }
+    finally { setBusy(false); }
   };
   const inp = "w-full rounded-md border border-border bg-background px-3 py-2 text-sm";
-  return (
-    <div className="rounded-lg border border-border bg-card p-4 space-y-3">
-      <h3 className="font-bold">Envoyer un e-mail à un client</h3>
-      {client ? (
-        <div className="flex items-center justify-between gap-2 rounded-md bg-muted px-3 py-2 text-sm">
-          <span className="min-w-0 truncate">{client.full_name} — {client.client_code} — {client.email}</span>
-          <button onClick={() => setClient(null)} className="text-xs text-primary">Changer</button>
-        </div>
-      ) : (
-        <ClientPicker onPick={setClient} />
-      )}
-      <select className={inp} value={kind} onChange={(e) => setKind(e.target.value as EmailKind)}>
-        {EMAIL_KINDS.map((k) => <option key={k.kind} value={k.kind}>{k.label}</option>)}
-      </select>
-      <textarea className={inp} rows={4} placeholder="Message (remplace {{details}} dans le modèle)" value={details} onChange={(e) => setDetails(e.target.value)} />
-      <button disabled={busy} onClick={go} className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground">{busy ? "Envoi..." : "Envoyer"}</button>
-    </div>
-  );
+  return <section className="space-y-3 border-y border-border py-5">
+    <h3 className="text-lg font-bold">Envoyer un e-mail manuel</h3>
+    <select aria-label="Destinataires" className={inp} disabled={busy} value={audience} onChange={(e) => { setAudience(e.target.value as "client" | "all"); setConfirmed(false); setEventId(null); }}>
+      <option value="client">Un client</option><option value="all">Tous les clients</option>
+    </select>
+    {audience === "client" && (client ? <div className="flex min-w-0 items-center gap-2"><span className="truncate">{client.full_name} — {client.email}</span><Button variant="ghost" size="sm" disabled={busy} onClick={() => { setClient(null); setEventId(null); }}>Changer</Button></div> : <ClientPicker onPick={(c) => { setClient(c); setEventId(null); }} />)}
+    <input aria-label="Objet du message" placeholder="Objet" maxLength={200} disabled={busy} className={inp} value={subject} onChange={(e) => { setSubject(e.target.value); setEventId(null); }} />
+    <textarea aria-label="Message manuel" placeholder="Votre message" rows={6} maxLength={10000} disabled={busy} className={inp} value={details} onChange={(e) => { setDetails(e.target.value); setEventId(null); }} />
+    <label className="flex items-start gap-2 text-sm"><input type="checkbox" disabled={busy} checked={confirmed} onChange={(e) => setConfirmed(e.target.checked)} />{audience === "all" ? "Je confirme l'envoi à tous les clients concernés et leur accord pour recevoir ce message." : "Je confirme l'envoi à ce client."}</label>
+    <Button disabled={busy || !confirmed || !subject.trim() || !details.trim() || (audience === "client" && !client)} onClick={go}>{busy ? "Envoi en cours…" : audience === "all" ? "Envoyer à tous les clients" : "Envoyer au client"}</Button>
+  </section>;
 }
 
 function CartReminder() {
@@ -171,13 +171,14 @@ export function AdminEmailTemplates() {
   const [adminEnabled, setAdminEnabled] = useState(false);
   const [packageId, setPackageId] = useState("");
   const [kind, setKind] = useState<EmailKind>("colis_recu");
-  const [testTo, setTestTo] = useState("");
+  const [manualSender, setManualSender] = useState("noreply@primeshipping.net");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (!data) return;
     setTpls(mergeTemplates(data["email_templates"]));
     setSender(String(data["email_sender"] || ""));
+    setManualSender(String(data["email_manual_sender"] || "noreply@primeshipping.net"));
     setSenderName(String(data["email_sender_name"] || "Prime Express Shipping"));
     setLogoUrl(String(data["email_logo_url"] || ""));
     setStoreLogoUrl(String(data["email_store_logo_url"] || ""));
@@ -199,18 +200,9 @@ export function AdminEmailTemplates() {
     if (adminEnabled && adminRecipients.split(/[\s,;]+/).filter(Boolean).some((email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) { toast.error("Une adresse administrateur est invalide."); return; }
     setBusy(true);
     try {
-      await saveExtraSettings({ email_templates: tpls, email_sender: sender.trim(), email_sender_name: senderName.trim(), email_logo_url: logoUrl.trim(), email_store_logo_url: storeLogoUrl.trim(), email_admin_recipients: adminRecipients.trim(), email_admin_alerts_enabled: adminEnabled });
+      await saveExtraSettings({ email_templates: tpls, email_manual_sender: manualSender.trim(), email_sender: sender.trim(), email_sender_name: senderName.trim(), email_logo_url: logoUrl.trim(), email_store_logo_url: storeLogoUrl.trim(), email_admin_recipients: adminRecipients.trim(), email_admin_alerts_enabled: adminEnabled });
       qc.invalidateQueries({ queryKey: ["email_settings"] });
       toast.success("Emails enregistrés");
-    } catch (e) { toast.error((e as Error).message); } finally { setBusy(false); }
-  }
-  async function test() {
-    if (!testTo) { toast.error("Saisis un email de test"); return; }
-    setBusy(true);
-    try {
-      await saveExtraSettings({ email_templates: tpls, email_sender: sender.trim(), email_sender_name: senderName.trim(), email_logo_url: logoUrl.trim(), email_store_logo_url: storeLogoUrl.trim(), email_admin_recipients: adminRecipients.trim(), email_admin_alerts_enabled: adminEnabled });
-      const r = await send({ data: { kind, toEmail: testTo.trim(), vars: SAMPLE, test: true } });
-      r.sent ? toast.success("Email de test envoyé") : toast.error(r.reason);
     } catch (e) { toast.error((e as Error).message); } finally { setBusy(false); }
   }
 
@@ -224,6 +216,7 @@ export function AdminEmailTemplates() {
           <input className={inp} placeholder="Nom affiché" value={senderName} onChange={(e) => setSenderName(e.target.value)} />
           <input className={inp} type="email" placeholder="ton-email@exemple.com" value={sender} onChange={(e) => setSender(e.target.value)} />
         </div>
+        <label className="block text-sm">Expéditeur des envois manuels<input className={inp} type="email" aria-label="Expéditeur manuel" value={manualSender} onChange={(e) => setManualSender(e.target.value)} /></label>
         <input className={inp} type="url" placeholder="Logo des e-mails — adresse https (facultatif)" value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} />
       </div>
 
@@ -259,8 +252,7 @@ export function AdminEmailTemplates() {
         </div>
         <div className="flex flex-wrap gap-2">
           <button disabled={busy} onClick={save} className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground">Enregistrer</button>
-          <input className={`${inp} max-w-xs`} type="email" placeholder="Email de test" value={testTo} onChange={(e) => setTestTo(e.target.value)} />
-          <button disabled={busy} onClick={test} className="rounded-md border border-border px-4 py-2 text-sm">Envoyer un test</button>
+
         </div>
       </div>
       <CartReminder />

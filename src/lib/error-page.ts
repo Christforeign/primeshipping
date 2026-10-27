@@ -1,6 +1,6 @@
 export function renderErrorPage(): string {
   return `<!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="utf-8" />
     <title>Cette page n'a pas pu s'afficher</title>

@@ -23,6 +23,8 @@ import { InteractiveTutorial } from "@/components/InteractiveTutorial";
 import { useSettings } from "@/lib/settings";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { Button } from "@/components/ui/button";
+import { OfflineScreen } from "@/components/OfflineScreen";
+import { registerOfflineSupport } from "@/lib/offline-registration";
 import { X } from "lucide-react";
 
 function NotFoundComponent() {
@@ -47,7 +49,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: ErrorComponentProps) {
+export function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
@@ -64,7 +66,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
           Un petit souci est survenu. Réessayez ou revenez à l'accueil.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <button
+          <Button
             onClick={() => {
               router.invalidate();
               reset();
@@ -72,7 +74,7 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Réessayer
-          </button>
+          </Button>
           <a
             href="/"
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
@@ -136,6 +138,8 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
 
+  useEffect(() => { void registerOfflineSupport().catch(console.error); }, []);
+
   useEffect(() => {
     const goReset = () => {
       if (window.location.pathname !== "/reset-password") {
@@ -165,6 +169,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <OfflineScreen />
       <AppShellContent />
       <Toaster richColors position="top-center" />
     </QueryClientProvider>
@@ -175,6 +180,13 @@ function AppShellContent() {
   const s = useSettings();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const isCheckout = ["/boutique/commande", "/boutique/panier"].includes(pathname.replace(/\/$/, ""));
+
+  useEffect(() => {
+    if (!s) return;
+    const contacts = Array.isArray(s.whatsapp_support_contacts) ? s.whatsapp_support_contacts : [];
+    const phone = contacts.find((c) => c.is_active !== false)?.phone || s.whatsapp || s.phone || "";
+    try { localStorage.setItem("prime_support_phone", phone); } catch { /* optional cache */ }
+  }, [s]);
 
   // Dynamic background style
   const getBackgroundStyle = () => {

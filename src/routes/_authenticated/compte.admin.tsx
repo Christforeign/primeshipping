@@ -56,6 +56,7 @@ import { clientStore } from "@/lib/store";
 import { PageHeader } from "@/components/PageHeader";
 import { AdminInvoiceBuilder } from "@/components/AdminInvoiceBuilder";
 import { AdminWalletAdjust } from "@/components/AdminWalletAdjust";
+import { OrderDeleteButton } from "@/components/OrderDeleteButton";
 import { AdminEmailTemplates } from "@/components/AdminEmailTemplates";
 import { AdminErrorLogs } from "@/components/AdminErrorLogs";
 import { AdminWhatsAppContacts } from "@/components/AdminWhatsAppContacts";
@@ -667,18 +668,9 @@ function AdminHubPage() {
   const adminOrdersQuery = useQuery({
     queryKey: ["admin-orders"],
     queryFn: async () => {
-      try {
-        const { data, error } = await supabase
-          .from("shop_orders")
-          .select("*")
-          .order("created_at", { ascending: false });
-        if (!error && data) {
-          return data as unknown as OrderItem[];
-        }
-      } catch {
-        // fallback
-      }
-      return clientStore.getOrders();
+      const { data, error } = await supabase.from("shop_orders").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data || []) as unknown as OrderItem[];
     },
   });
 
@@ -2359,6 +2351,7 @@ function AdminHubPage() {
             </p>
           </div>
 
+          {adminOrdersQuery.isError && <p role="alert" className="text-sm text-destructive">Impossible de charger les commandes. <Button variant="outline" onClick={() => adminOrdersQuery.refetch()}>Réessayer</Button></p>}
           <div className="divide-y rounded-2xl border bg-card overflow-hidden">
             {adminOrdersQuery.data?.map((ord) => (
               <div
@@ -2383,7 +2376,8 @@ function AdminHubPage() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <OrderDeleteButton orderId={ord.id} />
                   <select
                     value={ord.status}
                     onChange={(e) => handleUpdateOrderStatus(ord.id, e.target.value as OrderStatus)}
