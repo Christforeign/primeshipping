@@ -22,6 +22,9 @@ import { toast } from "sonner";
 import { useSettings } from "@/lib/settings";
 import { useUser } from "@/lib/session";
 import { clientStore } from "@/lib/store";
+import { supabase } from "@/integrations/supabase/client";
+import { sendClientEmail } from "@/lib/email.functions";
+import { uploadImage } from "@/lib/upload";
 import { notificationService } from "@/lib/notifications";
 import { sendLocalPush } from "@/lib/push-notifications";
 import type { AssistedPurchaseRequest } from "@/lib/types-store";
@@ -164,6 +167,7 @@ export function AssistedPurchasePage() {
   const [productLink, setProductLink] = useState("");
   const [productImageUrl, setProductImageUrl] = useState("");
   const [imageBase64, setImageBase64] = useState<string>("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [description, setDescription] = useState("");
   const [clientPriceInput, setClientPriceInput] = useState("");
 
@@ -178,7 +182,6 @@ export function AssistedPurchasePage() {
   const [deductFromWallet, setDeductFromWallet] = useState(true);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [, setLastSubmitted] = useState<AssistedPurchaseRequest | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -203,34 +206,29 @@ export function AssistedPurchasePage() {
   // Queries
   const walletQuery = useQuery({
     queryKey: ["wallet-balance", user?.id],
+    enabled: !!user?.id,
     queryFn: async () => {
-      try {
-        return safeNumber(clientStore.getWalletBalance(user?.id || "anon"), 0);
-      } catch {
-        return 0;
-      }
+      const { data } = await supabase
+        .from("wallets")
+        .select("balance_usd")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      return safeNumber(data?.balance_usd, 0);
     },
   });
   const walletBalance = safeNumber(walletQuery.data, 0);
 
   const purchasesQuery = useQuery({
-    queryKey: ["my-assisted-purchases", user?.id, user?.email],
+    queryKey: ["my-assisted-purchases", user?.id],
+    enabled: !!user?.id,
     queryFn: async () => {
-      try {
-        const all = clientStore.getAssistedPurchases();
-        if (!Array.isArray(all)) return [];
-        if (!user?.id && !user?.email) return all;
-        const userEmailLower = user?.email?.toLowerCase();
-        return all.filter((a) => {
-          if (!a) return false;
-          if (user?.id && a.user_id === user.id) return true;
-          if (userEmailLower && a.customer_email && a.customer_email.toLowerCase() === userEmailLower) return true;
-          if (a.user_id === "client-anon") return true;
-          return false;
-        });
-      } catch {
-        return [];
-      }
+      const { data, error } = await supabase
+        .from("assisted_purchases")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      return (data || []) as AssistedPurchaseRequest[];
     },
   });
   const myPurchases = Array.isArray(purchasesQuery.data) ? purchasesQuery.data : [];
@@ -240,6 +238,10 @@ export function AssistedPurchasePage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (!user) {
+      return toast.error("Connectez-vous pour joindre une image à votre demande.");
+    }
+
     if (!file.type.startsWith("image/")) {
       return toast.error("Veuillez sélectionner un fichier image valide (JPG, PNG, WebP).");
     }
@@ -248,17 +250,17 @@ export function AssistedPurchasePage() {
       return toast.error("L'image ne doit pas dépasser 5 Mo.");
     }
 
+    setImageFile(file);
     const reader = new FileReader();
     reader.onload = (uploadEvent) => {
-      const result = uploadEvent.target?.result as string;
-      setImageBase64(result);
-      toast.success("Image téléversée avec succès !");
+      setImageBase64((uploadEvent.target?.result as string) || "");
     };
     reader.readAsDataURL(file);
   };
 
   const removeUploadedImage = () => {
     setImageBase64("");
+    setImageFile(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -273,7 +275,7 @@ export function AssistedPurchasePage() {
   const totalUsd = Number((numericPrice + calculatedFee).toFixed(2));
   const totalHtg = Math.round(totalUsd * rate);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!customerName.trim() && !customerPhone.trim()) {
@@ -282,63 +284,96 @@ export function AssistedPurchasePage() {
 
     setIsSubmitting(true);
     try {
-      const finalPaymentChoice =
-        deductFromWallet && walletBalance >= totalUsd ? "wallet" : "pending_admin";
+      let imageUrl = productImageUrl.trim();
+      if (imageFile) {
+        try {
+          imageUrl = await uploadImage(`assisted/${user?.id || "invites"}`, imageFile);
+        } catch {
+          toast.warning("Image non envoyée — la demande partira sans image.");
+        }
+      }
 
-      const newReq = clientStore.createAssistedPurchase({
-        user_id: user?.id || (user?.email ? user.email : "client-anon"),
-        customer_name: customerName || "Client Prime",
-        customer_email: customerEmail || (user?.email ?? "client@primeentreprise.com"),
-        customer_phone: customerPhone || "",
+      const payload = {
         store_name: storeName.trim() || "Multi-sites / À identifier",
-        product_link: productLink.trim() || undefined,
-        product_image_url: productImageUrl.trim() || undefined,
-        image_base64: imageBase64 || undefined,
+        product_link: productLink.trim(),
         description: description.trim() || "Article soumis par le client pour vérification",
         exact_price_usd: numericPrice,
-        fee_usd: calculatedFee,
-        total_usd: totalUsd,
-        total_htg: totalHtg,
-        payment_choice: finalPaymentChoice,
-        payment_status: "pending_verification",
-        status: "en_attente",
-        deduct_from_wallet_after_verification: deductFromWallet,
+        customer_name: customerName || "Client Prime",
+        customer_phone: customerPhone || "",
+        customer_email: customerEmail || user?.email || "",
         delivery_city: deliveryCity,
         delivery_address: deliveryAddress,
-        admin_notes: deductFromWallet
-          ? "Client souhaite déduction sur solde portefeuille dès vérification"
-          : "En attente d'approbation et règlement",
-      });
+      };
 
-      setLastSubmitted(newReq);
+      let requestNumber = "";
+      let assistedId: string | undefined;
+      let debited = false;
+
+      if (user?.id) {
+        const { data: created, error } = await supabase.rpc("create_assisted_purchase", {
+          p_exact_price_usd: numericPrice,
+          p_store_name: payload.store_name,
+          p_product_link: payload.product_link,
+          p_product_image_url: imageUrl,
+          p_description: payload.description,
+          p_customer_name: payload.customer_name,
+          p_customer_phone: payload.customer_phone,
+          p_delivery_city: payload.delivery_city,
+          p_delivery_address: payload.delivery_address,
+          p_deduct_from_wallet: deductFromWallet,
+        });
+        if (error) throw new Error(error.message);
+        const result = (created || {}) as { id?: string; request_number?: string; payment_status?: string };
+        requestNumber = String(result.request_number || "");
+        assistedId = result.id;
+        debited = result.payment_status === "verified_paid";
+      } else {
+        const res = await fetch("/api/public/assisted-purchase", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ ...payload, product_image_url: imageUrl }),
+        });
+        const out = (await res.json().catch(() => ({}))) as { error?: string };
+        if (!res.ok) throw new Error(out.error || "Envoi impossible. Vérifiez votre connexion et réessayez.");
+      }
+
+      if (assistedId) {
+        try {
+          await sendClientEmail({ data: { kind: "achat", assistedId } });
+        } catch {
+          // L'e-mail ne doit pas bloquer l'enregistrement de la demande
+        }
+      }
+
       purchasesQuery.refetch();
       walletQuery.refetch();
 
       // In-App Notification
       try {
         notificationService.addNotification({
-          title: `Demande d'achat soumise : #${newReq.request_number}`,
-          message: `Votre demande d'achat sur ${newReq.store_name} a été transmise. L'administrateur va vérifier le produit et les taxes.`,
+          title: `Demande d'achat soumise : #${requestNumber}`,
+          message: `Votre demande d'achat sur ${payload.store_name} a été transmise. L'administration va vérifier le produit et les taxes.`,
           type: "achat",
           link: "/achat",
         });
-      } catch (e) {
-        console.error(e);
+      } catch (err) {
+        console.error(err);
       }
 
       // Native Push Notification
       try {
-        sendLocalPush(`Demande d'achat #${newReq.request_number} enregistrée !`, {
-          body: `Votre demande pour ${newReq.store_name} est bien reçue et en cours de vérification par Prime Express Shipping.`,
+        sendLocalPush(`Demande d'achat #${requestNumber} enregistrée !`, {
+          body: `Votre demande pour ${payload.store_name} est bien reçue et en cours de vérification par Prime Express Shipping.`,
           url: "/achat",
         });
-      } catch (e) {
-        console.error(e);
+      } catch (err) {
+        console.error(err);
       }
 
-      toast.success(`Demande d'achat #${newReq.request_number} enregistrée avec succès !`, {
-        description:
-          "L'administration examine votre produit. Vous recevrez une notification dès validation.",
+      toast.success(`Demande d'achat #${requestNumber} enregistrée avec succès !`, {
+        description: debited
+          ? "Le montant a été déduit de votre portefeuille Prime."
+          : "L'administration examine votre produit. Vous recevrez une notification dès validation.",
       });
 
       // Reset form
@@ -346,10 +381,16 @@ export function AssistedPurchasePage() {
       setProductLink("");
       setProductImageUrl("");
       setImageBase64("");
+      setImageFile(null);
       setDescription("");
       setClientPriceInput("");
-    } catch {
-      toast.error("Erreur lors de la soumission de votre demande d'achat.");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    } catch (err) {
+      toast.error(
+        err instanceof Error && err.message
+          ? err.message
+          : "Erreur réseau. Vérifiez votre connexion puis réessayez.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -831,7 +872,11 @@ export function AssistedPurchasePage() {
         {myPurchases.length === 0 ? (
           <div className="text-center py-10 text-muted-foreground text-xs space-y-2">
             <ShoppingBag className="h-8 w-8 mx-auto opacity-30 text-orange-500" />
-            <p>Vous n'avez pas encore de demande d'achat assisté.</p>
+            <p>
+              {user
+                ? "Vous n'avez pas encore de demande d'achat assisté."
+                : "Connectez-vous pour suivre vos demandes d'achat assisté."}
+            </p>
           </div>
         ) : (
           <div className="grid gap-3 sm:grid-cols-2">
@@ -884,22 +929,6 @@ export function AssistedPurchasePage() {
                       {formatDateSafe(req.created_at)}
                     </span>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        window.dispatchEvent(
-                          new CustomEvent("prime_open_chat", {
-                            detail: {
-                              dossierId: req.request_number,
-                              dossierTitle: `Demande d'achat ${req.request_number}`,
-                            },
-                          }),
-                        );
-                      }}
-                      className="inline-flex items-center gap-1 font-bold text-orange-500 hover:underline"
-                    >
-                      <MessageCircle className="h-3.5 w-3.5" /> Chat dossier
-                    </button>
                   </div>
                 </div>
               );
