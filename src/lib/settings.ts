@@ -1,4 +1,5 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import type { EnrichedCompanySettings } from "./types-store";
@@ -35,5 +36,10 @@ export const settingsQuery = queryOptions({
 });
 
 export function useSettings() {
-  return useQuery(settingsQuery).data ?? null;
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => { setHydrated(true); }, []);
+  const query = useQuery(settingsQuery);
+  // A client cache may already contain settings when SSR used defaults.
+  // Match the first browser render to SSR before exposing cached values.
+  return hydrated ? query.data ?? null : null;
 }
