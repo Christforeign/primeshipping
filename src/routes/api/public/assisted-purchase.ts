@@ -54,7 +54,7 @@ export const Route = createFileRoute("/api/public/assisted-purchase")({
               deduct_from_wallet_after_verification: false,
               admin_notes: "Demande envoyée sans compte (invité)",
             })
-            .select("id")
+            .select("id, request_number")
             .single();
           if (error || !row) {
             console.error("assisted insert", error?.message);
@@ -68,7 +68,7 @@ export const Route = createFileRoute("/api/public/assisted-purchase")({
             console.error("assisted email", e);
           }
 
-          return Response.json({ ok: true });
+          return Response.json({ ok: true, request_number: row.request_number });
         } catch {
           return Response.json({ error: "Requête invalide" }, { status: 400 });
         }

@@ -333,8 +333,9 @@ export function AssistedPurchasePage() {
           headers: { "content-type": "application/json" },
           body: JSON.stringify({ ...payload, product_image_url: imageUrl }),
         });
-        const out = (await res.json().catch(() => ({}))) as { error?: string };
+        const out = (await res.json().catch(() => ({}))) as { error?: string; request_number?: string };
         if (!res.ok) throw new Error(out.error || "Envoi impossible. Vérifiez votre connexion et réessayez.");
+        requestNumber = String(out.request_number || "");
       }
 
       if (assistedId) {
