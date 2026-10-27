@@ -95,6 +95,93 @@ export type Database = {
         }
         Relationships: []
       }
+      assisted_purchases: {
+        Row: {
+          admin_notes: string
+          created_at: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          deduct_from_wallet_after_verification: boolean
+          delivery_address: string
+          delivery_city: string
+          description: string
+          exact_price_usd: number
+          fee_usd: number
+          id: string
+          payment_choice: string
+          payment_status: string
+          product_image_url: string
+          product_link: string
+          request_number: string
+          site_rate_htg: number
+          status: string
+          store_name: string
+          tax_usd: number
+          total_htg: number
+          total_usd: number
+          tracking_number: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          admin_notes?: string
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string
+          deduct_from_wallet_after_verification?: boolean
+          delivery_address?: string
+          delivery_city?: string
+          description?: string
+          exact_price_usd?: number
+          fee_usd?: number
+          id?: string
+          payment_choice?: string
+          payment_status?: string
+          product_image_url?: string
+          product_link?: string
+          request_number?: string
+          site_rate_htg?: number
+          status?: string
+          store_name?: string
+          tax_usd?: number
+          total_htg?: number
+          total_usd?: number
+          tracking_number?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          admin_notes?: string
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string
+          deduct_from_wallet_after_verification?: boolean
+          delivery_address?: string
+          delivery_city?: string
+          description?: string
+          exact_price_usd?: number
+          fee_usd?: number
+          id?: string
+          payment_choice?: string
+          payment_status?: string
+          product_image_url?: string
+          product_link?: string
+          request_number?: string
+          site_rate_htg?: number
+          status?: string
+          store_name?: string
+          tax_usd?: number
+          total_htg?: number
+          total_usd?: number
+          tracking_number?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       company_settings: {
         Row: {
           company_name: string
@@ -746,8 +833,36 @@ export type Database = {
       }
       admin_delete_package: { Args: { _package_id: string }; Returns: boolean }
       admin_setup_available: { Args: never; Returns: boolean }
+      admin_update_assisted_purchase: {
+        Args: {
+          p_admin_notes: string
+          p_deduct_from_wallet: boolean
+          p_exact_price_usd: number
+          p_fee_usd: number
+          p_id: string
+          p_status: string
+          p_tax_usd: number
+        }
+        Returns: Json
+      }
+      assisted_purchase_fee: { Args: { _exact_price: number }; Returns: number }
       can_manage_packages: { Args: { _user_id: string }; Returns: boolean }
       claim_first_admin: { Args: never; Returns: boolean }
+      create_assisted_purchase: {
+        Args: {
+          p_customer_name?: string
+          p_customer_phone?: string
+          p_deduct_from_wallet?: boolean
+          p_delivery_address?: string
+          p_delivery_city?: string
+          p_description?: string
+          p_exact_price_usd: number
+          p_product_image_url?: string
+          p_product_link?: string
+          p_store_name?: string
+        }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

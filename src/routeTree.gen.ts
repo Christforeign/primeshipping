@@ -35,6 +35,7 @@ import { Route as AuthenticatedCompteAdressesRouteImport } from './routes/_authe
 import { Route as AuthenticatedCompteCommandesRouteImport } from './routes/_authenticated/compte.commandes'
 import { Route as AuthenticatedComptePortefeuilleRouteImport } from './routes/_authenticated/compte.portefeuille'
 import { Route as AuthenticatedCompteProfilRouteImport } from './routes/_authenticated/compte.profil'
+import { Route as ApiPublicAssistedPurchaseRouteImport } from './routes/api/public/assisted-purchase'
 import { Route as AuthenticatedCompteColisIndexRouteImport } from './routes/_authenticated/compte.colis.index'
 import { Route as AuthenticatedCompteColisIdRouteImport } from './routes/_authenticated/compte.colis.$id'
 import { Route as AuthenticatedCompteColisNouveauRouteImport } from './routes/_authenticated/compte.colis.nouveau'
@@ -177,6 +178,12 @@ const AuthenticatedCompteProfilRoute =
     path: '/profil',
     getParentRoute: () => AuthenticatedCompteRoute,
   } as any)
+const ApiPublicAssistedPurchaseRoute =
+  ApiPublicAssistedPurchaseRouteImport.update({
+    id: '/api/public/assisted-purchase',
+    path: '/api/public/assisted-purchase',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedCompteColisIndexRoute =
   AuthenticatedCompteColisIndexRouteImport.update({
     id: '/colis/',
@@ -231,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/compte/commandes': typeof AuthenticatedCompteCommandesRoute
   '/compte/portefeuille': typeof AuthenticatedComptePortefeuilleRoute
   '/compte/profil': typeof AuthenticatedCompteProfilRoute
+  '/api/public/assisted-purchase': typeof ApiPublicAssistedPurchaseRoute
   '/compte/': typeof AuthenticatedCompteIndexRoute
   '/compte/colis/$id': typeof AuthenticatedCompteColisIdRoute
   '/compte/colis/nouveau': typeof AuthenticatedCompteColisNouveauRoute
@@ -262,6 +270,7 @@ export interface FileRoutesByTo {
   '/compte/commandes': typeof AuthenticatedCompteCommandesRoute
   '/compte/portefeuille': typeof AuthenticatedComptePortefeuilleRoute
   '/compte/profil': typeof AuthenticatedCompteProfilRoute
+  '/api/public/assisted-purchase': typeof ApiPublicAssistedPurchaseRoute
   '/compte': typeof AuthenticatedCompteIndexRoute
   '/compte/colis/$id': typeof AuthenticatedCompteColisIdRoute
   '/compte/colis/nouveau': typeof AuthenticatedCompteColisNouveauRoute
@@ -296,6 +305,7 @@ export interface FileRoutesById {
   '/_authenticated/compte/commandes': typeof AuthenticatedCompteCommandesRoute
   '/_authenticated/compte/portefeuille': typeof AuthenticatedComptePortefeuilleRoute
   '/_authenticated/compte/profil': typeof AuthenticatedCompteProfilRoute
+  '/api/public/assisted-purchase': typeof ApiPublicAssistedPurchaseRoute
   '/_authenticated/compte/': typeof AuthenticatedCompteIndexRoute
   '/_authenticated/compte/colis/$id': typeof AuthenticatedCompteColisIdRoute
   '/_authenticated/compte/colis/nouveau': typeof AuthenticatedCompteColisNouveauRoute
@@ -330,6 +340,7 @@ export interface FileRouteTypes {
     | '/compte/commandes'
     | '/compte/portefeuille'
     | '/compte/profil'
+    | '/api/public/assisted-purchase'
     | '/compte/'
     | '/compte/colis/$id'
     | '/compte/colis/nouveau'
@@ -361,6 +372,7 @@ export interface FileRouteTypes {
     | '/compte/commandes'
     | '/compte/portefeuille'
     | '/compte/profil'
+    | '/api/public/assisted-purchase'
     | '/compte'
     | '/compte/colis/$id'
     | '/compte/colis/nouveau'
@@ -394,6 +406,7 @@ export interface FileRouteTypes {
     | '/_authenticated/compte/commandes'
     | '/_authenticated/compte/portefeuille'
     | '/_authenticated/compte/profil'
+    | '/api/public/assisted-purchase'
     | '/_authenticated/compte/'
     | '/_authenticated/compte/colis/$id'
     | '/_authenticated/compte/colis/nouveau'
@@ -421,6 +434,7 @@ export interface RootRouteChildren {
   BoutiqueCommandeRoute: typeof BoutiqueCommandeRoute
   BoutiquePanierRoute: typeof BoutiquePanierRoute
   BoutiqueIndexRoute: typeof BoutiqueIndexRoute
+  ApiPublicAssistedPurchaseRoute: typeof ApiPublicAssistedPurchaseRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
 }
@@ -609,6 +623,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCompteProfilRouteImport
       parentRoute: typeof AuthenticatedCompteRoute
     }
+    '/api/public/assisted-purchase': {
+      id: '/api/public/assisted-purchase'
+      path: '/api/public/assisted-purchase'
+      fullPath: '/api/public/assisted-purchase'
+      preLoaderRoute: typeof ApiPublicAssistedPurchaseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/compte/colis/': {
       id: '/_authenticated/compte/colis/'
       path: '/colis'
@@ -706,6 +727,7 @@ const rootRouteChildren: RootRouteChildren = {
   BoutiqueCommandeRoute: BoutiqueCommandeRoute,
   BoutiquePanierRoute: BoutiquePanierRoute,
   BoutiqueIndexRoute: BoutiqueIndexRoute,
+  ApiPublicAssistedPurchaseRoute: ApiPublicAssistedPurchaseRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
 }

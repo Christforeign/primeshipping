@@ -703,7 +703,15 @@ function AdminHubPage() {
   // -------------------------------------------------------------
   const adminAchatsQuery = useQuery({
     queryKey: ["admin-assisted-purchases"],
-    queryFn: async () => clientStore.getAssistedPurchases(),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("assisted_purchases")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(200);
+      if (error) throw error;
+      return (data || []) as AssistedPurchaseRequest[];
+    },
   });
 
   const [editingAchat, setEditingAchat] = useState<AssistedPurchaseRequest | null>(null);
@@ -725,77 +733,85 @@ function AdminHubPage() {
     setDeductFromWalletOption(ach.deduct_from_wallet_after_verification ?? true);
   };
 
-  const handleSaveAchatEdit = (e: React.FormEvent) => {
+  const handleSaveAchatEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingAchat) return;
-    const priceNum = parseFloat(editAchatPrice) || 0;
-    const feeNum = parseFloat(editAchatFee) || 0;
-    const taxNum = parseFloat(editAchatTax) || 0;
-    const totalUsd = Number((priceNum + feeNum + taxNum).toFixed(2));
-    const totalHtg = Math.round(totalUsd * (s?.usd_to_htg || 132));
-
-    let finalPaymentStatus = editingAchat.payment_status;
-    let finalStatus = editAchatStatus;
-
-    if (deductFromWalletOption && editAchatStatus === "validee") {
-      const success = clientStore.deductWallet(
-        editingAchat.user_id,
-        totalUsd,
-        `Commande achat assisté #${editingAchat.request_number}`,
-      );
-      if (success) {
-        finalPaymentStatus = "paid";
-        finalStatus = "payee";
-        toast.success(`Montant (${totalUsd}$ USD) déduit du solde du client !`);
-      } else {
-        toast.warning(
-          "Solde insuffisant dans le portefeuille du client. La demande est validée en attente de paiement.",
-        );
+    try {
+      const { data, error } = await supabase.rpc("admin_update_assisted_purchase", {
+        p_id: editingAchat.id,
+        p_exact_price_usd: parseFloat(editAchatPrice) || 0,
+        p_fee_usd: parseFloat(editAchatFee) || 0,
+        p_tax_usd: parseFloat(editAchatTax) || 0,
+        p_status: editAchatStatus,
+        p_admin_notes: editAchatNotes,
+        p_deduct_from_wallet: deductFromWalletOption,
+      });
+      if (error) throw error;
+      const result = (data || {}) as { debited?: boolean; total_usd?: number; payment_status?: string };
+      if (result.debited) {
+        toast.success(`Montant (${Number(result.total_usd || 0).toFixed(2)}$ USD) déduit du solde du client !`);
+      } else if (
+        deductFromWalletOption &&
+        (editAchatStatus === "validee" || editAchatStatus === "payee") &&
+        result.payment_status !== "verified_paid"
+      ) {
+        toast.warning("Solde du client insuffisant : la demande reste en attente de paiement.");
       }
-    }
-
-    clientStore.updateAssistedPurchase(editingAchat.id, {
-      exact_price_usd: priceNum,
-      fee_usd: feeNum,
-      tax_usd: taxNum,
-      total_usd: totalUsd,
-      total_htg: totalHtg,
-      status: finalStatus,
-      admin_notes: editAchatNotes,
-      payment_status: finalPaymentStatus,
-    });
-
-    qc.invalidateQueries({ queryKey: ["admin-assisted-purchases"] });
-    qc.invalidateQueries({ queryKey: ["my-assisted-purchases"] });
-    qc.invalidateQueries({ queryKey: ["admin-wallets"] });
-    setEditingAchat(null);
-    toast.success(`Demande ${editingAchat.request_number} mise à jour avec succès !`);
-  };
-
-  const handleQuickApproveAchat = (ach: AssistedPurchaseRequest) => {
-    const res = clientStore.verifyAndApproveAssistedPurchase(ach.id, {
-      tax_usd: ach.tax_usd || 0,
-      fee_usd: ach.fee_usd,
-      deductFromWallet: true,
-      notes: "Produit vérifié et validé par l'administrateur",
-    });
-    qc.invalidateQueries({ queryKey: ["admin-assisted-purchases"] });
-    qc.invalidateQueries({ queryKey: ["my-assisted-purchases"] });
-    qc.invalidateQueries({ queryKey: ["admin-wallets"] });
-    if (res?.status === "payee") {
-      toast.success(`Demande #${ach.request_number} validée et payée via portefeuille !`);
-    } else {
-      toast.success(`Demande #${ach.request_number} validée !`);
-    }
-  };
-
-  const handleDeleteAchat = (id: string) => {
-    if (confirm("Supprimer cette demande d'achat ?")) {
-      clientStore.deleteAssistedPurchase(id);
+      try {
+        const r = await sendClientEmail({ data: { kind: "achat", assistedId: editingAchat.id } });
+        if (!r.sent) toast.warning(r.reason);
+      } catch {
+        toast.warning("Demande enregistrée, e-mail non envoyé");
+      }
       qc.invalidateQueries({ queryKey: ["admin-assisted-purchases"] });
       qc.invalidateQueries({ queryKey: ["my-assisted-purchases"] });
-      toast.success("Demande d'achat supprimée.");
+      qc.invalidateQueries({ queryKey: ["admin-wallets"] });
+      setEditingAchat(null);
+      toast.success(`Demande #${editingAchat.request_number} mise à jour avec succès !`);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Mise à jour impossible.");
     }
+  };
+
+  const handleQuickApproveAchat = async (ach: AssistedPurchaseRequest) => {
+    try {
+      const { data, error } = await supabase.rpc("admin_update_assisted_purchase", {
+        p_id: ach.id,
+        p_exact_price_usd: Number(ach.exact_price_usd) || 0,
+        p_fee_usd: Number(ach.fee_usd) || 0,
+        p_tax_usd: Number(ach.tax_usd) || 0,
+        p_status: "validee",
+        p_admin_notes: ach.admin_notes || "Produit vérifié et validé par l'administration",
+        p_deduct_from_wallet: true,
+      });
+      if (error) throw error;
+      const result = (data || {}) as { debited?: boolean };
+      try {
+        const r = await sendClientEmail({ data: { kind: "achat", assistedId: ach.id } });
+        if (!r.sent) toast.warning(r.reason);
+      } catch {
+        toast.warning("Demande validée, e-mail non envoyé");
+      }
+      qc.invalidateQueries({ queryKey: ["admin-assisted-purchases"] });
+      qc.invalidateQueries({ queryKey: ["my-assisted-purchases"] });
+      qc.invalidateQueries({ queryKey: ["admin-wallets"] });
+      if (result.debited) {
+        toast.success(`Demande #${ach.request_number} validée et payée via portefeuille !`);
+      } else {
+        toast.success(`Demande #${ach.request_number} validée !`);
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Validation impossible.");
+    }
+  };
+
+  const handleDeleteAchat = async (id: string) => {
+    if (!confirm("Supprimer cette demande d'achat ?")) return;
+    const { error } = await supabase.from("assisted_purchases").delete().eq("id", id);
+    if (error) return toast.error("Suppression impossible. Réessayez.");
+    qc.invalidateQueries({ queryKey: ["admin-assisted-purchases"] });
+    qc.invalidateQueries({ queryKey: ["my-assisted-purchases"] });
+    toast.success("Demande d'achat supprimée.");
   };
 
   // -------------------------------------------------------------
@@ -2420,9 +2436,9 @@ function AdminHubPage() {
                   className="p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 text-xs hover:bg-muted/30 transition-colors"
                 >
                   <div className="flex items-start gap-4 flex-1 min-w-0">
-                    {ach.image_base64 || ach.product_image_url ? (
+                    {ach.product_image_url ? (
                       <img
-                        src={ach.image_base64 || ach.product_image_url}
+                        src={ach.product_image_url}
                         alt={ach.store_name}
                         className="w-16 h-16 rounded-xl object-cover border flex-shrink-0"
                       />
@@ -2445,12 +2461,12 @@ function AdminHubPage() {
                         </span>
                         <span
                           className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                            ach.payment_status === "paid"
+                            ach.payment_status === "verified_paid"
                               ? "bg-emerald-100 text-emerald-800"
                               : "bg-amber-100 text-amber-800"
                           }`}
                         >
-                          {ach.payment_status === "paid"
+                          {ach.payment_status === "verified_paid"
                             ? "Payé par Wallet"
                             : "En attente vérification"}
                         </span>
@@ -2565,10 +2581,10 @@ function AdminHubPage() {
 
                 <form onSubmit={handleSaveAchatEdit} className="space-y-4 text-xs">
                   {/* Photo preview if present */}
-                  {(editingAchat.image_base64 || editingAchat.product_image_url) && (
+                  {editingAchat.product_image_url && (
                     <div className="flex items-center gap-3 p-2 rounded-xl bg-secondary border">
                       <img
-                        src={editingAchat.image_base64 || editingAchat.product_image_url}
+                        src={editingAchat.product_image_url}
                         alt="Photo article"
                         className="h-16 w-16 rounded-lg object-cover border"
                       />
