@@ -31,6 +31,20 @@ function CartPage() {
   const { items, update } = useCart();
   const settings = useSettings();
   const navigate = useNavigate();
+  const { partage } = Route.useSearch();
+
+  // Un lien de panier partagé remplace le panier de l'appareil qui l'ouvre.
+  useEffect(() => {
+    if (!partage) return;
+    const shared = decodeCartShare(partage);
+    if (shared) {
+      writeCart(shared);
+      toast.success("Panier partagé chargé ! Vous pouvez finaliser vos commandes.");
+    } else {
+      toast.error("Ce lien de panier est invalide ou expiré.");
+    }
+    void navigate({ to: "/boutique/panier", search: {}, replace: true });
+  }, [partage, navigate]);
   const productsQ = useQuery({
     queryKey: ["cart-products", items.map((item) => item.productId).sort().join(",")],
     enabled: items.length > 0,
