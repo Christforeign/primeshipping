@@ -27,7 +27,7 @@ export function ShareButtons({ title, url, whatsappText, compact = false }: { ti
         <Share2 className="h-4 w-4" /> Partager <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`} />
       </Button>
       {open && (
-        <div className="absolute right-0 z-30 mt-2 w-60 rounded-2xl border bg-card/95 backdrop-blur-xl shadow-xl p-2 space-y-1" role="menu">
+        <div className={`absolute z-30 mt-2 w-60 max-w-[calc(100vw-2rem)] rounded-2xl border bg-card/95 backdrop-blur-xl shadow-xl p-2 space-y-1 ${compact ? "left-0" : "right-0"}`} role="menu">
           <button type="button" role="menuitem" onClick={() => { shareOnWhatsApp(text, url); setOpen(false); }} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold hover:bg-secondary transition-colors">
             <MessageCircle className="h-4 w-4 text-emerald-500" /> WhatsApp
           </button>
