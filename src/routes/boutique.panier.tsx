@@ -1,16 +1,21 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { ShoppingBag, Trash2, X } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSettings } from "@/lib/settings";
 import { productCurrency } from "@/lib/product-commerce";
 import { topupPrice } from "@/lib/product-pricing";
-import { useCart, type CartSelection } from "@/lib/cart";
+import { useCart, writeCart, type CartSelection } from "@/lib/cart";
+import { cartShareUrl, decodeCartShare } from "@/lib/share";
+import { ShareButtons } from "@/components/ShareButtons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { ProductItem } from "@/lib/types-store";
 
 export const Route = createFileRoute("/boutique/panier")({
+  validateSearch: (search: Record<string, unknown>) => ({ partage: typeof search["partage"] === "string" ? (search["partage"] as string) : undefined }),
   head: () => ({ meta: [
     { title: "Mon panier — Prime Shipping" },
     { name: "description", content: "Retrouvez vos articles et finalisez vos commandes Prime Shipping." },
@@ -26,6 +31,20 @@ function CartPage() {
   const { items, update } = useCart();
   const settings = useSettings();
   const navigate = useNavigate();
+  const { partage } = Route.useSearch();
+
+  // Un lien de panier partagé remplace le panier de l'appareil qui l'ouvre.
+  useEffect(() => {
+    if (!partage) return;
+    const shared = decodeCartShare(partage);
+    if (shared) {
+      writeCart(shared);
+      toast.success("Panier partagé chargé ! Vous pouvez finaliser vos commandes.");
+    } else {
+      toast.error("Ce lien de panier est invalide ou expiré.");
+    }
+    void navigate({ to: "/boutique/panier", search: { partage: undefined }, replace: true });
+  }, [partage, navigate]);
   const productsQ = useQuery({
     queryKey: ["cart-products", items.map((item) => item.productId).sort().join(",")],
     enabled: items.length > 0,
@@ -59,7 +78,14 @@ function CartPage() {
           {Object.entries(item.formValues).map(([key, value]) => <p key={key} className="text-sm text-muted-foreground break-words">{product?.custom_fields?.find((field) => field.id === key)?.label || key} : {Array.isArray(value) ? value.join(", ") : String(value)}</p>)}
         </article>;
       })}
-      <div className="flex flex-wrap gap-3 justify-between"><Button asChild variant="outline"><Link to="/boutique">Continuer mes achats</Link></Button></div>
+      <div className="flex flex-wrap gap-3 justify-between items-center">
+        <Button asChild variant="outline"><Link to="/boutique">Continuer mes achats</Link></Button>
+        <ShareButtons
+          title="Mon panier Prime Store"
+          url={cartShareUrl(items)}
+          whatsappText="Voici mon panier Prime Store — ouvre ce lien pour le retrouver tel quel :"
+        />
+      </div>
     </>}
   </div>;
 }

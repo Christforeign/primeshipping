@@ -34,6 +34,8 @@ import { topupPrice } from "@/lib/product-pricing";
 import { DEFAULT_ORDER_NOTICE, minimumQuantity, orderMinimumError } from "@/lib/order-minimums";
 import { addCartItem } from "@/lib/cart";
 import { DynamicProductForm } from "@/components/DynamicProductForm";
+import { ShareButtons } from "@/components/ShareButtons";
+import { productShareUrl } from "@/lib/share";
 import type {
   ProductItem,
   ProductVariant,
@@ -456,9 +458,17 @@ export function ProductDetailPage() {
 
             {/* Comprehensive Description */}
             <div className="rounded-3xl border bg-card p-6 sm:p-8 shadow-sm space-y-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-amber-500">
-                {product.category} {product.subcategory && `• ${product.subcategory}`}
-              </span>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-500">
+                  {product.category} {product.subcategory && `• ${product.subcategory}`}
+                </span>
+                <ShareButtons
+                  compact
+                  title={product.title}
+                  url={productShareUrl(product.id)}
+                  whatsappText={`Regarde cet article sur Prime Store : ${product.title}`}
+                />
+              </div>
               <h2 className="text-2xl font-black text-foreground">{product.title}</h2>
               {product.short_description && (
                 <p className="text-sm font-semibold text-muted-foreground leading-relaxed">
