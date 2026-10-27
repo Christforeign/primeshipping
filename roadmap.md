@@ -45,3 +45,4 @@
 - [ ] Activation des e-mails d’authentification — attend vérification DNS et mise en ligne des nouvelles routes
 - [x] Catalogue réel et navigation « Commander » vers la fiche produit (tests ordinateur/mobile)
 - [x] Chasse aux erreurs « Cette page n'a pas pu s'afficher » — 25 pages testées (public + connecté), aucune erreur
+- [x] Partage produit (natif, WhatsApp, TikTok/copie) et partage du panier par lien `?partage=` qui recharge les articles chez le destinataire ; 4 tests réussis et parcours mobile vérifié sans achat réel
