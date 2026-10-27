@@ -362,7 +362,7 @@ function CheckoutPage() {
           <span className="text-right">{displayMoney(total, totalHtg)}</span>
         </div>
         {minimumError && <div role="alert" className="text-sm text-destructive">{minimumError} <Link to="/boutique/$id" params={{ id: product.id }} className="underline">Modifier ma sélection</Link></div>}
-        <p className="text-sm text-muted-foreground whitespace-pre-line pt-3">{product.extra?.order_notice ?? DEFAULT_ORDER_NOTICE}</p>
+        {product.extra?.order_notice && <p className="text-sm text-muted-foreground whitespace-pre-line pt-3">{product.extra.order_notice}</p>}
         {!validRate && <p role="alert" className="text-destructive">Le taux de change n’est pas encore disponible.</p>}
         <Button className="w-full h-12 mt-2 font-black" disabled={submitting || walletShort || !!minimumError || !validRate} onClick={submit}>
           {submitting ? "Validation…" : "Valider ma commande"}

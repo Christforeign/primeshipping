@@ -366,7 +366,7 @@ function AdminHubPage() {
   const [prodSpecificRate, setProdSpecificRate] = useState("");
   const [prodMinimumQuantity, setProdMinimumQuantity] = useState("1");
   const [prodMinimumOrderUsd, setProdMinimumOrderUsd] = useState("");
-  const [prodOrderNotice, setProdOrderNotice] = useState(DEFAULT_ORDER_NOTICE);
+  const [prodOrderNotice, setProdOrderNotice] = useState("");
   const [prodVariants, setProdVariants] = useState<ProductVariant[]>([]);
   const [prodCustomFields, setProdCustomFields] = useState<CustomFormField[]>([]);
 
@@ -419,7 +419,7 @@ function AdminHubPage() {
     setProdSpecificRate("");
     setProdMinimumQuantity("1");
     setProdMinimumOrderUsd("");
-    setProdOrderNotice(DEFAULT_ORDER_NOTICE);
+    setProdOrderNotice("");
     setProdVariants([
       { id: `v-${Date.now()}-1`, name: "Option Standard", price_usd: 15, stock: 100 },
     ]);
@@ -476,7 +476,7 @@ function AdminHubPage() {
     setProdSpecificRate(String(prod.extra?.product_rate_htg || ""));
     setProdMinimumQuantity(String(prod.extra?.minimum_quantity || 1));
     setProdMinimumOrderUsd(String(prod.extra?.minimum_order_usd || ""));
-    setProdOrderNotice(prod.extra?.order_notice ?? DEFAULT_ORDER_NOTICE);
+    setProdOrderNotice(prod.extra?.order_notice ?? "");
     setProdVariants(prod.variants || []);
     setProdCustomFields(prod.custom_fields || []);
   };
@@ -1667,7 +1667,7 @@ function AdminHubPage() {
                 <div className="sm:col-span-2 grid gap-3 sm:grid-cols-2 border-t pt-4">
                   {!prodAmountMode && <div className="space-y-2"><Label htmlFor="minimum-quantity">Quantité minimum</Label><Input id="minimum-quantity" type="number" min="1" max="999" step="1" required value={prodMinimumQuantity} onChange={(e) => setProdMinimumQuantity(e.target.value)} /></div>}
                   <div className="space-y-2"><Label htmlFor="minimum-order">{prodAmountMode ? "Montant minimum à recharger (USD)" : `Montant minimum de commande (${prodCurrency === "HTG" ? "GDS" : "USD"}, hors frais)`}</Label><Input id="minimum-order" type="number" min="0" step="0.01" value={prodMinimumOrderUsd} onChange={(e) => setProdMinimumOrderUsd(e.target.value)} placeholder="Aucun minimum" /></div>
-                  <div className="space-y-2 sm:col-span-2"><Label htmlFor="order-notice">Conditions et délais affichés avant commande</Label><Textarea id="order-notice" rows={4} value={prodOrderNotice} onChange={(e) => setProdOrderNotice(e.target.value)} /></div>
+                  <div className="space-y-2 sm:col-span-2"><Label htmlFor="order-notice">Note spéciale affichée avant commande (facultatif)</Label><Textarea id="order-notice" rows={3} value={prodOrderNotice} onChange={(e) => setProdOrderNotice(e.target.value)} placeholder="Laissez vide si rien de spécial. Ex. : délai particulier, avertissement, consigne propre à cet article…" /></div>
                 </div>
                 <div className="space-y-1.5 sm:col-span-2 rounded-2xl border p-4 bg-muted/40">
                   <div className="flex items-start justify-between gap-4">

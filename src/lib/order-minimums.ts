@@ -1,4 +1,4 @@
-export const DEFAULT_ORDER_NOTICE = "En passant votre commande, vous acceptez nos conditions d’utilisation. Les produits numériques ne sont pas remboursables, sous réserve des droits prévus par la loi applicable. Votre commande peut être finalisée instantanément ou sous 5 à 20 minutes ; en cas de retard, le traitement peut prendre 24 heures ou plus.";
+export const DEFAULT_ORDER_NOTICE = "En passant commande, vous acceptez nos conditions d'utilisation. Les produits numériques ne sont pas remboursables. Vérifiez bien vos informations : aucune commande ne peut être remboursée en cas d'informations erronées. Pour les produits physiques, signalez tout dommage sous 24 heures. Les livraisons peuvent être retardées. En cas de fraude, votre compte sera supprimé et votre commande annulée.";
 
 export type OrderMinimums = { price_currency?: "USD" | "HTG"; minimum_quantity?: number; minimum_order_usd?: number; order_notice?: string };
 
