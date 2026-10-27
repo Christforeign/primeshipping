@@ -1,4 +1,5 @@
 // @ts-nocheck — legacy pages pending migration to real tables
+import { orderTotalDisplay } from "@/lib/checkout-display";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {

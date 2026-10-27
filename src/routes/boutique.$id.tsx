@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { orderTotalDisplay } from "@/lib/checkout-display";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
