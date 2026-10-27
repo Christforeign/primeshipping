@@ -8,7 +8,7 @@ import { useSettings } from "@/lib/settings";
 import type { ProductItem } from "@/lib/types-store";
 import { productCurrency, productExchangeRate } from "@/lib/product-commerce";
 import { formatNumber } from "@/lib/utils";
-import { PrimeStoreLogo, PaymentMethodsBar, PartnerBrandsBar } from "@/components/BrandLogos";
+import { PrimeStoreLogo } from "@/components/BrandLogos";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -241,14 +241,6 @@ function BoutiquePage() {
           })}
         </div>
       )}
-
-      {/* Partner Brands & B2B Showcase */}
-      <div className="mt-16 p-8 rounded-3xl glass border shadow-xl space-y-8">
-        <PartnerBrandsBar />
-        <div className="pt-6 border-t border-border">
-          <PaymentMethodsBar />
-        </div>
-      </div>
     </div>
   );
 }
