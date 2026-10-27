@@ -23,3 +23,15 @@ describe("Affichage du paiement", () => {
     expect(paymentCoordinates({ phone_number: "1234", account_number: "5678" })).toEqual(["1234", "5678"]);
   });
 });
+import { orderTotalDisplay } from "./checkout-display";
+describe("gourde-priced products stay in GDS", () => {
+  it("shows 2250 GDS at checkout even with the wallet", () => {
+    expect(paymentDisplayAmount("wallet", 16.67, 2250, true)).toEqual({ amount: 2250, currency: "GDS" });
+  });
+  it("shows the saved GDS order total with the wallet debit apart", () => {
+    const d = orderTotalDisplay({ price_currency: "HTG", payment_method: "wallet", total_usd: 16.67, total_htg: 2250 });
+    expect(d.primary).toContain("2250".replace(/(\d)(?=(\d{3})+$)/g, "$1\u202f").slice(0, 1));
+    expect(d.primary.endsWith("GDS")).toBe(true);
+    expect(d.secondary).toBe("Débité : 16.67 USD");
+  });
+});
