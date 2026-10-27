@@ -25,6 +25,9 @@ import { useUser } from "@/lib/session";
 import { clientStore } from "@/lib/store";
 import type { ProductItem } from "@/lib/types-store";
 import { formatNumber } from "@/lib/utils";
+import { productCurrency, productExchangeRate } from "@/lib/product-commerce";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import {
   PrimeShippingLogo,
   PrimeStoreLogo,
@@ -83,17 +86,16 @@ function Index() {
   const [tracking, setTracking] = useState("");
   const navigate = useNavigate();
   const name = s?.company_name ?? "Prime Express Shipping";
-  const rate = s?.usd_to_htg || 132;
-  const [products, setProducts] = useState<ProductItem[]>([]);
-
-  useEffect(() => {
-    setProducts(clientStore.getProducts().filter((p) => p.is_active !== false));
-    const handleProductsChange = () => {
-      setProducts(clientStore.getProducts().filter((p) => p.is_active !== false));
-    };
-    window.addEventListener("prime_products_changed", handleProductsChange);
-    return () => window.removeEventListener("prime_products_changed", handleProductsChange);
-  }, []);
+  const rate = Number(s?.usd_to_htg) || 0;
+  const productsQuery = useQuery({
+    queryKey: ["products-list"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("products").select("*").eq("is_active", true).order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as unknown as ProductItem[];
+    },
+  });
+  const products = productsQuery.data ?? [];
 
   return (
     <div className="space-y-12 pb-20">
@@ -326,9 +328,10 @@ function Index() {
         </div>
 
         {/* Product Cards Grid */}
+        {productsQuery.isError && <p role="alert" className="text-destructive">Impossible de charger les produits pour le moment.</p>}
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {products.slice(0, 4).map((p) => {
-            const priceHtg = Math.round(p.price_usd * rate);
+            const priceHtg = Number(p.promo_price_usd ?? p.price_usd) * productExchangeRate(p.extra, rate);
             const isDigital = p.requires_shipping_address === false;
             return (
               <div
@@ -384,11 +387,11 @@ function Index() {
                 <div className="p-4 pt-0 border-t border-border mt-3 flex items-center justify-between gap-2">
                   <div>
                     <div className="text-base font-black text-foreground">
-                      {p.price_usd} <span className="text-xs font-semibold text-primary">USD</span>
+                      {p.extra?.amount_mode === "custom_usd" ? "Montant libre" : <>{formatNumber(p.promo_price_usd ?? p.price_usd)} <span className="text-xs font-semibold text-primary">{productCurrency(p.extra)}</span></>}
                     </div>
-                    <div className="text-[10px] font-medium text-muted-foreground">
-                      ≈ {formatNumber(priceHtg)} HTG
-                    </div>
+                    {p.extra?.amount_mode !== "custom_usd" && productCurrency(p.extra) === "USD" && productExchangeRate(p.extra, rate) > 0 && <div className="text-[10px] font-medium text-muted-foreground">
+                      ≈ {formatNumber(priceHtg)} GDS
+                    </div>}
                   </div>
                   <Button
                     asChild
