@@ -12,6 +12,17 @@ describe("Product currency and delivery", () => {
   it("does not charge an unknown delivery fee", () => { expect(deliveryPricing({ delivery_pricing: "quote", delivery_fee_htg: 500 }, true)).toEqual({ quote: true, feeHtg: 0 }); });
   it("keeps free amount products in USD", () => { expect(productCurrency({ price_currency: "HTG", amount_mode: "custom_usd" })).toBe("USD"); });
 });describe("Gourdes to USD wallet debit", () => {
+  it("uses a fixed product rate without changing its 2250 GDS price", () => {
+    const total = fixedProductTotals(2250, 1, { price_currency: "HTG", product_rate_htg: 140 }, 135);
+    expect(total.totalHtg).toBe(2250);
+    expect(total.totalUsd).toBe(16.08);
+  });
+  it("updates conversion when the product rate changes", () => {
+    expect(fixedProductTotals(2250, 1, { price_currency: "HTG", product_rate_htg: 150 }, 135).totalUsd).toBe(15);
+  });
+  it("uses the product rate for fixed USD equivalents", () => {
+    expect(fixedProductTotals(15, 1, { product_rate_htg: 140 }, 135).totalHtg).toBe(2100);
+  });
   it("rounds 2250 GDS at rate 135 up to 16.67 USD, never losing a centime", () => {
     const total = fixedProductTotals(2250, 1, { price_currency: "HTG" }, 135);
     expect(total.totalHtg).toBe(2250);

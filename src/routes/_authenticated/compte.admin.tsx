@@ -539,6 +539,7 @@ function AdminHubPage() {
       .filter((u) => u.length > 0);
 
     if (prodAmountMode && !(Number(prodSpecificRate) > 0)) return toast.error("Indiquez le taux spécifique du produit.");
+    if (prodSpecificRate.trim() && (!Number.isFinite(Number(prodSpecificRate)) || Number(prodSpecificRate) <= 0)) return toast.error("Indiquez un taux de change supérieur à zéro.");
     if (!Number.isFinite(Number(prodDeliveryFee)) || Number(prodDeliveryFee) < 0) return toast.error("Indiquez un tarif de livraison positif ou nul.");
     const minimumQty = Number(prodMinimumQuantity);
     const minimumUsd = Number(prodMinimumOrderUsd);
@@ -563,7 +564,7 @@ function AdminHubPage() {
         f.options ? { ...f, options: f.options.map((o) => o.trim()).filter(Boolean) } : f,
       ),
       is_active: true,
-      extra: { ...(editingProduct?.extra || {}), price_currency: prodAmountMode ? "USD" : prodCurrency, delivery_pricing: prodDeliveryPricing, delivery_fee_htg: Number(prodDeliveryFee), order_mode: prodOrderMode, order_link: prodOrderLink.trim(), amount_mode: prodAmountMode ? "custom_usd" : "fixed", product_rate_htg: prodAmountMode ? Number(prodSpecificRate) : null, minimum_quantity: prodAmountMode ? 1 : minimumQty, minimum_order_usd: minimumUsd, order_notice: prodOrderNotice.trim() },
+      extra: { ...(editingProduct?.extra || {}), price_currency: prodAmountMode ? "USD" : prodCurrency, delivery_pricing: prodDeliveryPricing, delivery_fee_htg: Number(prodDeliveryFee), order_mode: prodOrderMode, order_link: prodOrderLink.trim(), amount_mode: prodAmountMode ? "custom_usd" : "fixed", product_rate_htg: prodSpecificRate.trim() ? Number(prodSpecificRate) : null, minimum_quantity: prodAmountMode ? 1 : minimumQty, minimum_order_usd: minimumUsd, order_notice: prodOrderNotice.trim() },
     };
 
     try {
@@ -1616,7 +1617,7 @@ function AdminHubPage() {
                   {prodCurrency === "USD" && !prodAmountMode && <p className="text-[11px] text-muted-foreground">
                     ≈{" "}
                     {Math.round(
-                      (parseFloat(prodPriceUsd) || 0) * (s?.usd_to_htg || 132),
+                      (parseFloat(prodPriceUsd) || 0) * (Number(prodSpecificRate) || Number(s?.usd_to_htg) || 0),
                     ).toLocaleString("fr-FR")}{" "}
                     GDS
                   </p>}
@@ -1643,7 +1644,7 @@ function AdminHubPage() {
 
                 <div className="sm:col-span-2 space-y-3 border-t pt-4">
                   <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={prodAmountMode} onChange={(e) => setProdAmountMode(e.target.checked)} /> Montant USD libre choisi par le client</label>
-                  {prodAmountMode && <div className="space-y-2"><Label>Taux de vente de ce produit (HTG pour 1 USD)</Label><Input type="number" min="0.01" step="0.01" required value={prodSpecificRate} onChange={(e) => setProdSpecificRate(e.target.value)} /></div>}
+                  <div className="space-y-2"><Label htmlFor="product-exchange-rate">Taux de ce produit (GDS pour 1 USD){!prodAmountMode && " — facultatif"}</Label><Input id="product-exchange-rate" type="number" min="0.01" step="0.01" required={prodAmountMode} placeholder={`Taux général : ${s?.usd_to_htg ?? "non configuré"}`} value={prodSpecificRate} onChange={(e) => setProdSpecificRate(e.target.value)} /></div>
                 </div>
                 {/* Exigence adresse de livraison (configurable admin) */}
                 <div className="sm:col-span-2 grid gap-3 sm:grid-cols-2 border-t pt-4">

@@ -1,6 +1,10 @@
 import type { ProductItem } from "./types-store";
 
 type Extra = ProductItem["extra"];
+export function productExchangeRate(extra: Extra, siteRate: number) {
+  const configured = Number(extra?.product_rate_htg);
+  return Number.isFinite(configured) && configured > 0 ? configured : Number.isFinite(siteRate) && siteRate > 0 ? siteRate : 0;
+}
 export const deliveryQuoteNotice = "Un administrateur vous notifiera le tarif de livraison en fonction de votre adresse. Les frais de livraison seront à régler séparément après confirmation.";
 export function productCurrency(extra: Extra) { return extra?.amount_mode !== "custom_usd" && extra?.price_currency === "HTG" ? "GDS" : "USD"; }
 // Gourde prices stay exact; the USD wallet debit is rounded UP to the cent so no centime is ever lost.
@@ -10,6 +14,7 @@ export function deliveryPricing(extra: Extra, home: boolean) {
   return { quote, feeHtg: home && !quote ? Math.max(0, Number(extra?.delivery_fee_htg) || 0) : 0 };
 }
 export function fixedProductTotals(amount: number, quantity: number, extra: Extra, rate: number, taxRate = 0, feePercent = 0, feeFixedUsd = 0, home = false) {
+  rate = productExchangeRate(extra, rate);
   const round = (n: number) => Math.round((n + Number.EPSILON) * 100) / 100;
   const htg = productCurrency(extra) === "GDS";
   const line = round(amount * quantity);

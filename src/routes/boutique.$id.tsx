@@ -28,7 +28,7 @@ import { useSettings } from "@/lib/settings";
 import { useUser } from "@/lib/session";
 import { clientStore } from "@/lib/store";
 import { supabase } from "@/integrations/supabase/client";
-import { productCurrency } from "@/lib/product-commerce";
+import { productCurrency, productExchangeRate } from "@/lib/product-commerce";
 import { topupPrice } from "@/lib/product-pricing";
 import { DEFAULT_ORDER_NOTICE, minimumQuantity, orderMinimumError } from "@/lib/order-minimums";
 import { addCartItem } from "@/lib/cart";
@@ -68,7 +68,7 @@ export function ProductDetailPage() {
   const navigate = useNavigate();
   const s = useSettings();
   const { user } = useUser();
-  const rate = s?.usd_to_htg || 132;
+  const rate = Number(s?.usd_to_htg) || 0;
   const defaultTaxRate = s?.tax_enabled ? s?.tax_rate || 10 : 0;
 
   const productQuery = useQuery({
@@ -184,6 +184,7 @@ export function ProductDetailPage() {
     : (product.promo_price_usd ?? product.price_usd));
 
   const freeAmount = product.extra?.amount_mode === "custom_usd";
+  const fixedRate = productExchangeRate(product.extra, rate);
   const minQty = minimumQuantity(product.extra);
   let amountPrice = { totalHtg: 0, walletUsd: 0 };
   if (freeAmount && Number(requestedAmount) > 0) { try { amountPrice = topupPrice(Number(requestedAmount), Number(product.extra?.product_rate_htg), Number(rate)); } catch { /* invalid input is checked at submission */ } }
@@ -507,8 +508,8 @@ export function ProductDetailPage() {
                     {(freeAmount ? subtotalUsd : unitPrice).toFixed(2)}{" "}
                     <span className="text-sm font-bold text-muted-foreground">{productCurrency(product.extra)}</span>
                   </span>
-                  {productCurrency(product.extra) === "USD" && <span className="text-sm font-bold text-amber-500 font-mono">
-                    ≈ {formatNumber(Math.round(unitPrice * rate))} GDS
+                  {productCurrency(product.extra) === "USD" && fixedRate > 0 && <span className="text-sm font-bold text-amber-500 font-mono">
+                    ≈ {formatNumber(unitPrice * fixedRate)} GDS
                   </span>}
                 </div>
                 {product.promo_price_usd && (
@@ -567,8 +568,8 @@ export function ProductDetailPage() {
                             <span className="font-black text-foreground block">
                               {vPrice.toFixed(2)} {productCurrency(product.extra)}
                             </span>
-                            {productCurrency(product.extra) === "USD" && <span className="text-[10px] text-muted-foreground font-mono">
-                              ≈ {formatNumber(Math.round(vPrice * rate))} HTG
+                            {productCurrency(product.extra) === "USD" && fixedRate > 0 && <span className="text-[10px] text-muted-foreground font-mono">
+                              ≈ {formatNumber(vPrice * fixedRate)} GDS
                             </span>}
                           </div>
                         </button>
@@ -625,7 +626,7 @@ export function ProductDetailPage() {
                   <span>Sous-total ({quantity}) :</span>
                   <div className="text-right">
                     <span className="text-xl text-amber-500 block">{subtotalUsd.toFixed(2)} {productCurrency(product.extra)}</span>
-                    {productCurrency(product.extra) === "USD" && <span className="text-xs font-semibold text-muted-foreground font-mono">≈ {formatNumber(Math.round(subtotalUsd * rate))} GDS</span>}
+                    {productCurrency(product.extra) === "USD" && fixedRate > 0 && <span className="text-xs font-semibold text-muted-foreground font-mono">≈ {formatNumber(subtotalUsd * fixedRate)} GDS</span>}
                   </div>
                 </div>
               </div>}
