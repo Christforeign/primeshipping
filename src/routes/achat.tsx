@@ -718,6 +718,11 @@ export function AssistedPurchasePage() {
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
                   placeholder="vous@exemple.com"
+                  className="text-xs h-9 rounded-md"
+                />
+              </div>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
                 <Label className="text-xs font-semibold">Ville en Haïti</Label>
