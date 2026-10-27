@@ -34,6 +34,8 @@ import { topupPrice } from "@/lib/product-pricing";
 import { DEFAULT_ORDER_NOTICE, minimumQuantity, orderMinimumError } from "@/lib/order-minimums";
 import { addCartItem } from "@/lib/cart";
 import { DynamicProductForm } from "@/components/DynamicProductForm";
+import { ShareButtons } from "@/components/ShareButtons";
+import { productShareUrl } from "@/lib/share";
 import type {
   ProductItem,
   ProductVariant,
