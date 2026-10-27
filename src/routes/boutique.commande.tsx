@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatNumber } from "@/lib/utils";
 import { readCart, writeCart } from "@/lib/cart";
-import { fixedProductTotals, deliveryQuoteNotice, productExchangeRate } from "@/lib/product-commerce";
+import { fixedProductTotals, deliveryQuoteNotice, productExchangeRate, productCurrency } from "@/lib/product-commerce";
 import { topupPrice } from "@/lib/product-pricing";
 import { DEFAULT_ORDER_NOTICE, orderMinimumError } from "@/lib/order-minimums";
 import { deliveryChoices } from "@/lib/delivery-options";
@@ -173,9 +173,10 @@ function CheckoutPage() {
   const totalHtg = freeAmount ? (!tax && !fee ? amountPrice.totalHtg : Math.round(total * rate * 100) / 100) : fixed.totalHtg;
   const quoteDelivery = needsShipping && deliveryMode === "home" && fixed.quote;
   const walletShort = method === "wallet" && walletBalance < total;
-  const displayedTotal = paymentDisplayAmount(method, total, totalHtg);
+  const gourdes = !freeAmount && productCurrency(product.extra) === "GDS";
+  const displayedTotal = paymentDisplayAmount(method, total, totalHtg, gourdes);
   const displayMoney = (usd: number, htg = Math.round(usd * rate * 100) / 100) => {
-    const value = paymentDisplayAmount(method, usd, htg);
+    const value = paymentDisplayAmount(method, usd, htg, gourdes);
     return `${formatNumber(value.amount)} ${value.currency}`;
   };
 
@@ -323,7 +324,7 @@ function CheckoutPage() {
               <Link to="/compte/portefeuille" className="underline">Recharger mon portefeuille</Link>
             </p>
           ) : (
-            <p className="text-xs text-muted-foreground">Le montant sera débité automatiquement de votre portefeuille à la validation.</p>
+            <p className="text-xs text-muted-foreground">{gourdes ? `${formatNumber(totalHtg)} GDS = ${total.toFixed(2)} USD débités automatiquement de votre portefeuille à la validation.` : "Le montant sera débité automatiquement de votre portefeuille à la validation."}</p>
           )
         ) : (
           pay && (
