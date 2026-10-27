@@ -33,3 +33,4 @@
 - Product minimums and purchase notices live in product extra settings; shared frontend validation and an order-insert database trigger enforce minimums even for stale carts or direct requests.
 - Checkout display helpers select the payment currency and deduplicate payment options/coordinates without changing the database's authoritative pricing calculation.
 - Product fixed prices and variant amounts use the denomination in extra.price_currency (legacy price_usd storage); product-commerce and the order RPC preserve exact HTG totals, and convert only the wallet debit. Delivery fees are per order, with free pickup; quote delivery is separately payable and explicitly snapshotted and notified.
+- Fixed-product conversions use the optional product rate before the configured site rate in both product-commerce and place_shop_order; custom USD recharge wallet conversion retains the global rate, and monetary formatting preserves cents to avoid displaying a different debit.

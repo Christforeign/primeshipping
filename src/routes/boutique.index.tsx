@@ -6,7 +6,7 @@ import { ShoppingBag, Search, Sparkles, ArrowRight, ShoppingCart } from "lucide-
 import { supabase } from "@/integrations/supabase/client";
 import { useSettings } from "@/lib/settings";
 import type { ProductItem } from "@/lib/types-store";
-import { productCurrency } from "@/lib/product-commerce";
+import { productCurrency, productExchangeRate } from "@/lib/product-commerce";
 import { formatNumber } from "@/lib/utils";
 import { PrimeStoreLogo, PaymentMethodsBar, PartnerBrandsBar } from "@/components/BrandLogos";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,7 @@ export const Route = createFileRoute("/boutique/")({
 
 function BoutiquePage() {
   const s = useSettings();
-  const rate = s?.usd_to_htg || 132;
+  const rate = Number(s?.usd_to_htg) || 0;
   const defaultTaxRate = s?.tax_enabled ? s?.tax_rate || 10 : 0;
   const [selectedCategory, setSelectedCategory] = useState("Tous");
   const [searchQuery, setSearchQuery] = useState("");
@@ -164,7 +164,7 @@ function BoutiquePage() {
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4">
           {filteredProducts.map((prod) => {
-            const htgPrice = Math.round(prod.price_usd * rate);
+            const htgPrice = Number(prod.promo_price_usd ?? prod.price_usd) * productExchangeRate(prod.extra, rate);
             const coverImg =
               prod.media_urls?.[0] ||
               "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?auto=format&fit=crop&w=1000&q=80";
@@ -219,7 +219,7 @@ function BoutiquePage() {
                     <div>
                       {prod.extra?.amount_mode === "custom_usd" ? <p className="text-sm font-bold text-foreground">Montant libre</p> : <>
                       <p className="text-base sm:text-lg font-extrabold text-foreground">{prod.price_usd} {productCurrency(prod.extra)}</p>
-                      {productCurrency(prod.extra) === "USD" && <p className="text-xs font-semibold text-muted-foreground">
+                      {productCurrency(prod.extra) === "USD" && productExchangeRate(prod.extra, rate) > 0 && <p className="text-xs font-semibold text-muted-foreground">
                         ≈ {formatNumber(htgPrice)} GDS
                       </p>}
                       </>}

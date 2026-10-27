@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { formatNumber } from "@/lib/utils";
 import { readCart, writeCart } from "@/lib/cart";
-import { fixedProductTotals, deliveryQuoteNotice } from "@/lib/product-commerce";
+import { fixedProductTotals, deliveryQuoteNotice, productExchangeRate } from "@/lib/product-commerce";
 import { topupPrice } from "@/lib/product-pricing";
 import { DEFAULT_ORDER_NOTICE, orderMinimumError } from "@/lib/order-minimums";
 import { deliveryChoices } from "@/lib/delivery-options";
@@ -42,7 +42,7 @@ function CheckoutPage() {
   const qc = useQueryClient();
   const s = useSettings();
   const { user } = useUser();
-  const rate = Number(s?.usd_to_htg) || 132;
+  const rate = Number(s?.usd_to_htg) || 0;
   const sendEmail = useServerFn(sendClientEmail);
 
   const [sel, setSel] = useState<Selection | null>(null);
@@ -156,6 +156,7 @@ function CheckoutPage() {
   const variant = (product.variants || []).find((v) => v.id === sel.variantId) || null;
   const unit = Number(variant ? (variant.promo_price_usd ?? variant.price_usd) : (product.promo_price_usd ?? product.price_usd)) || 0;
   const freeAmount = product.extra?.amount_mode === "custom_usd";
+  const validRate = rate > 0 && (freeAmount ? Number(product.extra?.product_rate_htg) > 0 : productExchangeRate(product.extra, rate) > 0);
   let amountPrice = { totalHtg: 0, walletUsd: 0 };
   if (freeAmount) { try { amountPrice = topupPrice(Number(sel.requestedAmountUsd), Number(product.extra?.product_rate_htg), rate); } catch { /* invalid selection cannot be submitted */ } }
   const qty = freeAmount ? 1 : Math.max(1, Number(sel.quantity) || 1);
@@ -188,6 +189,7 @@ function CheckoutPage() {
   };
 
   const submit = async () => {
+    if (!validRate) return toast.error("Le taux de change n’est pas encore disponible. Réessayez dans un instant.");
     if (minimumError) return toast.error(minimumError);
     if (freeAmount && !amountPrice.walletUsd) return toast.error("Revenez au produit pour saisir le montant à recharger.");
     if (needsShipping && deliveryMode === "pickup" && !pickupAddress) return toast.error("L'adresse de la succursale doit être renseignée par l'équipe avant de commander en retrait.");
@@ -360,7 +362,8 @@ function CheckoutPage() {
         </div>
         {minimumError && <div role="alert" className="text-sm text-destructive">{minimumError} <Link to="/boutique/$id" params={{ id: product.id }} className="underline">Modifier ma sélection</Link></div>}
         <p className="text-sm text-muted-foreground whitespace-pre-line pt-3">{product.extra?.order_notice ?? DEFAULT_ORDER_NOTICE}</p>
-        <Button className="w-full h-12 mt-2 font-black" disabled={submitting || walletShort || !!minimumError} onClick={submit}>
+        {!validRate && <p role="alert" className="text-destructive">Le taux de change n’est pas encore disponible.</p>}
+        <Button className="w-full h-12 mt-2 font-black" disabled={submitting || walletShort || !!minimumError || !validRate} onClick={submit}>
           {submitting ? "Validation…" : "Valider ma commande"}
         </Button>
       </section>
