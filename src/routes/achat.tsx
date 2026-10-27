@@ -710,9 +710,18 @@ export function AssistedPurchasePage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {!user && (
               <div className="space-y-1">
-                <Label className="text-xs font-semibold">Ville en Haïti</Label>
+                <Label className="text-xs font-semibold">Votre e-mail (pour recevoir la confirmation)</Label>
+                <Input
+                  type="email"
+                  value={customerEmail}
+                  onChange={(e) => setCustomerEmail(e.target.value)}
+                  placeholder="vous@exemple.com"
+                  className="text-xs h-9 rounded-md"
+                />
+              </div>
+            )}
                 <Input
                   value={deliveryCity}
                   onChange={(e) => setDeliveryCity(e.target.value)}
