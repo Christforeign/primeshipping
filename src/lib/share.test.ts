@@ -29,6 +29,6 @@ describe("partage du panier", () => {
     const encoded = btoa(JSON.stringify([{ p: "a", v: null, q: 0 }, { p: "b", v: null, q: 5000 }, { p: "c", v: null, q: 3 }]));
     const decoded = decodeCartShare(encoded);
     expect(decoded).toHaveLength(1);
-    expect(decoded![0].productId).toBe("c");
+    expect(decoded?.[0]?.productId).toBe("c");
   });
 });

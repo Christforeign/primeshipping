@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import type { ProductItem } from "@/lib/types-store";
 
 export const Route = createFileRoute("/boutique/panier")({
-  validateSearch: (search: Record<string, unknown>) => ({ partage: typeof search.partage === "string" ? search.partage : undefined }),
+  validateSearch: (search: Record<string, unknown>) => ({ partage: typeof search["partage"] === "string" ? (search["partage"] as string) : undefined }),
   head: () => ({ meta: [
     { title: "Mon panier — Prime Shipping" },
     { name: "description", content: "Retrouvez vos articles et finalisez vos commandes Prime Shipping." },
@@ -43,7 +43,7 @@ function CartPage() {
     } else {
       toast.error("Ce lien de panier est invalide ou expiré.");
     }
-    void navigate({ to: "/boutique/panier", search: {}, replace: true });
+    void navigate({ to: "/boutique/panier", search: { partage: undefined }, replace: true });
   }, [partage, navigate]);
   const productsQ = useQuery({
     queryKey: ["cart-products", items.map((item) => item.productId).sort().join(",")],
