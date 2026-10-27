@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSettings } from "@/lib/settings";
 import { productCurrency } from "@/lib/product-commerce";
 import { topupPrice } from "@/lib/product-pricing";
-import { readCart, useCart, writeCart, type CartSelection } from "@/lib/cart";
+import { useCart, writeCart, type CartSelection } from "@/lib/cart";
 import { cartShareUrl, decodeCartShare } from "@/lib/share";
 import { ShareButtons } from "@/components/ShareButtons";
 import { Button } from "@/components/ui/button";
