@@ -5,7 +5,25 @@ import { packageEmailKind } from "./package-email";
 import { formatDate, nextPackageStep, statusLabel } from "./labels";
 import { orderEmailStage } from "./order-email";
 
-type Input = { kind: EmailKind; packageId?: string; orderId?: string; walletTxId?: string; supportMessageId?: string; userId?: string; toEmail?: string; vars?: EmailVars; test?: boolean; cart?: { productId: string; variantId: string | null; quantity: number }[] };
+type Input = { kind: EmailKind; packageId?: string; orderId?: string; walletTxId?: string; supportMessageId?: string; assistedId?: string; userId?: string; toEmail?: string; vars?: EmailVars; test?: boolean; internal?: boolean; cart?: { productId: string; variantId: string | null; quantity: number }[] };
+
+const ASSISTED_STATUS_LABELS: Record<string, string> = {
+  en_attente: "En attente",
+  en_attente_validation: "En attente de validation",
+  validee: "Validée",
+  payee: "Payée",
+  achetee: "Achetée",
+  en_cours_achat: "Achat en cours",
+  recu_entrepot: "Reçue à l'entrepôt",
+  en_vol: "En vol vers Haïti",
+  expedie: "Expédiée",
+  disponible: "Disponible",
+  annulee: "Annulée",
+};
+
+function assistedStatusLabel(status: string): string {
+  return ASSISTED_STATUS_LABELS[status] || status;
+}
 
 export const sendClientEmail = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -13,7 +31,9 @@ export const sendClientEmail = createServerFn({ method: "POST" })
     if (!EMAIL_KINDS.some((k) => k.kind === d.kind)) throw new Error("Type d'email invalide");
     const vars: EmailVars = {};
     for (const [k, v] of Object.entries(d.vars || {})) vars[k as keyof EmailVars] = String(v ?? "").slice(0, 3000);
-    return { ...d, vars };
+    const clean = { ...d } as Input & { internal?: boolean };
+    delete clean.internal;
+    return { ...clean, vars };
   })
   .handler(async ({ data, context }) => {
     const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
@@ -82,7 +102,40 @@ async function run(data: Input & { vars: EmailVars }, context: { supabase: any; 
       data.vars = { tracking: pkg.tracking_number, reference: pkg.tracking_number, statut: statusLabel(pkg.status), prochaine_etape: nextPackageStep(pkg.status), date: formatDate(event?.created_at || pkg.updated_at), details: `${pkg.description}\nPoids : ${pkg.actual_weight_lb ?? pkg.estimated_weight_lb ?? "À vérifier"} lbs\nTransport estimé : ${Number(pkg.shipping_fee || 0).toFixed(2)} USD (sous réserve de vérification)` };
       adminLink = "/compte/admin-colis";
     }
-    if (!staff && (target !== userId || data.toEmail)) throw new Error("Non autorisé");
+    let assistedVerified = false;
+    if (data.assistedId) {
+      const { data: row, error } = await supabase.from("assisted_purchases").select("*").eq("id", data.assistedId).single();
+      if (error || !row) throw new Error("Demande d'achat inaccessible");
+      const claimsEmail = String(context.claims.email || "").toLowerCase();
+      assistedVerified = !!data.internal || !!staff || (!!row.user_id && row.user_id === userId) || (!!claimsEmail && String(row.customer_email || "").toLowerCase() === claimsEmail);
+      if (!assistedVerified) throw new Error("Non autorisé");
+      target = row.user_id || userId;
+      kind = "achat";
+      eventId = `assisted-${row.id}-${row.status}-${row.updated_at}`;
+      adminLink = "/compte/admin";
+      if (!row.user_id && row.customer_email) data.toEmail = row.customer_email;
+      const paid = row.payment_status === "verified_paid";
+      data.vars = {
+        nom: row.customer_name || "",
+        reference: row.request_number,
+        produit: [row.store_name, row.description].filter(Boolean).join(" — "),
+        montant: `${Number(row.total_usd || 0).toFixed(2)} USD (${Number(row.total_htg || 0).toFixed(2)} GDS)`,
+        paiement: paid ? "Payé via portefeuille Prime" : "À confirmer par l'administration",
+        statut: assistedStatusLabel(String(row.status)),
+        date: formatDate(row.updated_at),
+        details: [
+          `Boutique : ${row.store_name || "à identifier"}`,
+          row.description ? `Article : ${row.description}` : "",
+          row.product_link ? `Lien : ${row.product_link}` : "",
+          `Prix exact : ${Number(row.exact_price_usd || 0).toFixed(2)} USD`,
+          `Frais de service : ${Number(row.fee_usd || 0).toFixed(2)} USD`,
+          row.tax_usd ? `Taxes : ${Number(row.tax_usd).toFixed(2)} USD` : "",
+          paid ? "Paiement confirmé via le portefeuille Prime." : "Un administrateur vérifie votre article et vous contactera pour le règlement.",
+          row.delivery_city || row.delivery_address ? `Livraison en Haïti : ${[row.delivery_city, row.delivery_address].filter(Boolean).join(", ")}` : "",
+        ].filter(Boolean).join("\n"),
+      };
+    }
+    if (!staff && !assistedVerified && (target !== userId || data.toEmail)) throw new Error("Non autorisé");
 
     const { data: st } = await supabase.from("company_settings").select("*").eq("id", 1).maybeSingle();
     const extra = ((st as { extra?: Record<string, unknown> } | null)?.extra || {}) as Record<string, unknown>;
@@ -171,3 +224,8 @@ async function run(data: Input & { vars: EmailVars }, context: { supabase: any; 
     }
     return { sent: !clientReason, reason: [clientReason, adminWarning].filter(Boolean).join(" · "), messageId: receipt.messageId };
   }
+
+/** Envoi des e-mails d'une demande d'achat assisté (client + alertes administrateurs) depuis une route publique. */
+export async function sendAssistedPurchaseEmail(supabase: any, assistedId: string) {
+  return run({ kind: "achat", assistedId, vars: {}, internal: true }, { supabase, userId: "", claims: {} });
+}

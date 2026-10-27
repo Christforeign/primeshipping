@@ -6,7 +6,6 @@ import type {
   WalletTransaction,
   EnrichedCompanySettings,
   OrderStatus,
-  AssistedPurchaseRequest,
   AssistedPurchaseStatus,
   ChatMessage,
   SupportThread,
@@ -26,7 +25,6 @@ const STORAGE_KEYS = {
   WALLET_TX: "prime_wallet_tx_store",
   WALLET_BALANCE: "prime_wallet_balance_store",
   PACKAGE_PAYMENTS: "prime_package_payments_store",
-  ASSISTED_PURCHASES: "prime_assisted_purchases_store",
   SUPPORT_THREADS: "prime_support_threads_store",
   HAITI_PROFILES: "prime_user_haiti_profiles",
   PAYMENT_CONFIGS: "prime_payment_configs_store",
@@ -669,7 +667,6 @@ export const DEFAULT_FORM_TEMPLATES: FormTemplate[] = [
   },
 ];
 
-export const DEFAULT_ASSISTED_PURCHASES: AssistedPurchaseRequest[] = [];
 export const DEFAULT_SUPPORT_THREADS: SupportThread[] = [
   {
     id: "thread-default",
@@ -1094,78 +1091,6 @@ export const clientStore = {
     return newTx;
   },
 
-  // ASSISTED PURCHASES
-  getAssistedPurchases(): AssistedPurchaseRequest[] {
-    if (typeof window === "undefined") return DEFAULT_ASSISTED_PURCHASES;
-    try {
-      const stored = localStorage.getItem(STORAGE_KEYS.ASSISTED_PURCHASES);
-      if (stored) return JSON.parse(stored);
-    } catch {
-      // fallback
-    }
-    return DEFAULT_ASSISTED_PURCHASES;
-  },
-  createAssistedPurchase(data: Partial<AssistedPurchaseRequest>): AssistedPurchaseRequest {
-    const list = this.getAssistedPurchases();
-    const settings = this.getSettings();
-    const rate = settings.usd_to_htg || 132;
-    const exactPrice = data.exact_price_usd || 0;
-    const fee =
-      data.fee_usd !== undefined ? data.fee_usd : (settings.assisted_purchase_fee_usd ?? 5);
-    const totalUsd = Number((exactPrice + fee).toFixed(2));
-    const totalHtg = Math.round(totalUsd * rate);
-
-    const newReq: AssistedPurchaseRequest = {
-      id: `ach-${Date.now()}`,
-      request_number: `ACH-${new Date().getFullYear().toString().slice(2)}${String(new Date().getMonth() + 1).padStart(2, "0")}-${Math.floor(100 + Math.random() * 900)}`,
-      user_id: data.user_id || "anon",
-      customer_name: data.customer_name || "Client",
-      customer_email: data.customer_email || "",
-      customer_phone: data.customer_phone || "",
-      store_name: data.store_name || "Amazon",
-      product_link: data.product_link || "",
-      product_image_url: data.product_image_url || "",
-      image_base64: data.image_base64 || "",
-      description: data.description || "",
-      exact_price_usd: exactPrice,
-      fee_usd: fee,
-      total_usd: totalUsd,
-      total_htg: totalHtg,
-      payment_choice: data.payment_choice || "pending_admin",
-      payment_status: data.payment_status || "pending_verification",
-      status: (data.payment_choice === "wallet"
-        ? "payee"
-        : "en_attente_validation") as AssistedPurchaseStatus,
-      admin_notes: data.admin_notes || "",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      ...data,
-    };
-    list.unshift(newReq);
-    if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEYS.ASSISTED_PURCHASES, JSON.stringify(list));
-      window.dispatchEvent(new Event("prime_assisted_purchases_changed"));
-    }
-    return newReq;
-  },
-  updateAssistedPurchase(id: string, updates: Partial<AssistedPurchaseRequest>): void {
-    const list = this.getAssistedPurchases();
-    const idx = list.findIndex((a) => a.id === id);
-    if (idx >= 0) {
-      list[idx] = { ...list[idx]!, ...updates, updated_at: new Date().toISOString() };
-      if (typeof window !== "undefined") {
-        localStorage.setItem(STORAGE_KEYS.ASSISTED_PURCHASES, JSON.stringify(list));
-        window.dispatchEvent(new Event("prime_assisted_purchases_changed"));
-      }
-    }
-  },
-  deleteAssistedPurchase(id: string): void {
-    const list = this.getAssistedPurchases().filter((a) => a.id !== id);
-    if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEYS.ASSISTED_PURCHASES, JSON.stringify(list));
-      window.dispatchEvent(new Event("prime_assisted_purchases_changed"));
-    }
-  },
 
   // WHATSAPP SUPPORT CONTACTS
   getWhatsAppContacts(): WhatsAppSupportContact[] {
