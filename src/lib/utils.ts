@@ -13,7 +13,7 @@ export function formatNumber(value: number | string | null | undefined): string 
   if (value === null || value === undefined || value === "") return "0";
   const num = typeof value === "number" ? value : Number(value);
   if (!Number.isFinite(num)) return "0";
-  const [integer, decimals] = num.toFixed(2).split(".");
+  const [integer = "0", decimals = "00"] = num.toFixed(2).split(".");
   const grouped = integer.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   return decimals === "00" ? grouped : `${grouped},${decimals}`;
 }
