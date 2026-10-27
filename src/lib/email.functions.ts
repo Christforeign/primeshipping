@@ -207,7 +207,7 @@ async function run(data: Input & { vars: EmailVars }, context: { supabase: any; 
     }
     let adminWarning = "";
     if (!data.test && !data.toEmail && kind !== "panier" && kind !== "alerte_admin") {
-      const { data: roleEmails, error: roleError } = await supabase.rpc("admin_alert_recipients");
+      const { data: roleEmails, error: roleError } = await supabase.rpc(data.internal ? "admin_alert_recipients_trusted" : "admin_alert_recipients");
       if (roleError) console.error("admin recipients", roleError.message);
       const recipients = [...new Set(((roleEmails || []) as string[]).filter((email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email !== to.toLowerCase()))].slice(0, 20);
       const adminTemplate = mergeTemplates(extra["email_templates"]).alerte_admin;
