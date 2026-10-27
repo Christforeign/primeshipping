@@ -8,7 +8,7 @@ import { useSettings } from "@/lib/settings";
 import type { ProductItem } from "@/lib/types-store";
 import { productCurrency, productExchangeRate } from "@/lib/product-commerce";
 import { formatNumber } from "@/lib/utils";
-import { PrimeStoreLogo, PaymentMethodsBar, PartnerBrandsBar } from "@/components/BrandLogos";
+import { PrimeStoreLogo } from "@/components/BrandLogos";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -92,7 +92,7 @@ function BoutiquePage() {
       <div className="rounded-3xl border-2 border-accent/40 bg-gradient-to-r from-amber-500/10 via-accent/15 to-transparent p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-accent font-bold text-xs text-accent-foreground uppercase">
+            <span className="px-2.5 py-0.5 rounded-full bg-accent font-bold text-xs text-accent-foreground uppercase whitespace-nowrap">
               Page Dédiée
             </span>
             <h2 className="font-bold text-lg text-forest">
@@ -241,14 +241,6 @@ function BoutiquePage() {
           })}
         </div>
       )}
-
-      {/* Partner Brands & B2B Showcase */}
-      <div className="mt-16 p-8 rounded-3xl glass border shadow-xl space-y-8">
-        <PartnerBrandsBar />
-        <div className="pt-6 border-t border-border">
-          <PaymentMethodsBar />
-        </div>
-      </div>
     </div>
   );
 }
