@@ -1,4 +1,5 @@
 // @ts-nocheck — legacy pages pending migration to real tables
+import { orderTotalDisplay } from "@/lib/checkout-display";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -220,7 +221,7 @@ function Dashboard() {
                   <div className="min-w-0">
                     <p className="truncate font-semibold text-foreground">{o.product_title}</p>
                     <p className="font-mono text-[11px] text-muted-foreground">
-                      {o.order_number} · ${o.total_usd} USD
+                      {o.order_number} · {orderTotalDisplay(o).primary}
                     </p>
                   </div>
                   <span className="capitalize font-bold text-[11px] bg-secondary text-secondary-foreground px-2 py-0.5 rounded-full">

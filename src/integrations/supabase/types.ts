@@ -827,6 +827,7 @@ export type Database = {
         Returns: number
       }
       admin_alert_recipients: { Args: never; Returns: string[] }
+      admin_alert_recipients_trusted: { Args: never; Returns: string[] }
       admin_delete_customer_account: {
         Args: { _user_id: string }
         Returns: boolean

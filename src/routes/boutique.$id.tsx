@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { orderTotalDisplay } from "@/lib/checkout-display";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -301,8 +302,8 @@ export function ProductDetailPage() {
             <div className="flex justify-between border-b pb-2">
               <span className="text-muted-foreground">Total à régler :</span>
               <span className="font-extrabold text-foreground text-sm">
-                {confirmedOrder.total_usd.toFixed(2)} USD (≈{" "}
-                {formatNumber(confirmedOrder.total_htg)} HTG)
+                {orderTotalDisplay(confirmedOrder).primary}
+                {orderTotalDisplay(confirmedOrder).secondary ? ` (${orderTotalDisplay(confirmedOrder).secondary})` : ""}
               </span>
             </div>
             <div className="flex justify-between border-b pb-2">

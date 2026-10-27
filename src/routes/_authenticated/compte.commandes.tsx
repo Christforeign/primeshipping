@@ -1,4 +1,5 @@
 // @ts-nocheck — legacy pages pending migration to real tables
+import { orderTotalDisplay } from "@/lib/checkout-display";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -147,10 +148,8 @@ function MyOrdersPage() {
 
                 <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto border-t md:border-t-0 pt-3 md:pt-0">
                   <div className="text-left md:text-right">
-                    <p className="text-base font-extrabold text-forest">{order.total_usd} USD</p>
-                    <p className="text-xs text-muted-foreground">
-                      {order.total_htg ? `${order.total_htg.toLocaleString("fr-FR")} HTG` : ""}
-                    </p>
+                    <p className="text-base font-extrabold text-forest">{orderTotalDisplay(order).primary}</p>
+                    <p className="text-xs text-muted-foreground">{orderTotalDisplay(order).secondary}</p>
                   </div>
 
                   <div className="flex items-center gap-2">
@@ -241,8 +240,8 @@ function MyOrdersPage() {
                 <div className="border-t pt-1.5 flex justify-between font-bold text-sm text-forest">
                   <span>Total payé / dû :</span>
                   <span>
-                    {selectedOrder.total_usd} USD (
-                    {selectedOrder.total_htg?.toLocaleString("fr-FR")} HTG)
+                    {orderTotalDisplay(selectedOrder).primary}
+                    {orderTotalDisplay(selectedOrder).secondary ? ` (${orderTotalDisplay(selectedOrder).secondary})` : ""}
                   </span>
                 </div>
               </div>

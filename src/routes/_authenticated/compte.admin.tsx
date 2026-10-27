@@ -1,4 +1,5 @@
 // @ts-nocheck — legacy pages pending migration to real tables
+import { orderTotalDisplay } from "@/lib/checkout-display";
 import { saveExtraSettings } from "@/lib/admin-settings";
 import { DEFAULT_ORDER_NOTICE } from "@/lib/order-minimums";
 import { sendClientEmail } from "@/lib/email.functions";
@@ -2371,7 +2372,7 @@ function AdminHubPage() {
                       {ord.order_number}
                     </span>
                     <span className="font-bold text-forest">{ord.product_title}</span>
-                    <span className="text-muted-foreground">({ord.total_usd} USD)</span>
+                    <span className="text-muted-foreground">({orderTotalDisplay(ord).primary}{orderTotalDisplay(ord).secondary ? ` · ${orderTotalDisplay(ord).secondary}` : ""})</span>
                   </div>
                   <p className="text-muted-foreground">
                     Client : <strong>{ord.customer_name}</strong> ({ord.customer_phone}) ·{" "}
