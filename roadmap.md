@@ -49,7 +49,8 @@
 - [x] Case « conditions d'utilisation » obligatoire avant commande et paiement (lien cliquable vers /conditions), conditions simplifiées (numérique non remboursable, infos erronées non remboursées, dommage physique sous 24 h, retards possibles, fraude = compte supprimé) ; note spéciale par produit conservée et facultative dans l'admin ; parcours mobile vérifié connecté sans achat réel
 
 ## Intervention en cours
-- [ ] E-mails manuels Brevo (un client / tous), sans formulaire de test
-- [ ] Suppression définitive confirmée des commandes avec contrôle admin
-- [ ] Écran hors connexion avec logo et support administrable
-- [ ] Vérifier les erreurs de pages et les parcours connectés
+- [x] E-mails manuels Brevo (un client / tous), sans formulaire de test ; formulaire connecté et confirmation vérifiés, aucun envoi collectif réel
+- [x] Suppression définitive confirmée des commandes avec contrôle admin ; RPC appliquée, boutons vérifiés, historique financier conservé
+- [x] Écran hors connexion avec logo et support administrable ; coupure/reconnexion vérifiées, PWA réservé au site redéployé après première visite en ligne
+- [x] Vérifier les erreurs de pages et les parcours connectés : écart de chargement des réglages reproduit et corrigé, aucun plantage au dernier parcours
+- [ ] Réception e-mail manuel et suppression réelle : aucun message envoyé aux clients ; création de commande temporaire refusée par les protections existantes, aucune vraie commande supprimée

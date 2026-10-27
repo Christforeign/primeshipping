@@ -39,3 +39,4 @@
 - Manual Brevo messages use a dedicated admin-checked server function, saved profile recipients and one recipient per request; browser UUIDs keep retries idempotent and provider errors remain in admin logs.
 - Shop-order deletion uses an admin-checked database RPC, keeps the financial ledger intact and never issues an implicit refund.
 - Offline fallback is generated with vite-plugin-pwa and registered only through the guarded wrapper on published origins; private HTML and data are never cached.
+- Settings consumers expose query-cache values only after hydration so browser cache cannot mismatch server-rendered defaults.
