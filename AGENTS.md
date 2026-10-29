@@ -40,3 +40,5 @@
 - Shop-order deletion uses an admin-checked database RPC, keeps the financial ledger intact and never issues an implicit refund.
 - Offline fallback is generated with vite-plugin-pwa and registered only through the guarded wrapper on published origins; private HTML and data are never cached.
 - Settings consumers expose query-cache values only after hydration so browser cache cannot mismatch server-rendered defaults.
+- Render the shared wallpaper in a fixed root viewport layer, not a fixed body background; use semantic glass fallback surfaces so WebKit and browsers without blur retain readable panels.
+- Optional settings and notification device caches must tolerate denied storage without aborting Cloud-backed page flows.
