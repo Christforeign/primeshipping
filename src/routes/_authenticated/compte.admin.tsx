@@ -1,4 +1,5 @@
 // @ts-nocheck — legacy pages pending migration to real tables
+import { VideoUploadButton } from "@/components/VideoUploadButton";
 import { orderTotalDisplay } from "@/lib/checkout-display";
 import { saveExtraSettings } from "@/lib/admin-settings";
 import { sendClientEmail } from "@/lib/email.functions";
@@ -1856,6 +1857,8 @@ function AdminHubPage() {
                     placeholder="https://www.youtube.com/watch?v=..."
                     className="text-xs font-mono"
                   />
+                  <VideoUploadButton onUploaded={setProdVideoUrl} />
+                  {prodVideoUrl && <p className="text-[10px] text-muted-foreground">Vidéo enregistrée. Effacez le champ pour la retirer.</p>}
                 </div>
               </div>
 

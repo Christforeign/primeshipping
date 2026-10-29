@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { VideoUploadButton } from "@/components/VideoUploadButton";
 import React, { useState } from "react";
 import type { ProductItem, ProductVariant, CustomFormField, ProductKind } from "@/lib/types-store";
 import { Button } from "@/components/ui/button";
@@ -495,6 +496,8 @@ export function AdminProductModal({ product, isOpen, onClose, onSave }: Props) {
                   placeholder="https://www.youtube.com/watch?v=..."
                   className="rounded-xl text-xs h-10 font-mono"
                 />
+                  <VideoUploadButton onUploaded={setVideoUrl} />
+                  {videoUrl && <p className="text-[10px] text-muted-foreground">Vidéo enregistrée. Effacez le champ pour la retirer.</p>}
               </div>
             </div>
           )}

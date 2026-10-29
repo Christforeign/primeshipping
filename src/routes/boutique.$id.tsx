@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { isDirectVideo } from "@/lib/upload";
 import { orderTotalDisplay } from "@/lib/checkout-display";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
@@ -449,12 +450,16 @@ export function ProductDetailPage() {
                   <Play className="h-4 w-4 text-amber-500" /> Vidéo de présentation officielle
                 </div>
                 <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black">
+                  {isDirectVideo(product.video_url) ? (
+                    <video src={product.video_url} controls playsInline className="h-full w-full object-contain" />
+                  ) : (
                   <iframe
                     src={product.video_url.replace("watch?v=", "embed/")}
                     title="Présentation produit"
                     className="h-full w-full border-0"
                     allowFullScreen
                   />
+                  )}
                 </div>
               </div>
             )}
