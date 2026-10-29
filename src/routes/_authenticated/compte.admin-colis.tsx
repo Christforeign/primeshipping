@@ -592,7 +592,7 @@ function AdminColis() {
             value={f.user_id ?? ""}
             onChange={async (e) => {
               const uid = e.target.value;
-              setF((prev: typeof f) => ({ ...prev, user_id: uid }));
+              setF((prev: any) => ({ ...prev, user_id: uid }));
               if (!uid) return;
               const { data: addr } = await supabase
                 .from("addresses")
@@ -610,7 +610,7 @@ function AdminColis() {
                 ? [addr.warehouse, addr.street, addr.line2, addr.city, addr.region]
                 : [prof?.address_line, prof?.address_line2, prof?.city, prof?.region];
               const full = parts.filter(Boolean).join(", ");
-              if (full) setF((prev: typeof f) => ({ ...prev, user_id: uid, destination: full }));
+              if (full) setF((prev: any) => ({ ...prev, user_id: uid, destination: full }));
             }}
             className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
             required
