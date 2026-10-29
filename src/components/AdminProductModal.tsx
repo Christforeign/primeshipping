@@ -1,5 +1,5 @@
-import { VideoUploadButton } from "@/components/VideoUploadButton";
 // @ts-nocheck
+import { VideoUploadButton } from "@/components/VideoUploadButton";
 import React, { useState } from "react";
 import type { ProductItem, ProductVariant, CustomFormField, ProductKind } from "@/lib/types-store";
 import { Button } from "@/components/ui/button";

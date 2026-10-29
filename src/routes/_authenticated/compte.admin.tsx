@@ -1,5 +1,5 @@
-import { VideoUploadButton } from "@/components/VideoUploadButton";
 // @ts-nocheck — legacy pages pending migration to real tables
+import { VideoUploadButton } from "@/components/VideoUploadButton";
 import { orderTotalDisplay } from "@/lib/checkout-display";
 import { saveExtraSettings } from "@/lib/admin-settings";
 import { sendClientEmail } from "@/lib/email.functions";

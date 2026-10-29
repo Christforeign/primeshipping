@@ -1,5 +1,5 @@
-import { isDirectVideo } from "@/lib/upload";
 // @ts-nocheck
+import { isDirectVideo } from "@/lib/upload";
 import { orderTotalDisplay } from "@/lib/checkout-display";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
