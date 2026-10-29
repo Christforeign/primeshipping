@@ -49,7 +49,8 @@
 - [x] Case « conditions d'utilisation » obligatoire avant commande et paiement (lien cliquable vers /conditions), conditions simplifiées (numérique non remboursable, infos erronées non remboursées, dommage physique sous 24 h, retards possibles, fraude = compte supprimé) ; note spéciale par produit conservée et facultative dans l'admin ; parcours mobile vérifié connecté sans achat réel
 
 ## Intervention en cours
-- [ ] Safari : fond partagé et verre lisible, stockage facultatif protégé, vérification WebKit des pages publiques et connexion ; parcours administrateur à confirmer avec le compte du demandeur.
+- [x] Safari : fond partagé et verre lisible vérifiés avec WebKit et Chromium mobile ; caches facultatifs et lecture de session protégés, 4 tests réussis.
+- [ ] Safari administration connectée : compte du demandeur indisponible pour tester ; redirection déconnectée vers /auth réussie, mais avertissement récupérable MatchView/match.routeId observé dans WebKit, cause du plantage admin réel non confirmée.
 - [x] E-mails manuels Brevo (un client / tous), sans formulaire de test ; formulaire connecté et confirmation vérifiés, aucun envoi collectif réel
 - [x] Suppression définitive confirmée des commandes avec contrôle admin ; RPC appliquée, boutons vérifiés, historique financier conservé
 - [x] Écran hors connexion avec logo et support administrable ; coupure/reconnexion vérifiées, PWA réservé au site redéployé après première visite en ligne
