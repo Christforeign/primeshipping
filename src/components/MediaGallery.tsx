@@ -1,3 +1,4 @@
+import { isDirectVideo } from "@/lib/upload";
 import { useState } from "react";
 import { Play, Image as ImageIcon } from "lucide-react";
 
@@ -44,7 +45,7 @@ export function MediaGallery({ mediaUrls, videoUrl, title }: MediaGalleryProps) 
       {/* Main Display */}
       <div className="relative aspect-video sm:aspect-square w-full rounded-2xl overflow-hidden bg-muted border">
         {showVideo && videoUrl ? (
-          videoUrl.endsWith(".mp4") ? (
+          isDirectVideo(videoUrl) ? (
             <video
               src={videoUrl}
               controls
