@@ -10,6 +10,9 @@ import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   vite: {
+    // Older Safari (macOS Monterey and earlier) cannot parse class static blocks.
+    build: { target: "es2020" },
+    esbuild: { target: "es2020" },
     plugins: [VitePWA({
       strategies: "generateSW",
       filename: "sw.js",
