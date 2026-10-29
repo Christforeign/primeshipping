@@ -257,6 +257,12 @@ input, select, textarea, button { max-width: 100%; }
 html, body { max-width: 100%; overflow-x: clip; }
 img, video, svg, canvas, iframe { max-width: 100%; }
 input, select, textarea { min-width: 0; max-width: 100%; }
+/* iOS auto-zoom: keep every field at 16px minimum on touch devices */
+@media (pointer: coarse) {
+  input, select, textarea { font-size: max(16px, 1em) !important; }
+}
+/* Kill double-tap zoom / tap delay on interactive elements */
+button, a, [role="button"], label, input, select, textarea { touch-action: manipulation; }
 table { max-width: 100%; }
 @media (max-width: 640px) {
   table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
