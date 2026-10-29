@@ -18,8 +18,9 @@ export function PushNotificationPrompt({ className = "" }: { className?: string 
   useEffect(() => {
     setSupported(isPushSupported());
     setStatus(getPushPermissionStatus());
-    const isDismissed = localStorage.getItem("prime_push_prompt_dismissed") === "true";
-    if (isDismissed) setDismissed(true);
+    try {
+      if (localStorage.getItem("prime_push_prompt_dismissed") === "true") setDismissed(true);
+    } catch { /* Safari may deny optional device storage. */ }
   }, []);
 
   if (!supported || status === "granted" || dismissed) {
@@ -43,7 +44,7 @@ export function PushNotificationPrompt({ className = "" }: { className?: string 
 
   const handleDismiss = () => {
     setDismissed(true);
-    localStorage.setItem("prime_push_prompt_dismissed", "true");
+    try { localStorage.setItem("prime_push_prompt_dismissed", "true"); } catch { /* dismissed for this visit */ }
   };
 
   return (

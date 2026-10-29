@@ -31,6 +31,7 @@ function JulAdmin() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
+    try {
     const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     if (error) {
       setBusy(false);
@@ -50,6 +51,11 @@ function JulAdmin() {
       return;
     }
     navigate({ to: "/compte/admin", replace: true });
+    } catch {
+      toast.error("Connexion interrompue. Vérifiez votre connexion et réessayez.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (

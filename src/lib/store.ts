@@ -710,7 +710,7 @@ export const clientStore = {
     const current = this.getSettings();
     const merged = { ...current, ...updates, updated_at: new Date().toISOString() };
     if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(merged));
+      try { localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(merged)); } catch { /* optional local cache, Cloud remains authoritative */ }
       window.dispatchEvent(new Event("prime_settings_changed"));
     }
     return merged;
@@ -751,7 +751,7 @@ export const clientStore = {
   },
   savePaymentConfigs(configs: AdminPaymentConfig[]) {
     if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEYS.PAYMENT_CONFIGS, JSON.stringify(configs));
+      try { localStorage.setItem(STORAGE_KEYS.PAYMENT_CONFIGS, JSON.stringify(configs)); } catch { /* optional local cache */ }
       window.dispatchEvent(new Event("prime_payment_configs_changed"));
     }
   },
@@ -786,7 +786,7 @@ export const clientStore = {
   },
   saveCustomerFieldsConfig(cfg: CheckoutCustomerFieldsConfig) {
     if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEYS.CUSTOMER_FIELDS, JSON.stringify(cfg));
+      try { localStorage.setItem(STORAGE_KEYS.CUSTOMER_FIELDS, JSON.stringify(cfg)); } catch { /* optional local cache */ }
       window.dispatchEvent(new Event("prime_customer_fields_changed"));
     }
   },
@@ -811,14 +811,14 @@ export const clientStore = {
       list.push(tmpl);
     }
     if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEYS.FORM_TEMPLATES, JSON.stringify(list));
+      try { localStorage.setItem(STORAGE_KEYS.FORM_TEMPLATES, JSON.stringify(list)); } catch { /* optional local cache */ }
       window.dispatchEvent(new Event("prime_form_templates_changed"));
     }
   },
   deleteFormTemplate(id: string) {
     const list = this.getFormTemplates().filter((t) => t.id !== id);
     if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEYS.FORM_TEMPLATES, JSON.stringify(list));
+      try { localStorage.setItem(STORAGE_KEYS.FORM_TEMPLATES, JSON.stringify(list)); } catch { /* optional local cache */ }
       window.dispatchEvent(new Event("prime_form_templates_changed"));
     }
   },
@@ -841,7 +841,7 @@ export const clientStore = {
   },
   saveProducts(list: ProductItem[]) {
     if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(list));
+      try { localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(list)); } catch { /* optional local cache */ }
       window.dispatchEvent(new Event("prime_products_changed"));
     }
   },

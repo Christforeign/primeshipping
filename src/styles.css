@@ -111,6 +111,11 @@
   --shadow-soft: 0 10px 25px -10px rgba(31, 21, 12, 0.10);
   --primary-glow: #F59E0B;
   --shadow-glass: 0 8px 32px -12px rgba(31, 21, 12, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  --glass-surface: rgba(255, 255, 255, 0.52);
+  --glass-strong-surface: rgba(255, 255, 255, 0.68);
+  --glass-fallback-surface: rgba(255, 255, 255, 0.94);
+  --glass-edge: rgba(255, 255, 255, 0.55);
+  --backdrop-overlay: rgba(251, 247, 241, 0.42);
 }
 
 .dark {
@@ -149,33 +154,47 @@
   --sidebar-border: #3A2817;
   --sidebar-ring: #EA580C;
   --shadow-glass: 0 8px 32px -12px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --glass-surface: rgba(32, 21, 11, 0.62);
+  --glass-strong-surface: rgba(32, 21, 11, 0.78);
+  --glass-fallback-surface: rgba(32, 21, 11, 0.96);
+  --glass-edge: rgba(255, 255, 255, 0.16);
+  --backdrop-overlay: rgba(20, 13, 6, 0.42);
 }
 
 body {
   font-family: var(--font-sans);
   background-color: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  isolation: isolate;
+}
+
+/* A viewport layer avoids WebKit's fixed body-background painting issues. */
+.site-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--background);
   background-image:
-    linear-gradient(color-mix(in oklab, var(--background) 42%, transparent), color-mix(in oklab, var(--background) 42%, transparent)),
+    linear-gradient(var(--backdrop-overlay), var(--backdrop-overlay)),
     url("./assets/bg-warm.jpg");
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
-  color: var(--foreground);
-  -webkit-font-smoothing: antialiased;
 }
 
 /* Effet « verre dépoli » façon iOS, aux couleurs de la marque */
 @utility glass {
-  background: color-mix(in oklab, var(--card) 52%, transparent);
+  background: var(--glass-surface);
   backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid color-mix(in oklab, #ffffff 55%, transparent);
+  border: 1px solid var(--glass-edge);
   box-shadow: var(--shadow-glass);
 }
 
 @utility glass-strong {
-  background: color-mix(in oklab, var(--card) 68%, transparent);
+  background: var(--glass-strong-surface);
   backdrop-filter: blur(32px) saturate(190%);
-  border: 1px solid color-mix(in oklab, #ffffff 60%, transparent);
+  border: 1px solid var(--glass-edge);
   box-shadow: var(--shadow-glass);
 }
 
@@ -183,6 +202,13 @@ body {
   background-image: linear-gradient(120deg, var(--primary), var(--primary-glow));
   background-clip: text;
   color: transparent;
+}
+
+/* Unsupported blur must never leave transparent, unreadable panels. */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass, .glass-strong, .liquid, .liquid-active {
+    background: var(--glass-fallback-surface);
+  }
 }
 
 /* Scrollbar invisible pour un défilement tactile fluide */
