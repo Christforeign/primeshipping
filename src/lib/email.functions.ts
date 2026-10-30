@@ -229,3 +229,8 @@ async function run(data: Input & { vars: EmailVars }, context: { supabase: any; 
 export async function sendAssistedPurchaseEmail(supabase: any, assistedId: string) {
   return run({ kind: "achat", assistedId, vars: {}, internal: true }, { supabase, userId: "", claims: {} });
 }
+
+/** Server-only caller: the incoming relay must be authenticated before invoking this. */
+export async function sendPriorityPackageEmail(supabase: any, packageId: string) {
+  return run({ kind: "transit", packageId, vars: {}, internal: true }, { supabase, userId: "", claims: {} });
+}

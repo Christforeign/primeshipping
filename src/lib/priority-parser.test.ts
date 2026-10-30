@@ -30,4 +30,7 @@ describe("priority parser", () => {
   it("leaves ambiguous names unassigned", () => {
     expect(matchClient("Blaise", clients)).toBeNull();
   });
+  it("never falls back to a name when a PS code is unknown", () => {
+    expect(matchClient("Christeveste Blaise PS-9999", clients)).toBeNull();
+  });
 });

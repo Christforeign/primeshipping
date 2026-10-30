@@ -36,6 +36,7 @@ import { Route as AuthenticatedCompteCommandesRouteImport } from './routes/_auth
 import { Route as AuthenticatedComptePortefeuilleRouteImport } from './routes/_authenticated/compte.portefeuille'
 import { Route as AuthenticatedCompteProfilRouteImport } from './routes/_authenticated/compte.profil'
 import { Route as ApiPublicAssistedPurchaseRouteImport } from './routes/api/public/assisted-purchase'
+import { Route as ApiPublicPriorityWebhookRouteImport } from './routes/api/public/priority-webhook'
 import { Route as AuthenticatedCompteColisIndexRouteImport } from './routes/_authenticated/compte.colis.index'
 import { Route as AuthenticatedCompteColisIdRouteImport } from './routes/_authenticated/compte.colis.$id'
 import { Route as AuthenticatedCompteColisNouveauRouteImport } from './routes/_authenticated/compte.colis.nouveau'
@@ -184,6 +185,12 @@ const ApiPublicAssistedPurchaseRoute =
     path: '/api/public/assisted-purchase',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicPriorityWebhookRoute =
+  ApiPublicPriorityWebhookRouteImport.update({
+    id: '/api/public/priority-webhook',
+    path: '/api/public/priority-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedCompteColisIndexRoute =
   AuthenticatedCompteColisIndexRouteImport.update({
     id: '/colis/',
@@ -239,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/compte/portefeuille': typeof AuthenticatedComptePortefeuilleRoute
   '/compte/profil': typeof AuthenticatedCompteProfilRoute
   '/api/public/assisted-purchase': typeof ApiPublicAssistedPurchaseRoute
+  '/api/public/priority-webhook': typeof ApiPublicPriorityWebhookRoute
   '/compte/': typeof AuthenticatedCompteIndexRoute
   '/compte/colis/$id': typeof AuthenticatedCompteColisIdRoute
   '/compte/colis/nouveau': typeof AuthenticatedCompteColisNouveauRoute
@@ -271,6 +279,7 @@ export interface FileRoutesByTo {
   '/compte/portefeuille': typeof AuthenticatedComptePortefeuilleRoute
   '/compte/profil': typeof AuthenticatedCompteProfilRoute
   '/api/public/assisted-purchase': typeof ApiPublicAssistedPurchaseRoute
+  '/api/public/priority-webhook': typeof ApiPublicPriorityWebhookRoute
   '/compte': typeof AuthenticatedCompteIndexRoute
   '/compte/colis/$id': typeof AuthenticatedCompteColisIdRoute
   '/compte/colis/nouveau': typeof AuthenticatedCompteColisNouveauRoute
@@ -306,6 +315,7 @@ export interface FileRoutesById {
   '/_authenticated/compte/portefeuille': typeof AuthenticatedComptePortefeuilleRoute
   '/_authenticated/compte/profil': typeof AuthenticatedCompteProfilRoute
   '/api/public/assisted-purchase': typeof ApiPublicAssistedPurchaseRoute
+  '/api/public/priority-webhook': typeof ApiPublicPriorityWebhookRoute
   '/_authenticated/compte/': typeof AuthenticatedCompteIndexRoute
   '/_authenticated/compte/colis/$id': typeof AuthenticatedCompteColisIdRoute
   '/_authenticated/compte/colis/nouveau': typeof AuthenticatedCompteColisNouveauRoute
@@ -341,6 +351,7 @@ export interface FileRouteTypes {
     | '/compte/portefeuille'
     | '/compte/profil'
     | '/api/public/assisted-purchase'
+    | '/api/public/priority-webhook'
     | '/compte/'
     | '/compte/colis/$id'
     | '/compte/colis/nouveau'
@@ -373,6 +384,7 @@ export interface FileRouteTypes {
     | '/compte/portefeuille'
     | '/compte/profil'
     | '/api/public/assisted-purchase'
+    | '/api/public/priority-webhook'
     | '/compte'
     | '/compte/colis/$id'
     | '/compte/colis/nouveau'
@@ -407,6 +419,7 @@ export interface FileRouteTypes {
     | '/_authenticated/compte/portefeuille'
     | '/_authenticated/compte/profil'
     | '/api/public/assisted-purchase'
+    | '/api/public/priority-webhook'
     | '/_authenticated/compte/'
     | '/_authenticated/compte/colis/$id'
     | '/_authenticated/compte/colis/nouveau'
@@ -435,6 +448,7 @@ export interface RootRouteChildren {
   BoutiquePanierRoute: typeof BoutiquePanierRoute
   BoutiqueIndexRoute: typeof BoutiqueIndexRoute
   ApiPublicAssistedPurchaseRoute: typeof ApiPublicAssistedPurchaseRoute
+  ApiPublicPriorityWebhookRoute: typeof ApiPublicPriorityWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
 }
@@ -630,6 +644,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAssistedPurchaseRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/priority-webhook': {
+      id: '/api/public/priority-webhook'
+      path: '/api/public/priority-webhook'
+      fullPath: '/api/public/priority-webhook'
+      preLoaderRoute: typeof ApiPublicPriorityWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/compte/colis/': {
       id: '/_authenticated/compte/colis/'
       path: '/colis'
@@ -728,6 +749,7 @@ const rootRouteChildren: RootRouteChildren = {
   BoutiquePanierRoute: BoutiquePanierRoute,
   BoutiqueIndexRoute: BoutiqueIndexRoute,
   ApiPublicAssistedPurchaseRoute: ApiPublicAssistedPurchaseRoute,
+  ApiPublicPriorityWebhookRoute: ApiPublicPriorityWebhookRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
 }

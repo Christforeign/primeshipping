@@ -42,3 +42,4 @@
 - Settings consumers expose query-cache values only after hydration so browser cache cannot mismatch server-rendered defaults.
 - Render the shared wallpaper in a fixed root viewport layer, not a fixed body background; use semantic glass fallback surfaces so WebKit and browsers without blur retain readable panels.
 - Optional settings and notification device caches must tolerate denied storage without aborting Cloud-backed page flows.
+- Priority mail relays use one bounded authenticated JSON endpoint, an atomic import RPC and a staff-only ambiguity inbox; provider adapters remain external until a method is chosen.

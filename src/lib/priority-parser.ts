@@ -42,7 +42,7 @@ export function matchClient(consignee: string, clients: MatchClient[]): string |
   const code = consignee.match(/PS-?\s?(\d{3,})/i);
   if (code) {
     const c = clients.filter((x) => norm(x.client_code ?? "").replace(/ /g, "") === `ps${code[1]}`);
-    if (c.length === 1) return c[0]!.id;
+    return c.length === 1 ? c[0]?.id ?? null : null;
   }
   const words = norm(consignee.replace(/PS-?\s?\d+/i, "")).split(" ").filter((w) => w.length > 1);
   if (!words.length) return null;
@@ -50,5 +50,5 @@ export function matchClient(consignee: string, clients: MatchClient[]): string |
     const name = norm(x.full_name ?? "").split(" ");
     return words.every((w) => name.includes(w));
   });
-  return hits.length === 1 ? hits[0]!.id : null;
+  return hits.length === 1 ? hits[0]?.id ?? null : null;
 }

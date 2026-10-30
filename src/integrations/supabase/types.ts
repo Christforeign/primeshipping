@@ -420,6 +420,48 @@ export type Database = {
           },
         ]
       }
+      priority_imports: {
+        Row: {
+          consignee: string
+          content: string
+          created_at: string
+          email_error: string | null
+          email_sent: boolean
+          id: string
+          package_id: string | null
+          reception: string
+          source_key: string
+          tracking: string
+          weight_lb: number | null
+        }
+        Insert: {
+          consignee?: string
+          content?: string
+          created_at?: string
+          email_error?: string | null
+          email_sent?: boolean
+          id?: string
+          package_id?: string | null
+          reception?: string
+          source_key: string
+          tracking: string
+          weight_lb?: number | null
+        }
+        Update: {
+          consignee?: string
+          content?: string
+          created_at?: string
+          email_error?: string | null
+          email_sent?: boolean
+          id?: string
+          package_id?: string | null
+          reception?: string
+          source_key?: string
+          tracking?: string
+          weight_lb?: number | null
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           apply_tax: boolean
@@ -850,9 +892,43 @@ export type Database = {
         }
         Returns: Json
       }
+      assign_priority_import: {
+        Args: { p_id: string; p_user_id: string }
+        Returns: string
+      }
       assisted_purchase_fee: { Args: { _exact_price: number }; Returns: number }
       can_manage_packages: { Args: { _user_id: string }; Returns: boolean }
       claim_first_admin: { Args: never; Returns: boolean }
+      commit_priority_import: {
+        Args: {
+          p_consignee: string
+          p_content: string
+          p_reception: string
+          p_source_key: string
+          p_tracking: string
+          p_user_id?: string
+          p_weight: number
+        }
+        Returns: {
+          consignee: string
+          content: string
+          created_at: string
+          email_error: string | null
+          email_sent: boolean
+          id: string
+          package_id: string | null
+          reception: string
+          source_key: string
+          tracking: string
+          weight_lb: number | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "priority_imports"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       create_assisted_purchase: {
         Args: {
           p_customer_name?: string

@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { sendClientEmail } from "@/lib/email.functions";
 import { parsePriorityEmails, matchClient, type PriorityItem } from "@/lib/priority-parser";
 import { Mail } from "lucide-react";
+import { PriorityInbox } from "./PriorityInbox";
 
 type Row = PriorityItem & { userId: string };
 
@@ -58,6 +59,7 @@ export function PriorityImportPanel({ clients, ratePerLb, adminId, onDone }: {
 
   return (
     <div className="space-y-4 rounded-xl border border-border bg-card p-5 sm:p-6 shadow-xs">
+      <PriorityInbox clients={clients} onDone={onDone} />
       <div>
         <h2 className="text-lg font-bold text-foreground flex items-center gap-2"><Mail className="h-5 w-5 text-primary" /> Import Priority Courier</h2>
         <p className="text-xs text-muted-foreground">Collez un ou plusieurs e-mails « Notificación de Recepción ». Les clients sont reconnus par code PS ou par nom ; les doutes restent à attribuer.</p>
