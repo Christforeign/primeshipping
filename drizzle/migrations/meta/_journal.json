@@ -141,6 +141,13 @@
       "when": 1793334897846,
       "tag": "0019_priority_incoming_mail",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1793385027467,
+      "tag": "0020_priority_received_status",
+      "breakpoints": true
     }
   ]
 }

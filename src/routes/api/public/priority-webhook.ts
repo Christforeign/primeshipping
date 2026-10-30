@@ -31,7 +31,7 @@ export const Route = createFileRoute("/api/public/priority-webhook")({
       if (!items.length || items.length > 50 || items.some((i) => i.tracking.length > 200 || i.content.length > 3000 || (i.weightLb !== null && (!Number.isFinite(i.weightLb) || i.weightLb < 0 || i.weightLb > 10000)))) return Response.json({ error: "Avis Priority non reconnu" }, { status: 422 });
       try {
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { sendPriorityPackageEmail } = await import("@/lib/email.functions");
+        const { sendPriorityPackageEmail, sendPriorityUnassignedAlert } = await import("@/lib/email.functions");
         const { data: clients, error } = await supabaseAdmin.from("profiles").select("id,full_name,client_code");
         if (error) throw error;
         let assigned = 0; let pending = 0; let emailPending = 0;
@@ -45,7 +45,7 @@ export const Route = createFileRoute("/api/public/priority-webhook")({
             ...(userId ? { p_user_id: userId } : {}),
           });
           if (insertError) throw insertError;
-          if (!row.package_id) { pending++; continue; }
+          if (!row.package_id) { pending++; if (!row.email_sent) { await sendPriorityUnassignedAlert(supabaseAdmin, item).catch(() => {}); await supabaseAdmin.from("priority_imports").update({ email_sent: true }).eq("id", row.id); } continue; }
           assigned++;
           if (!row.email_sent) {
             const result = await sendPriorityPackageEmail(supabaseAdmin, row.package_id);

@@ -56,7 +56,8 @@ async function shortKey(raw: string) {
 
 async function run(data: Input & { vars: EmailVars }, context: { supabase: any; userId: string; claims: { email?: unknown } }): Promise<{ sent: boolean; reason: string; messageId?: string | undefined }> {
     const { supabase, userId } = context;
-    const { data: staff } = await supabase.rpc("is_staff", { _user_id: userId });
+    const { data: staffRole } = userId ? await supabase.rpc("is_staff", { _user_id: userId }) : { data: false };
+    const staff = !!staffRole || (!!data.internal && data.kind === "alerte_admin");
     let target = data.userId || userId;
     let kind = data.kind;
     let eventId: string | undefined;
@@ -233,4 +234,13 @@ export async function sendAssistedPurchaseEmail(supabase: any, assistedId: strin
 /** Server-only caller: the incoming relay must be authenticated before invoking this. */
 export async function sendPriorityPackageEmail(supabase: any, packageId: string) {
   return run({ kind: "transit", packageId, vars: {}, internal: true }, { supabase, userId: "", claims: {} });
+}
+
+/** Server-only: alerts every administrator that a Priority parcel has no identified owner. */
+export async function sendPriorityUnassignedAlert(supabase: any, item: { tracking: string; consignee: string; content: string; weightLb: number | null; reception: string }) {
+  const { data: emails } = await supabase.rpc("admin_alert_recipients_trusted");
+  const list = [...new Set(((emails || []) as string[]).filter((e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)))].slice(0, 20);
+  for (const toEmail of list) {
+    await run({ kind: "alerte_admin", toEmail, internal: true, vars: { reference: item.tracking, tracking: item.tracking, statut: "Pas encore attribué", details: `Colis reçu sans propriétaire identifié\nDestinataire indiqué : ${item.consignee || "—"}\nRéception : ${item.reception || "—"}\nContenu : ${item.content || "—"}\nPoids : ${item.weightLb ?? "?"} lbs\nAttribuez-le dans Administration > Priority.` } } as never, { supabase, userId: "", claims: {} });
+  }
 }
