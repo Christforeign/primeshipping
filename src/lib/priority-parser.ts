@@ -22,14 +22,14 @@ export function parsePriorityEmails(text: string): PriorityItem[] {
   const seen = new Set<string>();
   const items: PriorityItem[] = [];
   for (const b of blocks) {
-    const tracking = field(b, "Tracking").split(/\s+/)[0];
+    const tracking = field(b, "Tracking").split(/\s+/)[0] ?? "";
     if (!tracking || seen.has(tracking)) continue;
     seen.add(tracking);
     const w = field(b, "Peso").replace(",", ".").match(/[\d.]+/)?.[0];
     items.push({
       consignee: field(b, "Consignatario"),
       tracking,
-      reception: field(b, "Recepci[oó]n").split(/\s+/)[0],
+      reception: field(b, "Recepci[oó]n").split(/\s+/)[0] ?? "",
       content: field(b, "Contenido"),
       weightLb: w ? Number(w) : null,
     });
@@ -42,7 +42,7 @@ export function matchClient(consignee: string, clients: MatchClient[]): string |
   const code = consignee.match(/PS-?\s?(\d{3,})/i);
   if (code) {
     const c = clients.filter((x) => norm(x.client_code ?? "").replace(/ /g, "") === `ps${code[1]}`);
-    if (c.length === 1) return c[0].id;
+    if (c.length === 1) return c[0]!.id;
   }
   const words = norm(consignee.replace(/PS-?\s?\d+/i, "")).split(" ").filter((w) => w.length > 1);
   if (!words.length) return null;
@@ -50,5 +50,5 @@ export function matchClient(consignee: string, clients: MatchClient[]): string |
     const name = norm(x.full_name ?? "").split(" ");
     return words.every((w) => name.includes(w));
   });
-  return hits.length === 1 ? hits[0].id : null;
+  return hits.length === 1 ? hits[0]!.id : null;
 }
