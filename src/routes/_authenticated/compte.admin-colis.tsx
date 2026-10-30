@@ -12,6 +12,7 @@ import { useRoles, useUser } from "@/lib/session";
 import { useSettings } from "@/lib/settings";
 import { openInvoice } from "@/lib/invoice";
 import { AdminPackageEditDialog } from "@/components/AdminPackageEditDialog";
+import { PriorityImportPanel } from "@/components/PriorityImportPanel";
 import { sendClientEmail } from "@/lib/email.functions";
 import { notifyNewPackage, notifyPackageStatusChange } from "@/lib/push-notifications";
 import {
@@ -534,6 +535,13 @@ function AdminColis() {
           </div>
         </div>
       </div>
+
+      <PriorityImportPanel
+        clients={clients.data ?? []}
+        ratePerLb={ratePerLb}
+        adminId={user?.id ?? ""}
+        onDone={() => qc.invalidateQueries({ queryKey: ["admin-packages"] })}
+      />
 
       {/* FORMULAIRE : CRÉATION DE COLIS OU PAQUET GROUPÉ */}
       <form
