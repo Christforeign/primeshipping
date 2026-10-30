@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { sendClientEmail } from "@/lib/email.functions";
+import { processPriorityImport } from "@/lib/priority.functions";
 import { toast } from "sonner";
 import { RefreshCw, BookOpen } from "lucide-react";
 import type { MatchClient } from "@/lib/priority-parser";
@@ -19,15 +19,9 @@ export function PriorityInbox({ clients, onDone }: { clients: MatchClient[]; onD
   const process = async (id: string, packageId: string | null) => {
     setBusy(id);
     try {
-      let pid = packageId;
-      if (!pid) {
-        const userId = selected[id];
-        if (!userId) throw new Error("Choisissez un client.");
-        const result = await supabase.rpc("assign_priority_import", { p_id:id, p_user_id:userId });
-        if (result.error) throw result.error;
-        pid = result.data;
-      }
-      const result = await sendClientEmail({ data: { kind: "transit", packageId: pid } });
+      const userId = selected[id];
+      if (!packageId && !userId) throw new Error("Choisissez un client.");
+      const result = await processPriorityImport({ data: { id, userId: packageId ? undefined : userId } });
       toast[result.sent ? "success" : "warning"](result.sent ? "Colis attribué et e-mail accepté." : "Colis enregistré ; e-mail non envoyé. Consultez les journaux.");
       await qc.invalidateQueries({ queryKey: ["priority-inbox"] }); onDone();
     } catch { toast.error("Impossible de traiter ce colis. Réessayez."); }

@@ -40,8 +40,8 @@ export const Route = createFileRoute("/api/public/priority-webhook")({
           const sourceKey = [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2,"0")).join("");
           const { data: row, error: insertError } = await supabaseAdmin.rpc("commit_priority_import", {
             p_source_key: sourceKey, p_tracking: item.tracking, p_reception: item.reception,
-            p_consignee: item.consignee, p_content: item.content, p_weight: item.weightLb,
-            p_user_id: matchClient(item.consignee, clients || []),
+            p_consignee: item.consignee, p_content: item.content, p_weight: item.weightLb as number,
+            p_user_id: matchClient(item.consignee, clients || []) ?? undefined,
           });
           if (insertError) throw insertError;
           if (!row.package_id) { pending++; continue; }
