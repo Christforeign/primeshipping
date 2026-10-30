@@ -1578,8 +1578,17 @@ function AdminHubPage() {
                   <Input
                     value={prodCategory}
                     onChange={(e) => setProdCategory(e.target.value)}
-                    placeholder="Jeux & Top Up, Streaming, Logistique, Électronique..."
+                    list="admin-product-categories"
+                    placeholder="Choisir une catégorie existante ou en taper une nouvelle"
                   />
+                  <datalist id="admin-product-categories">
+                    {[...new Set((productsQuery.data ?? []).map((p) => p.category).filter(Boolean))].map((c) => <option key={c} value={c} />)}
+                  </datalist>
+                  <div className="flex flex-wrap gap-1">
+                    {[...new Set((productsQuery.data ?? []).map((p) => p.category).filter(Boolean))].map((c) => (
+                      <button key={c} type="button" onClick={() => setProdCategory(c)} className={`px-2 py-0.5 rounded-full border text-[11px] ${prodCategory === c ? "bg-primary text-primary-foreground" : "bg-background"}`}>{c}</button>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="space-y-1.5 sm:col-span-2">

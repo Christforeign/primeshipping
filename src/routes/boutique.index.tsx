@@ -49,6 +49,7 @@ function BoutiquePage() {
       if (error) throw error;
       return (data ?? []) as unknown as ProductItem[];
     },
+    staleTime: 2 * 60_000,
   });
   const products = productsQuery.data ?? [];
   const categories = ["Tous", ...Array.from(new Set(products.map((p) => p.category)))];
