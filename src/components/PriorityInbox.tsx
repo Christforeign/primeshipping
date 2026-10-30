@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { processPriorityImport } from "@/lib/priority.functions";
 import { toast } from "sonner";
-import { RefreshCw, BookOpen } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import type { MatchClient } from "@/lib/priority-parser";
 
 export function PriorityInbox({ clients, onDone }: { clients: MatchClient[]; onDone: () => void }) {
@@ -31,7 +31,6 @@ export function PriorityInbox({ clients, onDone }: { clients: MatchClient[]; onD
     <div className="flex flex-wrap items-center justify-between gap-2">
       <h3 className="font-semibold">Réception automatique Priority</h3>
       <div className="flex flex-wrap gap-2">
-        <Button variant="outline" size="sm" asChild><a href="/guides/priority-automatisation.md" download><BookOpen className="h-4 w-4" /> Tutoriels des méthodes</a></Button>
         <Button variant="ghost" size="icon" title="Actualiser les imports" aria-label="Actualiser les imports" onClick={() => inbox.refetch()}><RefreshCw className="h-4 w-4" /></Button>
       </div>
     </div>
