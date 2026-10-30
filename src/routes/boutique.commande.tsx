@@ -198,7 +198,7 @@ function CheckoutPage() {
     if (needsShipping && deliveryMode === "pickup" && !pickupAddress) return toast.error("L'adresse de la succursale doit être renseignée par l'équipe avant de commander en retrait.");
     if (needsShipping && deliveryMode === "home" && !address.trim()) return toast.error("Indiquez votre adresse de livraison en Haïti.");
     if (walletShort) return toast.error("Solde du portefeuille insuffisant.");
-    if (method !== "wallet" && pay?.require_proof && !proofUrl) return toast.error("Ajoutez la capture de votre paiement.");
+    if (method !== "wallet" && !proofUrl) return toast.error("Ajoutez la capture de votre paiement.");
     setSubmitting(true);
     try {
       const delivery = !needsShipping
@@ -307,7 +307,7 @@ function CheckoutPage() {
         <Button type="button" variant="outline" className={`${opt(method === "wallet")} h-auto block whitespace-normal`} onClick={() => setMethod("wallet")}>
           <div className="flex items-center justify-between gap-2">
             <span className="flex items-center gap-2"><Wallet className="h-4 w-4" /> Portefeuille Prime</span>
-            <span className="font-mono">{walletQ.isPending ? "…" : `${walletBalance.toFixed(2)} USD`}</span>
+            <span className="font-mono">{walletQ.isPending ? "…" : `${walletBalance.toFixed(2)} USD${validRate ? ` ≈ ${formatNumber(Math.floor(walletBalance * rate * 100) / 100)} GDS` : ""}`}</span>
           </div>
         </Button>
         {payments.map((p) => (
@@ -340,12 +340,13 @@ function CheckoutPage() {
                 </div>
               ))}
               {pay.instructions && <p className="text-muted-foreground">{pay.instructions}</p>}
-              <Input value={reference} onChange={(e) => setReference(e.target.value)} placeholder="N° de transaction" />
-              {pay.require_proof && (
+              <Input value={reference} onChange={(e) => setReference(e.target.value)} placeholder="N° de transaction (facultatif)" />
+              {(
                 <>
+                  <p className="font-bold">Capture du paiement *</p>
                   <input ref={proofRef} type="file" accept="image/*,.pdf" className="hidden" onChange={onProof} />
                   <Button type="button" variant="outline" size="sm" className="w-full" onClick={() => proofRef.current?.click()}>
-                    <Upload className="h-3.5 w-3.5 mr-2" /> {proofName || "Ajouter la capture du paiement"}
+                    <Upload className="h-3.5 w-3.5 mr-2" /> {proofName ? `✓ ${proofName}` : "Ajouter la capture du paiement"}
                   </Button>
                 </>
               )}
@@ -367,7 +368,7 @@ function CheckoutPage() {
         {product.extra?.order_notice && <p className="text-sm text-muted-foreground whitespace-pre-line pt-3">{product.extra.order_notice}</p>}
         {!validRate && <p role="alert" className="text-destructive">Le taux de change n’est pas encore disponible.</p>}
         <OrderTermsCheckbox checked={acceptedTerms} onCheckedChange={setAcceptedTerms} id="accept-order-terms-checkout" />
-        <Button className="w-full h-12 mt-2 font-black" disabled={submitting || walletShort || !!minimumError || !validRate || !acceptedTerms} onClick={submit}>
+        <Button className="w-full h-12 mt-2 font-black" disabled={submitting || (method !== "wallet" && !proofUrl) || walletShort || !!minimumError || !validRate || !acceptedTerms} onClick={submit}>
           {submitting ? "Validation…" : "Valider ma commande"}
         </Button>
       </section>

@@ -43,7 +43,7 @@ const STATUS_CONFIG: Record<OrderStatus, { label: string; tone: string; icon: Lu
     icon: PackageCheck,
   },
   expediee: {
-    label: "Expédiée vers Haïti",
+    label: "Livraison en cours",
     tone: "bg-purple-100 text-purple-800 border-purple-300",
     icon: Truck,
   },

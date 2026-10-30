@@ -675,6 +675,7 @@ function AdminHubPage() {
     },
   });
 
+  const [orderKind, setOrderKind] = useState<"livraison" | "numerique">("livraison");
   const handleUpdateOrderStatus = async (orderId: string, newStatus: OrderStatus) => {
     try {
       const { data: order, error } = await supabase.from("shop_orders").update({ status: newStatus, updated_at: new Date().toISOString() }).eq("id", orderId).select("id").single();
@@ -1578,8 +1579,17 @@ function AdminHubPage() {
                   <Input
                     value={prodCategory}
                     onChange={(e) => setProdCategory(e.target.value)}
-                    placeholder="Jeux & Top Up, Streaming, Logistique, Électronique..."
+                    list="admin-product-categories"
+                    placeholder="Choisir une catégorie existante ou en taper une nouvelle"
                   />
+                  <datalist id="admin-product-categories">
+                    {[...new Set((productsQuery.data ?? []).map((p) => p.category).filter(Boolean))].map((c) => <option key={c} value={c} />)}
+                  </datalist>
+                  <div className="flex flex-wrap gap-1">
+                    {[...new Set((productsQuery.data ?? []).map((p) => p.category).filter(Boolean))].map((c) => (
+                      <button key={c} type="button" onClick={() => setProdCategory(c)} className={`px-2 py-0.5 rounded-full border text-[11px] ${prodCategory === c ? "bg-primary text-primary-foreground" : "bg-background"}`}>{c}</button>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="space-y-1.5 sm:col-span-2">
@@ -2347,6 +2357,15 @@ function AdminHubPage() {
       {/* ================================================================= */}
       {tab === "orders" && (
         <div className="space-y-4">
+          {previewProofUrl && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={() => setPreviewProofUrl(null)}>
+              <div className="relative max-w-lg w-full bg-card p-4 rounded-2xl border shadow-2xl">
+                <h4 className="font-bold text-sm mb-3">Preuve de paiement</h4>
+                <img src={previewProofUrl} alt="Preuve de paiement" className="w-full max-h-[70vh] object-contain rounded-xl" />
+                <p className="text-xs text-muted-foreground mt-2">Touchez pour fermer.</p>
+              </div>
+            </div>
+          )}
           <div>
             <h3 className="text-base font-bold text-forest">Commandes clients reçues</h3>
             <p className="text-xs text-muted-foreground">
@@ -2355,8 +2374,12 @@ function AdminHubPage() {
           </div>
 
           {adminOrdersQuery.isError && <p role="alert" className="text-sm text-destructive">Impossible de charger les commandes. <Button variant="outline" onClick={() => adminOrdersQuery.refetch()}>Réessayer</Button></p>}
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" size="sm" variant={orderKind === "livraison" ? "default" : "outline"} onClick={() => setOrderKind("livraison")}>Produits à livrer ({(adminOrdersQuery.data ?? []).filter((o) => !!o.delivery_mode).length})</Button>
+            <Button type="button" size="sm" variant={orderKind === "numerique" ? "default" : "outline"} onClick={() => setOrderKind("numerique")}>Produits numériques ({(adminOrdersQuery.data ?? []).filter((o) => !o.delivery_mode).length})</Button>
+          </div>
           <div className="divide-y rounded-2xl border bg-card overflow-hidden">
-            {adminOrdersQuery.data?.map((ord) => (
+            {adminOrdersQuery.data?.filter((o) => (orderKind === "livraison") === !!o.delivery_mode).map((ord) => (
               <div
                 key={ord.id}
                 className="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 text-xs"
@@ -2381,18 +2404,14 @@ function AdminHubPage() {
 
                 <div className="flex flex-wrap items-center gap-2">
                   <OrderDeleteButton orderId={ord.id} />
-                  <select
-                    value={ord.status}
-                    onChange={(e) => handleUpdateOrderStatus(ord.id, e.target.value as OrderStatus)}
-                    className="h-8 rounded-lg border text-xs px-2 bg-background font-semibold"
-                  >
-                    <option value="en_attente">En attente de validation</option>
-                    <option value="payee">Payée / Validée</option>
-                    <option value="preparation">En préparation</option>
-                    <option value="expediee">Expédiée vers Haïti</option>
-                    <option value="livree">Livrée</option>
-                    <option value="annulee">Annulée</option>
-                  </select>
+                  {ord.payment_proof_url && (
+                    <Button type="button" size="sm" variant="outline" onClick={() => setPreviewProofUrl(ord.payment_proof_url)}>Voir la preuve</Button>
+                  )}
+                  {((ord.delivery_mode
+                    ? [["en_attente", "En attente"], ["payee", "Paiement confirmé"], ["preparation", "En préparation"], ["expediee", "Livraison en cours"], ["livree", "Livrée"], ["annulee", "Annulée"]]
+                    : [["en_attente", "En attente"], ["payee", "Paiement confirmé"], ["livree", "Livrée"], ["annulee", "Annulée"]]) as [OrderStatus, string][]).map(([st, label]) => (
+                    <Button key={st} type="button" size="sm" variant={ord.status === st ? "default" : "outline"} disabled={ord.status === st} onClick={() => handleUpdateOrderStatus(ord.id, st)}>{label}</Button>
+                  ))}
                 </div>
               </div>
             ))}

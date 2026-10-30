@@ -30,9 +30,9 @@ export const settingsQuery = queryOptions({
     } catch {
       // safe fallback
     }
-    return storeSettings as unknown as CompanySettings;
+    return { ...storeSettings, usd_to_htg: null } as unknown as CompanySettings;
   },
-  staleTime: 10_000,
+  staleTime: 5 * 60_000,
 });
 
 export function useSettings() {

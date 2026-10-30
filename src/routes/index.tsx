@@ -1,3 +1,4 @@
+import { productPreview } from "@/lib/text-preview";
 import { LocationMap } from "@/components/LocationMap";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
@@ -94,6 +95,7 @@ function Index() {
       if (error) throw error;
       return (data ?? []) as unknown as ProductItem[];
     },
+    staleTime: 2 * 60_000,
   });
   const products = productsQuery.data ?? [];
 
@@ -379,7 +381,7 @@ function Index() {
                       </h3>
                     </Link>
                     <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">
-                      {p.description}
+                      {productPreview(p)}
                     </p>
                   </div>
                 </div>
