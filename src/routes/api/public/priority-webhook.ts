@@ -38,10 +38,11 @@ export const Route = createFileRoute("/api/public/priority-webhook")({
         for (const item of items) {
           const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${parsed.data.messageId}:${item.tracking.toLowerCase()}`));
           const sourceKey = [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2,"0")).join("");
+          const userId = matchClient(item.consignee, clients || []);
           const { data: row, error: insertError } = await supabaseAdmin.rpc("commit_priority_import", {
             p_source_key: sourceKey, p_tracking: item.tracking, p_reception: item.reception,
             p_consignee: item.consignee, p_content: item.content, p_weight: item.weightLb as number,
-            p_user_id: matchClient(item.consignee, clients || []) ?? undefined,
+            ...(userId ? { p_user_id: userId } : {}),
           });
           if (insertError) throw insertError;
           if (!row.package_id) { pending++; continue; }

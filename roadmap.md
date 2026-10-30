@@ -49,7 +49,8 @@
 - [x] Case « conditions d'utilisation » obligatoire avant commande et paiement (lien cliquable vers /conditions), conditions simplifiées (numérique non remboursable, infos erronées non remboursées, dommage physique sous 24 h, retards possibles, fraude = compte supprimé) ; note spéciale par produit conservée et facultative dans l'admin ; parcours mobile vérifié connecté sans achat réel
 
 ## Intervention en cours
-- [ ] Priority : réception automatique sécurisée, file des colis à attribuer et tutoriels comparatifs ; activation attend le choix de messagerie et du relais.
+- [x] Priority : réception JSON sécurisée, imports atomiques et file réservée au staff, tutoriels Gmail/Make, Outlook, Brevo inbound et Cloudflare accessibles dans Gestion des colis ; 8 tests réussis, réception non configurée refuse les appels.
+- [ ] Priority : choisir/connecter le relais, configurer clé partagée et expéditeur autorisé, redéployer puis tester un vrai avis et sa livraison e-mail ; aucun compte du demandeur disponible pour vérifier l’admin connecté.
 - [x] Safari : fond partagé et verre lisible vérifiés avec WebKit et Chromium mobile ; caches facultatifs et lecture de session protégés, 4 tests réussis.
 - [ ] Safari administration connectée : compte du demandeur indisponible pour tester ; redirection déconnectée vers /auth réussie, mais avertissement récupérable MatchView/match.routeId observé dans WebKit, cause du plantage admin réel non confirmée.
 - [x] E-mails manuels Brevo (un client / tous), sans formulaire de test ; formulaire connecté et confirmation vérifiés, aucun envoi collectif réel
