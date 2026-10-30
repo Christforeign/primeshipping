@@ -134,6 +134,13 @@
       "when": 1793073755908,
       "tag": "0018_admin_delete_shop_order",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1793334897846,
+      "tag": "0019_priority_incoming_mail",
+      "breakpoints": true
     }
   ]
 }
