@@ -15,11 +15,11 @@ export function PromoBanner() {
   const s = useSettings();
   const [minimized, setMinimized] = useState(false);
 
-  const rate = s?.usd_to_htg || 132;
+  const rate = Number(s?.usd_to_htg) || null;
   const shippingRate = s?.shipping_rate_per_lb || null;
   const bannerText =
     s?.promo_banner_text ||
-    `🚀 Expéditions USA ➔ Haïti chaque semaine • Taux officiel : 1 USD = ${rate} HTG${shippingRate ? ` • Aérien ${shippingRate}$/lb` : ""} • Service « Achetez pour moi » disponible !`;
+    `🚀 Expéditions USA ➔ Haïti chaque semaine • ${rate ? `Taux officiel : 1 USD = ${rate} HTG` : "Taux du jour en boutique"}${shippingRate ? ` • Aérien ${shippingRate}$/lb` : ""} • Service « Achetez pour moi » disponible !`;
 
   if (minimized) {
     return (
@@ -27,7 +27,7 @@ export function PromoBanner() {
         <div className="mx-auto max-w-7xl flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 font-bold text-accent">
-              <DollarSign className="h-3 w-3" /> 1 USD = {rate} HTG
+              <DollarSign className="h-3 w-3" /> {rate ? `1 USD = ${rate} HTG` : "Prime Shipping"}
             </span>
             <span className="hidden sm:inline text-forest-foreground/80">
               • Expéditions régulières vers Haïti
@@ -50,7 +50,7 @@ export function PromoBanner() {
         {/* Left: Badge Taux + Live text */}
         <div className="flex items-center gap-2.5 flex-1 min-w-0">
           <span className="flex-shrink-0 inline-flex items-center gap-1 rounded-full bg-accent text-accent-foreground px-2.5 py-0.5 text-xs font-extrabold shadow-sm">
-            <Sparkles className="h-3 w-3 animate-pulse" />1 USD = {rate} HTG
+            <Sparkles className="h-3 w-3 animate-pulse" />{rate ? `1 USD = ${rate} HTG` : "Prime"}
           </span>
 
           <p className="truncate font-medium text-xs sm:text-sm tracking-tight text-white">

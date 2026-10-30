@@ -1,3 +1,4 @@
+import { productPreview } from "@/lib/text-preview";
 import { LocationMap } from "@/components/LocationMap";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
@@ -379,7 +380,7 @@ function Index() {
                       </h3>
                     </Link>
                     <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">
-                      {p.description}
+                      {productPreview(p)}
                     </p>
                   </div>
                 </div>

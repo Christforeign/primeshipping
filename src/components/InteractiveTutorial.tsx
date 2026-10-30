@@ -127,7 +127,7 @@ export function InteractiveTutorial() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg rounded-3xl bg-card border shadow-2xl overflow-hidden p-6 sm:p-8 animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-lg max-h-[90dvh] overflow-y-auto rounded-3xl bg-card border shadow-2xl p-6 sm:p-8 animate-in zoom-in-95 duration-200">
         {/* Progress bar */}
         <div className="flex items-center gap-1.5 mb-6">
           {STEPS.map((_, idx) => (
@@ -178,7 +178,7 @@ export function InteractiveTutorial() {
         )}
 
         {/* Footer controls */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t">
+        <div className="sticky bottom-0 -mx-6 sm:-mx-8 px-6 sm:px-8 pb-1 bg-card flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t">
           <button
             onClick={() => handleClose(true)}
             className="text-xs text-muted-foreground hover:text-foreground underline sm:order-1 order-3"
@@ -192,7 +192,7 @@ export function InteractiveTutorial() {
                 <ChevronLeft className="h-4 w-4 mr-1" /> Précédent
               </Button>
             )}
-            <Button size="sm" onClick={handleNext}>
+            <Button size="sm" className="flex-1 sm:flex-none" onClick={handleNext}>
               {currentStep < STEPS.length - 1 ? (
                 <>
                   Suivant <ChevronRight className="h-4 w-4 ml-1" />

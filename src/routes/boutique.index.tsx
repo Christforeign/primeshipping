@@ -1,4 +1,5 @@
 // @ts-nocheck — legacy pages pending migration to real tables
+import { productPreview } from "@/lib/text-preview";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -211,7 +212,7 @@ function BoutiquePage() {
                       </h3>
                     </Link>
                     <p className="hidden sm:block text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">
-                      {prod.description}
+                      {productPreview(prod)}
                     </p>
                   </div>
 
