@@ -2357,6 +2357,15 @@ function AdminHubPage() {
       {/* ================================================================= */}
       {tab === "orders" && (
         <div className="space-y-4">
+          {previewProofUrl && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70" onClick={() => setPreviewProofUrl(null)}>
+              <div className="relative max-w-lg w-full bg-card p-4 rounded-2xl border shadow-2xl">
+                <h4 className="font-bold text-sm mb-3">Preuve de paiement</h4>
+                <img src={previewProofUrl} alt="Preuve de paiement" className="w-full max-h-[70vh] object-contain rounded-xl" />
+                <p className="text-xs text-muted-foreground mt-2">Touchez pour fermer.</p>
+              </div>
+            </div>
+          )}
           <div>
             <h3 className="text-base font-bold text-forest">Commandes clients reçues</h3>
             <p className="text-xs text-muted-foreground">
@@ -2368,7 +2377,6 @@ function AdminHubPage() {
           <div className="flex flex-wrap gap-2">
             <Button type="button" size="sm" variant={orderKind === "livraison" ? "default" : "outline"} onClick={() => setOrderKind("livraison")}>Produits à livrer ({(adminOrdersQuery.data ?? []).filter((o) => !!o.delivery_mode).length})</Button>
             <Button type="button" size="sm" variant={orderKind === "numerique" ? "default" : "outline"} onClick={() => setOrderKind("numerique")}>Produits numériques ({(adminOrdersQuery.data ?? []).filter((o) => !o.delivery_mode).length})</Button>
-            <Button type="button" size="sm" variant="outline" onClick={() => setTab("packages")}>Colis →</Button>
           </div>
           <div className="divide-y rounded-2xl border bg-card overflow-hidden">
             {adminOrdersQuery.data?.filter((o) => (orderKind === "livraison") === !!o.delivery_mode).map((ord) => (
