@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { priorityPayload, verifyPriorityToken } from "@/lib/priority-webhook";
-import { parsePriorityEmails, matchClient } from "@/lib/priority-parser";
+import { parsePriorityEmails } from "@/lib/priority-parser";
 
 export const Route = createFileRoute("/api/public/priority-webhook")({
   server: { handlers: {
@@ -32,17 +32,13 @@ export const Route = createFileRoute("/api/public/priority-webhook")({
       try {
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { sendPriorityPackageEmail, sendPriorityUnassignedAlert } = await import("@/lib/email.functions");
-        const { data: clients, error } = await supabaseAdmin.from("profiles").select("id,full_name,client_code");
-        if (error) throw error;
         let assigned = 0; let pending = 0; let emailPending = 0;
         for (const item of items) {
           const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${parsed.data.messageId}:${item.tracking.toLowerCase()}`));
           const sourceKey = [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2,"0")).join("");
-          const userId = matchClient(item.consignee, clients || []);
           const { data: row, error: insertError } = await supabaseAdmin.rpc("commit_priority_import", {
             p_source_key: sourceKey, p_tracking: item.tracking, p_reception: item.reception,
             p_consignee: item.consignee, p_content: item.content, p_weight: item.weightLb as number,
-            ...(userId ? { p_user_id: userId } : {}),
           });
           if (insertError) throw insertError;
           if (!row.package_id) { pending++; if (!row.email_sent) { await sendPriorityUnassignedAlert(supabaseAdmin, item).catch(() => {}); await supabaseAdmin.from("priority_imports").update({ email_sent: true }).eq("id", row.id); } continue; }
@@ -54,6 +50,10 @@ export const Route = createFileRoute("/api/public/priority-webhook")({
             if (!result.sent) emailPending++;
           }
         }
+        const { error: noticeError } = await supabaseAdmin.rpc("enqueue_shipping_notice", { p_kind: "arrival" });
+        if (noticeError) throw noticeError;
+        const { dispatchShippingNotices } = await import("@/lib/shipping-notices.server");
+        await dispatchShippingNotices(supabaseAdmin);
         return Response.json({ accepted: true, assigned, pending, emailPending });
       } catch (error) {
         console.error("Priority receiver failed", error instanceof Error ? error.message : "Unknown error");
