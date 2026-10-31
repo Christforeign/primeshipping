@@ -1,10 +1,11 @@
-type PaymentOption = { id: string; name?: string; is_enabled?: boolean };
+import { isAutomaticPayment } from './payment-availability';
+type PaymentOption = { id: string; name?: string; is_enabled?: boolean; is_visible?: boolean; availability?: string };
 
 export function checkoutPayments<T extends PaymentOption>(configured: T[]): T[] {
   const seen = new Set<string>();
   return configured.filter((payment) => {
     const card = ["stripe", "card", "credit_card", "carte_bancaire"].includes(payment.id) || /carte bancaire|visa|mastercard/i.test(payment.name || "");
-    if (!payment.is_enabled || payment.id === "wallet" || card || seen.has(payment.id)) return false;
+    if (payment.is_visible === false || (!payment.is_enabled && payment.is_visible !== true) || payment.id === "wallet" || card || seen.has(payment.id)) return false;
     seen.add(payment.id);
     return true;
   });

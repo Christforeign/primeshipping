@@ -87,6 +87,8 @@ export interface AdminPaymentConfig {
   id: PaymentMethodId;
   name: string;
   is_enabled: boolean;
+  is_visible?: boolean;
+  availability?: 'available' | 'maintenance';
   logo_url?: string;
   instructions: string;
   account_number?: string;
