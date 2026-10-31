@@ -11,7 +11,7 @@ export function PaymentSmsInbox() {
   } });
   const dismiss = async (id: string) => {
     const { error } = await supabase.from('payment_sms_receipts').update({ status: 'dismissed' }).eq('id', id);
-    if (error) return toast.error('Classement impossible');
+    if (error) { toast.error('Classement impossible'); return; }
     await qc.invalidateQueries({ queryKey: ['payment-sms-receipts'] });
   };
   return <section className="space-y-3 border-t pt-6">
