@@ -49,7 +49,8 @@
 - [x] Case « conditions d'utilisation » obligatoire avant commande et paiement (lien cliquable vers /conditions), conditions simplifiées (numérique non remboursable, infos erronées non remboursées, dommage physique sous 24 h, retards possibles, fraude = compte supprimé) ; note spéciale par produit conservée et facultative dans l'admin ; parcours mobile vérifié connecté sans achat réel
 
 ## Intervention en cours
-- [ ] Priority : annonces de réception et rappels de déclaration administrables, envois limités et poids importé modifiable ; vérifier le parcours et préciser les limites des notifications iPhone.
+- [x] Priority : annonces/rappels désactivés par défaut et administrables, poids importé conservé et modifiable, tracking public des colis non attribués sans détails privés ; file dédupliquée et plafond 100 e-mails généraux/jour. 14 tests réussis, recherche publique et refus non autorisé vérifiés, rappel planifié cinq passages/jour.
+- [ ] Priority annonces : activer les réglages après redéploiement, tester sauvegarde et poids connecté (aucun compte du demandeur disponible), réception Gmail et e-mail réel ; push iPhone site fermé non connecté. Le plafond des annonces ne contrôle pas les autres e-mails Brevo.
 - [x] Paiements : options MonCash/NatCash automatiques masquées par défaut, affichables en maintenance ; activation/visibilité/disponibilité manuelles administrables, réception SMS dédupliquée et file finance sans crédit automatique. Tests formats et disponibilité réussis ; réception non configurée refuse les appels.
 - [ ] Relais iPhone et confirmation fournisseur : connexion du téléphone et source de paiement authentifiée nécessaires avant activation automatique.
 - [ ] Vérifier sauvegarde des états et affichage connecté : aucun compte correspondant au demandeur disponible pour le test ; connexion dans l’aperçu requise. Aucun paiement réel validé.
