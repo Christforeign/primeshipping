@@ -57,7 +57,8 @@ async function shortKey(raw: string) {
 async function run(data: Input & { vars: EmailVars }, context: { supabase: any; userId: string; claims: { email?: unknown } }): Promise<{ sent: boolean; reason: string; messageId?: string | undefined }> {
     const { supabase, userId } = context;
     const { data: staffRole } = userId ? await supabase.rpc("is_staff", { _user_id: userId }) : { data: false };
-    const staff = !!staffRole || (!!data.internal && data.kind === "alerte_admin");
+    // Browser inputs strip internal; only authenticated server-only callers set it.
+    const staff = !!staffRole || !!data.internal;
     let target = data.userId || userId;
     let kind = data.kind;
     let eventId: string | undefined;

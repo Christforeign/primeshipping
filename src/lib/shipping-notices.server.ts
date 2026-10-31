@@ -11,7 +11,7 @@ export async function dispatchShippingNotices(db: SupabaseClient<Database>) {
   let sent = 0, failed = 0;
   for (const job of jobs || []) {
     try {
-      const result = await sendManualBrevo(db, job.user_id, { audience: "client", userId: job.user_id, eventId: job.id, subject: job.title, message: `${job.body}\n\n${site}${job.link}` });
+      const result = await sendManualBrevo(db, job.user_id, { audience: "client", userId: job.user_id, eventId: job.id, confirmed: true, subject: job.title, message: `${job.body}\n\n${site}${job.link}` });
       const ok = result.sent > 0 && result.failed === 0;
       const { error: updateError } = await db.from("shipping_notice_deliveries").update({ email_status: ok ? "sent" : "failed", email_error: ok ? null : "Envoi refusé ou adresse absente ; consulter les journaux." }).eq("id", job.id);
       if (updateError) throw updateError;
