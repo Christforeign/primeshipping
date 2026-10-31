@@ -3,6 +3,9 @@ import { checkoutPayments, paymentCoordinates, paymentDisplayAmount } from "./ch
 import { topupPrice } from "./product-pricing";
 
 describe("Affichage du paiement", () => {
+  it('affiche une option automatique en maintenance uniquement si demandée par admin', () => {
+    expect(checkoutPayments([{ id: 'moncash_auto', is_enabled: false, is_visible: true, availability: 'maintenance' }, { id: 'natcash_auto', is_enabled: true, is_visible: false }]).map(p => p.id)).toEqual(['moncash_auto']);
+  });
   const price = topupPrice(5, 148, 135);
   it("MonCash montre uniquement les 740 gourdes pour les 5 USD choisis au taux produit", () => {
     expect(paymentDisplayAmount("moncash", price.walletUsd, price.totalHtg)).toEqual({ amount: 740, currency: "GDS" });

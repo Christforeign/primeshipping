@@ -49,8 +49,9 @@
 - [x] Case « conditions d'utilisation » obligatoire avant commande et paiement (lien cliquable vers /conditions), conditions simplifiées (numérique non remboursable, infos erronées non remboursées, dommage physique sous 24 h, retards possibles, fraude = compte supprimé) ; note spéciale par produit conservée et facultative dans l'admin ; parcours mobile vérifié connecté sans achat réel
 
 ## Intervention en cours
-- [ ] Paiements : options MonCash/NatCash automatiques affichables, activation et maintenance ; réception SMS sécurisée et file de vérification, sans crédit sur SMS non authentifié par le fournisseur.
+- [x] Paiements : options MonCash/NatCash automatiques masquées par défaut, affichables en maintenance ; activation/visibilité/disponibilité manuelles administrables, réception SMS dédupliquée et file finance sans crédit automatique. Tests formats et disponibilité réussis ; réception non configurée refuse les appels.
 - [ ] Relais iPhone et confirmation fournisseur : connexion du téléphone et source de paiement authentifiée nécessaires avant activation automatique.
+- [ ] Vérifier sauvegarde des états et affichage connecté : aucun compte correspondant au demandeur disponible pour le test ; connexion dans l’aperçu requise. Aucun paiement réel validé.
 - [x] Priority : réception JSON sécurisée, imports atomiques et file réservée au staff ; 8 tests réussis, réception non configurée refuse les appels. Tutoriels retirés du site à la demande du client et fournis dans le chat uniquement.
 - [ ] Priority : choisir/connecter le relais, configurer clé partagée et expéditeur autorisé, redéployer puis tester un vrai avis et sa livraison e-mail ; aucun compte du demandeur disponible pour vérifier l’admin connecté.
 - [x] Safari : fond partagé et verre lisible vérifiés avec WebKit et Chromium mobile ; caches facultatifs et lecture de session protégés, 4 tests réussis.

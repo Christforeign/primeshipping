@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { isDirectVideo } from "@/lib/upload";
 import { orderTotalDisplay } from "@/lib/checkout-display";
+import { paymentSelectable } from '@/lib/payment-availability';
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -119,10 +120,10 @@ export function ProductDetailPage() {
 
   // Payment Options from CMS
   const [paymentConfigs, setPaymentConfigs] = useState<AdminPaymentConfig[]>(() =>
-    clientStore.getPaymentConfigs().filter((p) => p.is_enabled),
+    clientStore.getPaymentConfigs().filter(paymentSelectable),
   );
   const [selectedPaymentId, setSelectedPaymentId] = useState<PaymentMethodId>(() => {
-    const list = clientStore.getPaymentConfigs().filter((p) => p.is_enabled);
+    const list = clientStore.getPaymentConfigs().filter(paymentSelectable);
     return list[0]?.id || "moncash";
   });
   const [paymentReference, setPaymentReference] = useState("");
