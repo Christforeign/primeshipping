@@ -16,6 +16,7 @@ import type {
 } from "./types-store";
 import { notificationService } from "./notifications";
 import { sendLocalPush } from "./push-notifications";
+import { mergePaymentConfigs } from './payment-availability';
 
 const STORAGE_KEYS = {
   SETTINGS: "prime_enriched_settings",
@@ -740,14 +741,14 @@ export const clientStore = {
 
   // PAYMENT CONFIGS
   getPaymentConfigs(): AdminPaymentConfig[] {
-    if (typeof window === "undefined") return DEFAULT_PAYMENTS;
+    if (typeof window === "undefined") return mergePaymentConfigs(DEFAULT_PAYMENTS);
     try {
       const stored = localStorage.getItem(STORAGE_KEYS.PAYMENT_CONFIGS);
-      if (stored) return JSON.parse(stored);
+      if (stored) return mergePaymentConfigs(JSON.parse(stored));
     } catch {
       // fallback
     }
-    return DEFAULT_PAYMENTS;
+    return mergePaymentConfigs(DEFAULT_PAYMENTS);
   },
   savePaymentConfigs(configs: AdminPaymentConfig[]) {
     if (typeof window !== "undefined") {

@@ -1,4 +1,3 @@
-import { isAutomaticPayment } from './payment-availability';
 type PaymentOption = { id: string; name?: string; is_enabled?: boolean; is_visible?: boolean; availability?: string };
 
 export function checkoutPayments<T extends PaymentOption>(configured: T[]): T[] {
