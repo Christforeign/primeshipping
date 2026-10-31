@@ -1,5 +1,7 @@
 // @ts-nocheck — legacy pages pending migration to real tables
 import { VideoUploadButton } from "@/components/VideoUploadButton";
+import { PaymentSmsInbox } from '@/components/PaymentSmsInbox';
+import { mergePaymentConfigs, isAutomaticPayment } from '@/lib/payment-availability';
 import { orderTotalDisplay } from "@/lib/checkout-display";
 import { saveExtraSettings } from "@/lib/admin-settings";
 import { sendClientEmail } from "@/lib/email.functions";
@@ -376,7 +378,7 @@ function AdminHubPage() {
     clientStore.getPaymentConfigs(),
   );
 
-  useEffect(() => { if (Array.isArray(s?.payment_configs)) { clientStore.savePaymentConfigs(s.payment_configs); setPaymentConfigs(s.payment_configs); } }, [s?.payment_configs]);
+  useEffect(() => { if (Array.isArray(s?.payment_configs)) { const configs = mergePaymentConfigs(s.payment_configs); clientStore.savePaymentConfigs(configs); setPaymentConfigs(configs); } }, [s?.payment_configs]);
 
   const handleUpdatePayment = async (id: string, updates: Partial<AdminPaymentConfig>) => {
     clientStore.updatePaymentConfig(id, updates);
@@ -2148,6 +2150,18 @@ function AdminHubPage() {
                 </div>
 
                 <div className="space-y-3 text-xs">
+                  <label className="flex items-center gap-2">
+                    <input type="checkbox" checked={pay.is_visible ?? pay.is_enabled} onChange={e => handleUpdatePayment(pay.id, { is_visible: e.target.checked })} />
+                    Afficher aux clients
+                  </label>
+                  <div className="space-y-1">
+                    <Label htmlFor={`availability-${pay.id}`}>Disponibilité</Label>
+                    <select id={`availability-${pay.id}`} className="w-full rounded-md border border-input bg-background text-foreground p-2" value={isAutomaticPayment(pay.id) ? 'maintenance' : pay.availability || 'available'} onChange={e => handleUpdatePayment(pay.id, { availability: e.target.value })}>
+                      <option value="available" disabled={isAutomaticPayment(pay.id)}>Disponible</option>
+                      <option value="maintenance">En maintenance</option>
+                    </select>
+                    {isAutomaticPayment(pay.id) && <p className="text-muted-foreground">Activation automatique bloquée jusqu’à une confirmation sécurisée du fournisseur. Vous pouvez afficher l’option en maintenance.</p>}
+                  </div>
                   <div className="space-y-1">
                     <Label className="text-[11px] font-semibold">
                       Numéro de compte / Téléphone marchand
@@ -2211,6 +2225,7 @@ function AdminHubPage() {
               </div>
             ))}
           </div>
+          <PaymentSmsInbox />
         </div>
       )}
 

@@ -19,7 +19,6 @@
 - Checkout uses a dedicated root shell without floating support controls, bottom navigation or the site footer, so its leaf route remains a standalone page.
 - International platform marks use static vector assets in the shared BrandLogos module rather than approximate hand-drawn logos, preserving sharpness at small sizes.
 - Cart selections persist on the current device; checkout re-reads active products and removes only the paid cart line after a successful order, preserving the remaining selections.
-- Cart emails are explicitly requested by the signed-in customer, use Brevo, and derive item names from active database products rather than browser-supplied copy.
 - Support and footer share the same enabled social links and configurable icon selection; official payment and messaging logo assets are reused from the shared brand modules.
 - Vercel proxies only `/__l5e/assets-v1/*` to this project's verified Lovable asset host; asset pointers stay unchanged because external hosting does not provide Lovable's asset-serving infrastructure.
 - The package lifecycle uses shared canonical mappings over the existing enum for backward compatibility; payment never advances physical shipping status.
@@ -43,3 +42,4 @@
 - Render the shared wallpaper in a fixed root viewport layer, not a fixed body background; use semantic glass fallback surfaces so WebKit and browsers without blur retain readable panels.
 - Optional settings and notification device caches must tolerate denied storage without aborting Cloud-backed page flows.
 - Priority mail relays use one bounded authenticated JSON endpoint, an atomic import RPC and a staff-only ambiguity inbox; provider adapters remain external until a method is chosen.
+- Payment SMS are immutable, deduplicated staff-review notices, never payment proof; database guards block automatic modes pending provider verification and enforce disabled/maintenance settings. Shared helpers merge new modes without activation.

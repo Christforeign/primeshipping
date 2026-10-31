@@ -420,6 +420,39 @@ export type Database = {
           },
         ]
       }
+      payment_sms_receipts: {
+        Row: {
+          amount_htg: number
+          content_code: string | null
+          created_at: string
+          id: string
+          provider: string
+          sender_phone: string
+          status: string
+          transaction_id: string
+        }
+        Insert: {
+          amount_htg: number
+          content_code?: string | null
+          created_at?: string
+          id?: string
+          provider: string
+          sender_phone: string
+          status?: string
+          transaction_id: string
+        }
+        Update: {
+          amount_htg?: number
+          content_code?: string | null
+          created_at?: string
+          id?: string
+          provider?: string
+          sender_phone?: string
+          status?: string
+          transaction_id?: string
+        }
+        Relationships: []
+      }
       priority_imports: {
         Row: {
           consignee: string

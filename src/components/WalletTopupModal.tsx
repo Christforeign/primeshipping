@@ -13,6 +13,8 @@ import {
 import { toast } from "sonner";
 import { useSettings } from "@/lib/settings";
 import { clientStore } from "@/lib/store";
+import { mergePaymentConfigs, paymentSelectable, paymentState } from '@/lib/payment-availability';
+import { checkoutPayments, paymentCoordinates } from '@/lib/checkout-display';
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,10 +36,11 @@ export function WalletTopupModal({
   onSuccess,
 }: WalletTopupModalProps) {
   const s = useSettings();
-  const rate = s?.usd_to_htg || 132;
+  const rate = Number(s?.usd_to_htg) || 0;
+  const payments = checkoutPayments(mergePaymentConfigs(Array.isArray(s?.payment_configs) ? s.payment_configs : clientStore.getPaymentConfigs()));
 
   const [amountUsd, setAmountUsd] = useState<string>("50");
-  const [method, setMethod] = useState<"moncash" | "natcash" | "bank">("moncash");
+  const [method, setMethod] = useState<string>('moncash');
   const [reference, setReference] = useState<string>("");
   const [proofUrl, setProofUrl] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -45,7 +48,8 @@ export function WalletTopupModal({
   if (!isOpen) return null;
 
   const numericUsd = parseFloat(amountUsd) || 0;
-  const amountHtg = Math.round(numericUsd * rate);
+  const amountHtg = Math.round(numericUsd * rate * 100) / 100;
+  const pay = payments.find(p => p.id === method);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -61,6 +65,9 @@ export function WalletTopupModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!pay || !paymentSelectable(pay)) return toast.error('Choisissez un mode de paiement disponible.');
+    if (!rate) return toast.error('Le taux de change n’est pas encore disponible.');
+    if (!proofUrl) return toast.error('Ajoutez la capture du paiement.');
     if (numericUsd <= 0) {
       return toast.error("Veuillez saisir un montant valide (supérieur à 0).");
     }
@@ -74,8 +81,7 @@ export function WalletTopupModal({
         type: "topup" as const,
         amount_usd: numericUsd,
         amount_htg: amountHtg,
-        method:
-          method === "moncash" ? "MonCash" : method === "natcash" ? "Natcash" : "Virement Bancaire",
+        method: pay.id,
         reference: reference.trim() || null,
         proof_url: proofUrl || null,
         status: "pending" as const,
@@ -177,45 +183,10 @@ export function WalletTopupModal({
             <Label className="text-xs font-semibold uppercase tracking-wider">
               Mode de versement
             </Label>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => setMethod("moncash")}
-                className={`p-3 rounded-2xl border text-center transition-all ${
-                  method === "moncash"
-                    ? "border-primary bg-primary/5 ring-2 ring-primary/20 font-bold"
-                    : "hover:border-primary/40 text-muted-foreground"
-                }`}
-              >
-                <div className="text-sm font-extrabold text-red-600">MonCash</div>
-                <div className="text-[10px] mt-0.5">En Gourdes (HTG)</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setMethod("natcash")}
-                className={`p-3 rounded-2xl border text-center transition-all ${
-                  method === "natcash"
-                    ? "border-primary bg-primary/5 ring-2 ring-primary/20 font-bold"
-                    : "hover:border-primary/40 text-muted-foreground"
-                }`}
-              >
-                <div className="text-sm font-extrabold text-blue-600">Natcash</div>
-                <div className="text-[10px] mt-0.5">Transfert direct</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setMethod("bank")}
-                className={`p-3 rounded-2xl border text-center transition-all ${
-                  method === "bank"
-                    ? "border-primary bg-primary/5 ring-2 ring-primary/20 font-bold"
-                    : "hover:border-primary/40 text-muted-foreground"
-                }`}
-              >
-                <div className="text-sm font-extrabold text-forest">Banque</div>
-                <div className="text-[10px] mt-0.5">USD ou HTG</div>
-              </button>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {payments.map(p => <Button key={p.id} variant="outline" type="button" disabled={!paymentSelectable(p)} onClick={() => setMethod(p.id)} className={`h-auto whitespace-normal flex-col items-start p-3 ${method === p.id ? 'border-primary bg-primary/10' : ''}`}>
+                <span>{p.name}</span><span className="text-xs text-muted-foreground">{paymentState(p)}</span>
+              </Button>)}
             </div>
           </div>
 
@@ -225,59 +196,11 @@ export function WalletTopupModal({
               <ShieldCheck className="h-4 w-4 text-primary" /> Coordonnées & Instructions
             </p>
 
-            {method === "moncash" && (
-              <div className="space-y-1 text-secondary-foreground">
-                <p>
-                  Numéro MonCash marchand / particulier :{" "}
-                  <strong className="text-foreground font-mono">
-                    {s?.moncash_merchant_number || s?.moncash_phone || "+509 3700-1122"}
-                  </strong>
-                </p>
-                <p>
-                  Montant à transférer :{" "}
-                  <strong className="text-primary font-mono text-sm">
-                    {amountHtg.toLocaleString("fr-FR")} HTG
-                  </strong>
-                </p>
-                <p className="text-[11px] text-muted-foreground">
-                  {s?.moncash_instructions ||
-                    "Effectuez le transfert puis indiquez le numéro de transaction ci-dessous."}
-                </p>
-              </div>
-            )}
-
-            {method === "natcash" && (
-              <div className="space-y-1 text-secondary-foreground">
-                <p>
-                  Numéro Natcash :{" "}
-                  <strong className="text-foreground font-mono">
-                    {s?.natcash_phone || "+509 4200-3344"}
-                  </strong>
-                </p>
-                <p>
-                  Montant à transférer :{" "}
-                  <strong className="text-primary font-mono text-sm">
-                    {amountHtg.toLocaleString("fr-FR")} HTG
-                  </strong>
-                </p>
-                <p className="text-[11px] text-muted-foreground">
-                  {s?.natcash_instructions || "Effectuez le transfert puis saisissez la référence."}
-                </p>
-              </div>
-            )}
-
-            {method === "bank" && (
-              <div className="space-y-1 text-secondary-foreground whitespace-pre-line font-mono text-[11px]">
-                {s?.bank_accounts?.trim() ? (
-                  s.bank_accounts
-                ) : (
-                  <span className="text-amber-800 dark:text-amber-300 font-sans italic text-xs block">
-                    Coordonnées bancaires en cours de configuration. Veuillez privilégier MonCash ou
-                    Natcash pour une recharge immédiate.
-                  </span>
-                )}
-              </div>
-            )}
+            {pay && paymentSelectable(pay) ? <div className="space-y-2">
+              {paymentCoordinates(pay).map(value => <p key={value} className="font-mono break-all">{value}</p>)}
+              <p>Montant à transférer : <strong>{amountHtg.toLocaleString('fr-FR')} GDS</strong></p>
+              <p className="whitespace-pre-line text-muted-foreground">{pay.instructions}</p>
+            </div> : <p className="text-muted-foreground">Choisissez un mode disponible.</p>}
           </div>
 
           {/* Reference & Proof Inputs */}
@@ -325,7 +248,7 @@ export function WalletTopupModal({
             </div>
           </div>
 
-          <Button type="submit" size="lg" className="w-full font-bold" disabled={isSubmitting}>
+          <Button type="submit" size="lg" className="w-full font-bold" disabled={isSubmitting || !rate || !proofUrl || !pay || !paymentSelectable(pay)}>
             {isSubmitting ? "Envoi en cours..." : "Confirmer ma demande de recharge"}
           </Button>
         </form>

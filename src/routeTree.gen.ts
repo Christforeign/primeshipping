@@ -36,6 +36,7 @@ import { Route as AuthenticatedCompteCommandesRouteImport } from './routes/_auth
 import { Route as AuthenticatedComptePortefeuilleRouteImport } from './routes/_authenticated/compte.portefeuille'
 import { Route as AuthenticatedCompteProfilRouteImport } from './routes/_authenticated/compte.profil'
 import { Route as ApiPublicAssistedPurchaseRouteImport } from './routes/api/public/assisted-purchase'
+import { Route as ApiPublicPaymentSmsRouteImport } from './routes/api/public/payment-sms'
 import { Route as ApiPublicPriorityWebhookRouteImport } from './routes/api/public/priority-webhook'
 import { Route as AuthenticatedCompteColisIndexRouteImport } from './routes/_authenticated/compte.colis.index'
 import { Route as AuthenticatedCompteColisIdRouteImport } from './routes/_authenticated/compte.colis.$id'
@@ -185,6 +186,11 @@ const ApiPublicAssistedPurchaseRoute =
     path: '/api/public/assisted-purchase',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicPaymentSmsRoute = ApiPublicPaymentSmsRouteImport.update({
+  id: '/api/public/payment-sms',
+  path: '/api/public/payment-sms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicPriorityWebhookRoute =
   ApiPublicPriorityWebhookRouteImport.update({
     id: '/api/public/priority-webhook',
@@ -246,6 +252,7 @@ export interface FileRoutesByFullPath {
   '/compte/portefeuille': typeof AuthenticatedComptePortefeuilleRoute
   '/compte/profil': typeof AuthenticatedCompteProfilRoute
   '/api/public/assisted-purchase': typeof ApiPublicAssistedPurchaseRoute
+  '/api/public/payment-sms': typeof ApiPublicPaymentSmsRoute
   '/api/public/priority-webhook': typeof ApiPublicPriorityWebhookRoute
   '/compte/': typeof AuthenticatedCompteIndexRoute
   '/compte/colis/$id': typeof AuthenticatedCompteColisIdRoute
@@ -279,6 +286,7 @@ export interface FileRoutesByTo {
   '/compte/portefeuille': typeof AuthenticatedComptePortefeuilleRoute
   '/compte/profil': typeof AuthenticatedCompteProfilRoute
   '/api/public/assisted-purchase': typeof ApiPublicAssistedPurchaseRoute
+  '/api/public/payment-sms': typeof ApiPublicPaymentSmsRoute
   '/api/public/priority-webhook': typeof ApiPublicPriorityWebhookRoute
   '/compte': typeof AuthenticatedCompteIndexRoute
   '/compte/colis/$id': typeof AuthenticatedCompteColisIdRoute
@@ -315,6 +323,7 @@ export interface FileRoutesById {
   '/_authenticated/compte/portefeuille': typeof AuthenticatedComptePortefeuilleRoute
   '/_authenticated/compte/profil': typeof AuthenticatedCompteProfilRoute
   '/api/public/assisted-purchase': typeof ApiPublicAssistedPurchaseRoute
+  '/api/public/payment-sms': typeof ApiPublicPaymentSmsRoute
   '/api/public/priority-webhook': typeof ApiPublicPriorityWebhookRoute
   '/_authenticated/compte/': typeof AuthenticatedCompteIndexRoute
   '/_authenticated/compte/colis/$id': typeof AuthenticatedCompteColisIdRoute
@@ -351,6 +360,7 @@ export interface FileRouteTypes {
     | '/compte/portefeuille'
     | '/compte/profil'
     | '/api/public/assisted-purchase'
+    | '/api/public/payment-sms'
     | '/api/public/priority-webhook'
     | '/compte/'
     | '/compte/colis/$id'
@@ -384,6 +394,7 @@ export interface FileRouteTypes {
     | '/compte/portefeuille'
     | '/compte/profil'
     | '/api/public/assisted-purchase'
+    | '/api/public/payment-sms'
     | '/api/public/priority-webhook'
     | '/compte'
     | '/compte/colis/$id'
@@ -419,6 +430,7 @@ export interface FileRouteTypes {
     | '/_authenticated/compte/portefeuille'
     | '/_authenticated/compte/profil'
     | '/api/public/assisted-purchase'
+    | '/api/public/payment-sms'
     | '/api/public/priority-webhook'
     | '/_authenticated/compte/'
     | '/_authenticated/compte/colis/$id'
@@ -448,6 +460,7 @@ export interface RootRouteChildren {
   BoutiquePanierRoute: typeof BoutiquePanierRoute
   BoutiqueIndexRoute: typeof BoutiqueIndexRoute
   ApiPublicAssistedPurchaseRoute: typeof ApiPublicAssistedPurchaseRoute
+  ApiPublicPaymentSmsRoute: typeof ApiPublicPaymentSmsRoute
   ApiPublicPriorityWebhookRoute: typeof ApiPublicPriorityWebhookRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -644,6 +657,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAssistedPurchaseRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/payment-sms': {
+      id: '/api/public/payment-sms'
+      path: '/api/public/payment-sms'
+      fullPath: '/api/public/payment-sms'
+      preLoaderRoute: typeof ApiPublicPaymentSmsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/priority-webhook': {
       id: '/api/public/priority-webhook'
       path: '/api/public/priority-webhook'
@@ -749,6 +769,7 @@ const rootRouteChildren: RootRouteChildren = {
   BoutiquePanierRoute: BoutiquePanierRoute,
   BoutiqueIndexRoute: BoutiqueIndexRoute,
   ApiPublicAssistedPurchaseRoute: ApiPublicAssistedPurchaseRoute,
+  ApiPublicPaymentSmsRoute: ApiPublicPaymentSmsRoute,
   ApiPublicPriorityWebhookRoute: ApiPublicPriorityWebhookRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,

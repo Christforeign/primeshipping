@@ -21,6 +21,7 @@ import { orderMinimumError } from "@/lib/order-minimums";
 import { OrderTermsCheckbox } from "@/components/OrderTermsCheckbox";
 import { deliveryChoices } from "@/lib/delivery-options";
 import { checkoutPayments, paymentCoordinates, paymentDisplayAmount } from "@/lib/checkout-display";
+import { mergePaymentConfigs, paymentSelectable, paymentState } from '@/lib/payment-availability';
 
 export const Route = createFileRoute("/boutique/commande")({
   head: () => ({
@@ -85,7 +86,7 @@ function CheckoutPage() {
   const [payments, setPayments] = useState<any[]>([]);
   useEffect(() => {
     const configured = Array.isArray(s?.payment_configs) ? s.payment_configs : clientStore.getPaymentConfigs();
-    setPayments(checkoutPayments(configured));
+    setPayments(checkoutPayments(mergePaymentConfigs(configured)));
   }, [s?.payment_configs]);
   const [method, setMethod] = useState<string>("wallet");
   const [deliveryMode, setDeliveryMode] = useState<"pickup" | "home">("home");
@@ -192,6 +193,7 @@ function CheckoutPage() {
   };
 
   const submit = async () => {
+    if (method !== 'wallet' && (!pay || !paymentSelectable(pay))) return toast.error('Ce mode de paiement est indisponible.');
     if (!validRate) return toast.error("Le taux de change n’est pas encore disponible. Réessayez dans un instant.");
     if (minimumError) return toast.error(minimumError);
     if (freeAmount && !amountPrice.walletUsd) return toast.error("Revenez au produit pour saisir le montant à recharger.");
@@ -311,9 +313,10 @@ function CheckoutPage() {
           </div>
         </Button>
         {payments.map((p) => (
-          <Button key={p.id} type="button" variant="outline" className={`${opt(method === p.id)} h-auto block whitespace-normal`} onClick={() => setMethod(p.id)}>
+          <Button key={p.id} type="button" variant="outline" disabled={!paymentSelectable(p)} className={`${opt(method === p.id)} h-auto block whitespace-normal`} onClick={() => setMethod(p.id)}>
             <div className="flex justify-between gap-2">
               <span>{p.name}</span>
+              <span className="text-muted-foreground">{paymentState(p)}</span>
               {Number(p.fee_percentage) > 0 && <span className="text-muted-foreground">+{p.fee_percentage}%</span>}
             </div>
           </Button>
@@ -329,7 +332,7 @@ function CheckoutPage() {
             <p className="text-xs text-muted-foreground">{gourdes ? `${formatNumber(totalHtg)} GDS = ${total.toFixed(2)} USD débités automatiquement de votre portefeuille à la validation.` : "Le montant sera débité automatiquement de votre portefeuille à la validation."}</p>
           )
         ) : (
-          pay && (
+          pay && paymentSelectable(pay) && (
             <div className="p-4 rounded-2xl bg-secondary/60 border space-y-2 text-xs">
               {paymentCoordinates(pay).map((v) => (
                 <div key={v} className="flex items-center justify-between gap-2 bg-background p-2 rounded-xl border">
@@ -368,7 +371,7 @@ function CheckoutPage() {
         {product.extra?.order_notice && <p className="text-sm text-muted-foreground whitespace-pre-line pt-3">{product.extra.order_notice}</p>}
         {!validRate && <p role="alert" className="text-destructive">Le taux de change n’est pas encore disponible.</p>}
         <OrderTermsCheckbox checked={acceptedTerms} onCheckedChange={setAcceptedTerms} id="accept-order-terms-checkout" />
-        <Button className="w-full h-12 mt-2 font-black" disabled={submitting || (method !== "wallet" && !proofUrl) || walletShort || !!minimumError || !validRate || !acceptedTerms} onClick={submit}>
+        <Button className="w-full h-12 mt-2 font-black" disabled={submitting || (method !== "wallet" && (!proofUrl || !pay || !paymentSelectable(pay))) || walletShort || !!minimumError || !validRate || !acceptedTerms} onClick={submit}>
           {submitting ? "Validation…" : "Valider ma commande"}
         </Button>
       </section>
