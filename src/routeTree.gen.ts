@@ -38,6 +38,7 @@ import { Route as AuthenticatedCompteProfilRouteImport } from './routes/_authent
 import { Route as ApiPublicAssistedPurchaseRouteImport } from './routes/api/public/assisted-purchase'
 import { Route as ApiPublicPaymentSmsRouteImport } from './routes/api/public/payment-sms'
 import { Route as ApiPublicPriorityWebhookRouteImport } from './routes/api/public/priority-webhook'
+import { Route as ApiPublicShippingRemindersRouteImport } from './routes/api/public/shipping-reminders'
 import { Route as AuthenticatedCompteColisIndexRouteImport } from './routes/_authenticated/compte.colis.index'
 import { Route as AuthenticatedCompteColisIdRouteImport } from './routes/_authenticated/compte.colis.$id'
 import { Route as AuthenticatedCompteColisNouveauRouteImport } from './routes/_authenticated/compte.colis.nouveau'
@@ -197,6 +198,12 @@ const ApiPublicPriorityWebhookRoute =
     path: '/api/public/priority-webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicShippingRemindersRoute =
+  ApiPublicShippingRemindersRouteImport.update({
+    id: '/api/public/shipping-reminders',
+    path: '/api/public/shipping-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedCompteColisIndexRoute =
   AuthenticatedCompteColisIndexRouteImport.update({
     id: '/colis/',
@@ -254,6 +261,7 @@ export interface FileRoutesByFullPath {
   '/api/public/assisted-purchase': typeof ApiPublicAssistedPurchaseRoute
   '/api/public/payment-sms': typeof ApiPublicPaymentSmsRoute
   '/api/public/priority-webhook': typeof ApiPublicPriorityWebhookRoute
+  '/api/public/shipping-reminders': typeof ApiPublicShippingRemindersRoute
   '/compte/': typeof AuthenticatedCompteIndexRoute
   '/compte/colis/$id': typeof AuthenticatedCompteColisIdRoute
   '/compte/colis/nouveau': typeof AuthenticatedCompteColisNouveauRoute
@@ -288,6 +296,7 @@ export interface FileRoutesByTo {
   '/api/public/assisted-purchase': typeof ApiPublicAssistedPurchaseRoute
   '/api/public/payment-sms': typeof ApiPublicPaymentSmsRoute
   '/api/public/priority-webhook': typeof ApiPublicPriorityWebhookRoute
+  '/api/public/shipping-reminders': typeof ApiPublicShippingRemindersRoute
   '/compte': typeof AuthenticatedCompteIndexRoute
   '/compte/colis/$id': typeof AuthenticatedCompteColisIdRoute
   '/compte/colis/nouveau': typeof AuthenticatedCompteColisNouveauRoute
@@ -325,6 +334,7 @@ export interface FileRoutesById {
   '/api/public/assisted-purchase': typeof ApiPublicAssistedPurchaseRoute
   '/api/public/payment-sms': typeof ApiPublicPaymentSmsRoute
   '/api/public/priority-webhook': typeof ApiPublicPriorityWebhookRoute
+  '/api/public/shipping-reminders': typeof ApiPublicShippingRemindersRoute
   '/_authenticated/compte/': typeof AuthenticatedCompteIndexRoute
   '/_authenticated/compte/colis/$id': typeof AuthenticatedCompteColisIdRoute
   '/_authenticated/compte/colis/nouveau': typeof AuthenticatedCompteColisNouveauRoute
@@ -362,6 +372,7 @@ export interface FileRouteTypes {
     | '/api/public/assisted-purchase'
     | '/api/public/payment-sms'
     | '/api/public/priority-webhook'
+    | '/api/public/shipping-reminders'
     | '/compte/'
     | '/compte/colis/$id'
     | '/compte/colis/nouveau'
@@ -396,6 +407,7 @@ export interface FileRouteTypes {
     | '/api/public/assisted-purchase'
     | '/api/public/payment-sms'
     | '/api/public/priority-webhook'
+    | '/api/public/shipping-reminders'
     | '/compte'
     | '/compte/colis/$id'
     | '/compte/colis/nouveau'
@@ -432,6 +444,7 @@ export interface FileRouteTypes {
     | '/api/public/assisted-purchase'
     | '/api/public/payment-sms'
     | '/api/public/priority-webhook'
+    | '/api/public/shipping-reminders'
     | '/_authenticated/compte/'
     | '/_authenticated/compte/colis/$id'
     | '/_authenticated/compte/colis/nouveau'
@@ -462,6 +475,7 @@ export interface RootRouteChildren {
   ApiPublicAssistedPurchaseRoute: typeof ApiPublicAssistedPurchaseRoute
   ApiPublicPaymentSmsRoute: typeof ApiPublicPaymentSmsRoute
   ApiPublicPriorityWebhookRoute: typeof ApiPublicPriorityWebhookRoute
+  ApiPublicShippingRemindersRoute: typeof ApiPublicShippingRemindersRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
 }
@@ -671,6 +685,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPriorityWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/shipping-reminders': {
+      id: '/api/public/shipping-reminders'
+      path: '/api/public/shipping-reminders'
+      fullPath: '/api/public/shipping-reminders'
+      preLoaderRoute: typeof ApiPublicShippingRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/compte/colis/': {
       id: '/_authenticated/compte/colis/'
       path: '/colis'
@@ -771,6 +792,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicAssistedPurchaseRoute: ApiPublicAssistedPurchaseRoute,
   ApiPublicPaymentSmsRoute: ApiPublicPaymentSmsRoute,
   ApiPublicPriorityWebhookRoute: ApiPublicPriorityWebhookRoute,
+  ApiPublicShippingRemindersRoute: ApiPublicShippingRemindersRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
 }
