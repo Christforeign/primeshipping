@@ -162,6 +162,13 @@
       "when": 1793419586653,
       "tag": "0022_payment_availability_guard_record_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1793484560100,
+      "tag": "0023_priority_announcements_reminders_weight",
+      "breakpoints": true
     }
   ]
 }

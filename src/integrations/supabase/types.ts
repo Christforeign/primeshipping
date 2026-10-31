@@ -615,6 +615,75 @@ export type Database = {
         }
         Relationships: []
       }
+      shipping_notice_deliveries: {
+        Row: {
+          attempted_at: string | null
+          body: string
+          campaign_key: string
+          created_at: string
+          email_error: string | null
+          email_status: string
+          id: string
+          link: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          attempted_at?: string | null
+          body: string
+          campaign_key: string
+          created_at?: string
+          email_error?: string | null
+          email_status?: string
+          id?: string
+          link: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          attempted_at?: string | null
+          body?: string
+          campaign_key?: string
+          created_at?: string
+          email_error?: string | null
+          email_status?: string
+          id?: string
+          link?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      shipping_notice_settings: {
+        Row: {
+          arrivals_enabled: boolean
+          email_daily_limit: number
+          email_enabled: boolean
+          id: number
+          last_reminder_at: string | null
+          reminder_days: number
+          reminders_enabled: boolean
+        }
+        Insert: {
+          arrivals_enabled?: boolean
+          email_daily_limit?: number
+          email_enabled?: boolean
+          id?: number
+          last_reminder_at?: string | null
+          reminder_days?: number
+          reminders_enabled?: boolean
+        }
+        Update: {
+          arrivals_enabled?: boolean
+          email_daily_limit?: number
+          email_enabled?: boolean
+          id?: number
+          last_reminder_at?: string | null
+          reminder_days?: number
+          reminders_enabled?: boolean
+        }
+        Relationships: []
+      }
       shop_orders: {
         Row: {
           admin_notes: string | null
@@ -932,6 +1001,27 @@ export type Database = {
       assisted_purchase_fee: { Args: { _exact_price: number }; Returns: number }
       can_manage_packages: { Args: { _user_id: string }; Returns: boolean }
       claim_first_admin: { Args: never; Returns: boolean }
+      claim_shipping_notice_emails: {
+        Args: never
+        Returns: {
+          attempted_at: string | null
+          body: string
+          campaign_key: string
+          created_at: string
+          email_error: string | null
+          email_status: string
+          id: string
+          link: string
+          title: string
+          user_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "shipping_notice_deliveries"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       commit_priority_import: {
         Args: {
           p_consignee: string
@@ -977,6 +1067,7 @@ export type Database = {
         }
         Returns: Json
       }
+      enqueue_shipping_notice: { Args: { p_kind: string }; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1002,6 +1093,10 @@ export type Database = {
         Returns: string
       }
       track_package: { Args: { _tracking: string }; Returns: Json }
+      update_priority_weight: {
+        Args: { p_id: string; p_weight: number }
+        Returns: undefined
+      }
     }
     Enums: {
       address_kind: "etranger" | "retrait" | "livraison"
