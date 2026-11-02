@@ -5,6 +5,7 @@ export const manualEmailSchema = z.object({
   userId: z.string().uuid().optional(),
   subject: z.string().trim().min(1).max(200),
   message: z.string().trim().min(1).max(10000),
+  imageUrl: z.string().url().max(4000).refine((url) => url.startsWith("https://"), "L’image doit utiliser HTTPS").optional(),
   eventId: z.string().uuid(),
   confirmed: z.boolean(),
 }).superRefine((data, ctx) => {
