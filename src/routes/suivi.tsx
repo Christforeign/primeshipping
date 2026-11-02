@@ -9,7 +9,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { StatusBadge } from "@/components/StatusBadge";
 import { canonicalStatus, PACKAGE_STATUSES, formatDate, statusLabel, type PackageStatus } from "@/lib/labels";
 import { useUser } from "@/lib/session";
-import { ReceivedParcels } from "@/components/ReceivedParcels";
 
 export const Route = createFileRoute("/suivi")({
   validateSearch: z.object({ n: z.string().max(40).optional() }),
@@ -85,7 +84,6 @@ function Suivi() {
           <Button asChild variant="outline"><Link to="/compte/colis">Mes colis</Link></Button>
         </>}
       </section>}
-      <ReceivedParcels />
     </div>
   );
 }
