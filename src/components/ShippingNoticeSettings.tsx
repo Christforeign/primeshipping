@@ -30,7 +30,7 @@ export function ShippingNoticeSettings() {
     if (!window.confirm("Envoyer ce message à tous les clients maintenant ?")) return;
     setSending(kind);
     try {
-      const { data, error } = await supabase.rpc("staff_send_shipping_notice", { p_kind: kind, p_request_id: crypto.randomUUID(), p_suffixes: kind === "suffixes" ? parseSuffixes(suffixes) : undefined });
+      const { data, error } = await supabase.rpc("staff_send_shipping_notice", { p_kind: kind, p_request_id: crypto.randomUUID(), p_suffixes: kind === "suffixes" ? parseSuffixes(suffixes) : [] });
       if (error) throw error;
       toast.success(`Envoyé à ${data ?? 0} client(s).`);
       if (kind === "suffixes") setSuffixes("");
