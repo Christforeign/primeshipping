@@ -19,6 +19,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Toaster } from "@/components/ui/sonner";
 import { PromoBanner } from "@/components/PromoBanner";
+import { SiteAnnouncement } from "@/components/SiteAnnouncement";
 import { WhatsAppSupportButton } from "@/components/WhatsAppSupportButton";
 import { InteractiveTutorial } from "@/components/InteractiveTutorial";
 import { useSettings } from "@/lib/settings";
@@ -173,6 +174,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <OfflineScreen />
+      <SiteAnnouncement />
       <AppShellContent />
       <Toaster richColors position="top-center" />
     </QueryClientProvider>

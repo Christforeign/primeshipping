@@ -10,6 +10,7 @@ import { sendManualEmail } from "@/lib/admin-actions.functions";
 import { deleteCustomerAccount } from "@/lib/account.functions";
 import { Button } from "@/components/ui/button";
 import { ClientPicker } from "@/components/ClientPicker";
+import { AdminAnnouncement } from "@/components/AdminAnnouncement";
 import type { ClientHit } from "@/lib/admin-settings";
 
 const SAMPLE = { nom: "Jean Exemple", code: "PS-0001", tracking: "1Z999AA10123456784", reference: "F-0042", montant: "45.00 USD", details: "Poids : 6 lbs", statut: "Reçu", prochaine_etape: "En transit", date: "26 octobre 2026 à 12:43" };
@@ -42,7 +43,7 @@ function ManualSend() {
   return <section className="space-y-3 border-y border-border py-5">
     <h3 className="text-lg font-bold">Envoyer un e-mail manuel</h3>
     <select aria-label="Destinataires" className={inp} disabled={busy} value={audience} onChange={(e) => { setAudience(e.target.value as "client" | "all"); setConfirmed(false); setEventId(null); }}>
-      <option value="client">Un client</option><option value="all">Tous les clients</option>
+      <option value="client">Un client</option><option value="all">Tous les comptes, administrateurs inclus</option>
     </select>
     {audience === "client" && (client ? <div className="flex min-w-0 items-center gap-2"><span className="truncate">{client.full_name} — {client.email}</span><Button variant="ghost" size="sm" disabled={busy} onClick={() => { setClient(null); setEventId(null); }}>Changer</Button></div> : <ClientPicker onPick={(c) => { setClient(c); setEventId(null); }} />)}
     <input aria-label="Objet du message" placeholder="Objet" maxLength={200} disabled={busy} className={inp} value={subject} onChange={(e) => { setSubject(e.target.value); setEventId(null); }} />
@@ -209,6 +210,7 @@ export function AdminEmailTemplates() {
   const inp = "w-full rounded-md border border-input bg-background px-3 py-2 text-sm";
   return (
     <div className="space-y-5 min-w-0">
+      <AdminAnnouncement />
       <div className="rounded-lg border border-border bg-card p-4 space-y-3">
         <h3 className="font-semibold">Expéditeur (Brevo)</h3>
         <p className="text-xs text-muted-foreground">Utilise l'adresse vérifiée dans Brevo (Expéditeurs & domaines).</p>
