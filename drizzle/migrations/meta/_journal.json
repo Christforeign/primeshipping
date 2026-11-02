@@ -183,6 +183,13 @@
       "when": 1793593890249,
       "tag": "0025_staff_send_shipping_notice",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1793596140537,
+      "tag": "0026_received_parcels_public_masked",
+      "breakpoints": true
     }
   ]
 }

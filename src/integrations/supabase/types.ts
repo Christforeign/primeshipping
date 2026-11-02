@@ -1078,6 +1078,7 @@ export type Database = {
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
       place_shop_order: { Args: { _order: Json }; Returns: Json }
+      public_received_parcels: { Args: { p_offset?: number }; Returns: Json }
       request_wallet_topup: {
         Args: {
           _amount_htg: number
