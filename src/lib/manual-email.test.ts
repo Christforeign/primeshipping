@@ -13,4 +13,8 @@ describe("manual email rules", () => {
   it("rejects an invalid order id", () => {
     expect(orderDeletionSchema.safeParse({ orderId: "test" }).success).toBe(false);
   });
+  it("permits an image broadcast to all accounts and rejects insecure images", () => {
+    expect(manualEmailSchema.safeParse({ ...input, imageUrl: "https://primeshipping.net/photo.jpeg" }).success).toBe(true);
+    expect(manualEmailSchema.safeParse({ ...input, imageUrl: "http://primeshipping.net/photo.jpeg" }).success).toBe(false);
+  });
 });
