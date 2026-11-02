@@ -49,6 +49,7 @@
 - [x] Case « conditions d'utilisation » obligatoire avant commande et paiement (lien cliquable vers /conditions), conditions simplifiées (numérique non remboursable, infos erronées non remboursées, dommage physique sous 24 h, retards possibles, fraude = compte supprimé) ; note spéciale par produit conservée et facultative dans l'admin ; parcours mobile vérifié connecté sans achat réel
 
 ## Intervention en cours
+- [ ] Annonce photo tarifs : affichage fermable, gestion admin complète et e-mail collectif avec image, administrateurs inclus ; vérifier sauvegarde et envoi.
 - [x] Configurer « C’est ton colis ? » : cinq réceptions réelles affichées, cinq derniers caractères et transporteur identifiable seulement ; sélection admin pour annonce et lien vers déclaration complète. 14 tests réussis, projection publique et navigation vérifiées ; poids déjà facultatif. Aucun envoi collectif réel effectué.
 - [x] Priority : annonces/rappels désactivés par défaut et administrables, poids importé conservé et modifiable, tracking public des colis non attribués sans détails privés ; file dédupliquée et plafond 100 e-mails généraux/jour. 14 tests réussis, recherche publique et refus non autorisé vérifiés, rappel planifié cinq passages/jour.
 - [ ] Priority annonces : activer les réglages après redéploiement, tester sauvegarde et poids connecté (aucun compte du demandeur disponible), réception Gmail et e-mail réel ; push iPhone site fermé non connecté. Le plafond des annonces ne contrôle pas les autres e-mails Brevo.
