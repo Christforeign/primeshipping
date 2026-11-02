@@ -21,7 +21,7 @@ export function AdminAnnouncement() {
   const [eventId, setEventId] = useState<string | null>(null);
   useEffect(() => {
     if (!settings) return;
-    const saved = readAnnouncement((settings as unknown as Record<string, unknown>).site_announcement);
+    const saved = readAnnouncement((settings as unknown as Record<string, unknown>)["site_announcement"]);
     setDraft(saved || { ...INITIAL_ANNOUNCEMENT, enabled: false });
   }, [settings]);
   const change = (patch: Partial<SiteAnnouncement>) => { setDraft((d) => ({ ...d, ...patch })); setConfirmed(false); setEventId(null); };

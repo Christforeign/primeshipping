@@ -7,7 +7,7 @@ import { readAnnouncement, shouldShowAnnouncement } from "@/lib/site-announcemen
 
 export function SiteAnnouncement() {
   const settings = useSettings();
-  const announcement = readAnnouncement((settings as unknown as Record<string, unknown> | null)?.site_announcement);
+  const announcement = readAnnouncement((settings as unknown as Record<string, unknown> | null)?.["site_announcement"]);
   const [open, setOpen] = useState(false);
   const version = announcement?.version;
   const enabled = announcement?.enabled;

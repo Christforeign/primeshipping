@@ -32,7 +32,7 @@ export async function sendManualBrevo(db: SupabaseClient<Database>, adminId: str
       const email = (profile.email || "").toLowerCase().trim();
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || seen.has(email)) continue;
       seen.add(email);
-      const rendered = renderEmail({ enabled: true, subject: input.subject, body: "{{details}}", color: "#ea580c" }, { details: input.message, nom: profile.full_name || "", code: profile.client_code || "", image_annonce: input.imageUrl }, name, String(extra["email_logo_url"] || "") || undefined, /^https:\/\//.test(site) ? site : undefined);
+      const rendered = renderEmail({ enabled: true, subject: input.subject, body: "{{details}}", color: "#ea580c" }, { details: input.message, nom: profile.full_name || "", code: profile.client_code || "", image_annonce: input.imageUrl || "" }, name, String(extra["email_logo_url"] || "") || undefined, /^https:\/\//.test(site) ? site : undefined);
       const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(`${input.eventId}:${profile.id}`));
       const idempotencyKey = [...new Uint8Array(digest)].slice(0, 16).map((v) => v.toString(16).padStart(2, "0")).join("");
       const response = await fetch(endpoint, { method: "POST", headers, body: JSON.stringify({ sender: { name, email: sender }, to: [{ email }], subject: rendered.subject, htmlContent: rendered.html, headers: { idempotencyKey } }) });

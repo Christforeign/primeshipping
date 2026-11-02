@@ -35,7 +35,7 @@
 - Fixed-product conversions use the optional product rate before the configured site rate in both product-commerce and place_shop_order; custom USD recharge wallet conversion retains the global rate, and monetary formatting preserves cents to avoid displaying a different debit.
 - Assisted purchase requests live in the `assisted_purchases` table (migration 0018): signed-in clients create them through `create_assisted_purchase` (optional wallet debit inside the RPC), guests through the public route `/api/public/assisted-purchase`; a BEFORE INSERT trigger recomputes fee, totals and rate from company settings so browser-supplied amounts are never trusted. Admin edits go through `admin_update_assisted_purchase`, and status e-mails use `sendClientEmail({ kind: "achat", assistedId })`; guest submissions e-mail via `sendAssistedPurchaseEmail` (server-only, uses `admin_alert_recipients_trusted`).
 
-- Manual Brevo messages use a dedicated admin-checked server function, saved profile recipients and one recipient per request; browser UUIDs keep retries idempotent and provider errors remain in admin logs.
+- Manual Brevo broadcasts use admin checks, all saved accounts, private recipients and idempotent UUIDs. Announcements use settings and versioned dismissal, no fallback after removal; email images use HTTPS.
 - Shop-order deletion uses an admin-checked database RPC, keeps the financial ledger intact and never issues an implicit refund.
 - Offline fallback is generated with vite-plugin-pwa and registered only through the guarded wrapper on published origins; private HTML and data are never cached.
 - Settings consumers expose query-cache values only after hydration so browser cache cannot mismatch server-rendered defaults.
