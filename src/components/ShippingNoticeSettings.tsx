@@ -11,6 +11,7 @@ import { parseSuffixes } from "@/lib/shipping-notices";
 import { toast } from "sonner";
 import { defaultShippingNotices } from "@/lib/shipping-notices";
 import { saveShippingNoticeSettings } from "@/lib/shipping-notices.functions";
+import { ReceivedParcels } from "./ReceivedParcels";
 
 export function ShippingNoticeSettings() {
   const qc = useQueryClient();
@@ -59,8 +60,12 @@ export function ShippingNoticeSettings() {
         <Button variant="secondary" disabled={!!sending} onClick={() => sendNow("reminder")}><Send className="h-4 w-4" />Rappel de déclaration</Button>
       </div>
       <Label htmlFor="suffixes">5 derniers caractères des trackings reçus (séparés par virgule ou espace)</Label>
+      <ReceivedParcels selected={parseSuffixes(suffixes)} onSelect={(suffix) => {
+        const current = parseSuffixes(suffixes);
+        setSuffixes((current.includes(suffix) ? current.filter((s) => s !== suffix) : [...current, suffix].slice(0, 50)).join(", "));
+      }} />
       <Input id="suffixes" placeholder="34594, 08308, 89368" value={suffixes} onChange={(e) => setSuffixes(e.target.value)} />
-      <Button disabled={!!sending || parseSuffixes(suffixes).length === 0} onClick={() => sendNow("suffixes")}><Send className="h-4 w-4" />{sending === "suffixes" ? "Envoi…" : "Envoyer « Est-ce votre colis ? »"}</Button>
+      <Button disabled={!!sending || parseSuffixes(suffixes).length === 0} onClick={() => sendNow("suffixes")}><Send className="h-4 w-4" />{sending === "suffixes" ? "Envoi…" : "Envoyer « C’est ton colis ? »"}</Button>
     </div>
   </section>;
 }

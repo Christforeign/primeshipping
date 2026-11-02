@@ -41,5 +41,5 @@
 - Settings consumers expose query-cache values only after hydration so browser cache cannot mismatch server-rendered defaults.
 - Render the shared wallpaper in a fixed root viewport layer, not a fixed body background; use semantic glass fallback surfaces so WebKit and browsers without blur retain readable panels.
 - Optional settings and notification device caches must tolerate denied storage without aborting Cloud-backed page flows.
-- Priority uses an authenticated bounded relay, unique tracking matching and staff-only attribution/weight edits; names on box emails cannot assign ownership. Notices use deduplicated queues, atomic email budgets and managed callbacks to avoid repeat alerts.
+- Priority uses a bounded relay, unique tracking matching and staff-only attribution/weight edits; box names cannot assign ownership. Public boards use a restricted RPC exposing only suffix, inferred carrier and receipt date, never ownership or weight. Notices use deduplicated queues and atomic email budgets.
 - Payment SMS are immutable, deduplicated staff-review notices, never payment proof; database guards block automatic modes pending provider verification and enforce disabled/maintenance settings. Shared helpers merge new modes without activation.
