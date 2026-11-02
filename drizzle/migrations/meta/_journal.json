@@ -176,6 +176,13 @@
       "when": 1793484633491,
       "tag": "0024_priority_unique_tracking_public_received",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1793593890249,
+      "tag": "0025_staff_send_shipping_notice",
+      "breakpoints": true
     }
   ]
 }

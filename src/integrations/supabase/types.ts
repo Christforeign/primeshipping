@@ -1092,6 +1092,10 @@ export type Database = {
         Args: { _approve: boolean; _tx_id: string }
         Returns: string
       }
+      staff_send_shipping_notice: {
+        Args: { p_kind: string; p_request_id: string; p_suffixes?: string[] }
+        Returns: number
+      }
       track_package: { Args: { _tracking: string }; Returns: Json }
       update_priority_weight: {
         Args: { p_id: string; p_weight: number }

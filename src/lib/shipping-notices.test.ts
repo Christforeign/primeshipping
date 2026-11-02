@@ -16,3 +16,10 @@ describe("Shipping announcement safeguards", () => {
     expect(shippingNoticeSettingsSchema.safeParse({ ...defaultShippingNotices, email_daily_limit: 101 }).success).toBe(false);
   });
 });
+import { parseSuffixes } from "./shipping-notices";
+describe("parseSuffixes", () => {
+  it("keeps only the last 5 characters of each tracking", () => {
+    expect(parseSuffixes("gfus01079797534594, 879139489368")).toEqual(["34594", "89368"]);
+  });
+  it("ignores entries shorter than 5", () => { expect(parseSuffixes("123, ab")).toEqual([]); });
+});
