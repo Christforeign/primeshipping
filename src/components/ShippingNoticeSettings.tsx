@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Save } from "lucide-react";
+import { Save, Send } from "lucide-react";
+import { parseSuffixes } from "@/lib/shipping-notices";
 import { toast } from "sonner";
 import { defaultShippingNotices } from "@/lib/shipping-notices";
 import { saveShippingNoticeSettings } from "@/lib/shipping-notices.functions";
@@ -23,6 +24,19 @@ export function ShippingNoticeSettings() {
   } });
   const value = draft || q.data || defaultShippingNotices;
   const set = (patch: Partial<typeof defaultShippingNotices>) => setDraft({ ...value, ...patch });
+  const [suffixes, setSuffixes] = useState("");
+  const [sending, setSending] = useState<string | null>(null);
+  const sendNow = async (kind: "arrival" | "reminder" | "suffixes") => {
+    if (!window.confirm("Envoyer ce message à tous les clients maintenant ?")) return;
+    setSending(kind);
+    try {
+      const { data, error } = await supabase.rpc("staff_send_shipping_notice", { p_kind: kind, p_request_id: crypto.randomUUID(), p_suffixes: kind === "suffixes" ? parseSuffixes(suffixes) : undefined });
+      if (error) throw error;
+      toast.success(`Envoyé à ${data ?? 0} client(s).`);
+      if (kind === "suffixes") setSuffixes("");
+    } catch { toast.error("Envoi impossible. Réessayez."); }
+    finally { setSending(null); }
+  };
   return <section className="space-y-4 border-b border-border py-5">
     <h3 className="font-semibold">Annonces et rappels colis</h3>
     {q.isError && <p role="alert" className="text-destructive">Réglages momentanément indisponibles.</p>}
@@ -37,5 +51,16 @@ export function ShippingNoticeSettings() {
       catch { toast.error("Impossible d’enregistrer. Vérifiez les valeurs."); }
       finally { setBusy(false); }
     }}><Save className="h-4 w-4" />{busy ? "Enregistrement…" : "Enregistrer les annonces"}</Button>
+    <div className="space-y-3 border-t border-border pt-4">
+      <h4 className="font-medium">Envoyer maintenant à tous les clients</h4>
+      <p className="text-sm text-muted-foreground">Notification dans le site (et e-mail si activé). Aucun nom ni tracking complet n’est affiché.</p>
+      <div className="flex flex-wrap gap-2">
+        <Button variant="secondary" disabled={!!sending} onClick={() => sendNow("arrival")}><Send className="h-4 w-4" />Annonce de réception</Button>
+        <Button variant="secondary" disabled={!!sending} onClick={() => sendNow("reminder")}><Send className="h-4 w-4" />Rappel de déclaration</Button>
+      </div>
+      <Label htmlFor="suffixes">5 derniers caractères des trackings reçus (séparés par virgule ou espace)</Label>
+      <Input id="suffixes" placeholder="34594, 08308, 89368" value={suffixes} onChange={(e) => setSuffixes(e.target.value)} />
+      <Button disabled={!!sending || parseSuffixes(suffixes).length === 0} onClick={() => sendNow("suffixes")}><Send className="h-4 w-4" />{sending === "suffixes" ? "Envoi…" : "Envoyer « Est-ce votre colis ? »"}</Button>
+    </div>
   </section>;
 }
