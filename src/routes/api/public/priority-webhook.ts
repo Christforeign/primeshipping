@@ -5,6 +5,12 @@ import { parsePriorityEmails } from "@/lib/priority-parser";
 export const Route = createFileRoute("/api/public/priority-webhook")({
   server: { handlers: {
     POST: async ({ request }) => {
+      const { needsCloudRelay, relayToCloud } = await import("@/lib/cloud-relay.server");
+      if (needsCloudRelay(request)) {
+        const raw = await request.text();
+        if (raw.length > 150000) return Response.json({ error: "Message trop volumineux" }, { status: 413 });
+        return relayToCloud(request, raw);
+      }
       const secret = process.env["PRIORITY_WEBHOOK_SECRET"];
       const senders = (process.env["PRIORITY_ALLOWED_SENDERS"] || "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
       if (!secret || !senders.length) return Response.json({ error: "Réception non activée" }, { status: 503 });
