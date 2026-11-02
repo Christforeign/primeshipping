@@ -4,6 +4,12 @@ import { verifyPriorityToken } from '@/lib/priority-webhook';
 
 export const Route = createFileRoute('/api/public/payment-sms')({ server: { handlers: {
   POST: async ({ request }) => {
+    const { needsCloudRelay, relayToCloud } = await import('@/lib/cloud-relay.server');
+    if (needsCloudRelay(request)) {
+      const raw = await request.text();
+      if (raw.length > 12000) return Response.json({ error: 'Message trop long' }, { status: 413 });
+      return relayToCloud(request, raw);
+    }
     const secret = process.env['PAYMENT_SMS_RELAY_SECRET'];
     if (!secret || secret.length < 32) return Response.json({ error: 'Réception SMS non activée' }, { status: 503 });
     if (!await verifyPriorityToken(request.headers.get('authorization'), secret)) return Response.json({ error: 'Non autorisé' }, { status: 401 });
