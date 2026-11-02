@@ -190,6 +190,13 @@
       "when": 1793596140537,
       "tag": "0026_received_parcels_public_masked",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1793596214324,
+      "tag": "0027_received_notice_carrier_labels",
+      "breakpoints": true
     }
   ]
 }
