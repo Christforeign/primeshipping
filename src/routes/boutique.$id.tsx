@@ -141,7 +141,7 @@ export function ProductDetailPage() {
   // Set default variant on product change
   useEffect(() => {
     if (product && product.variants && product.variants.length > 0) {
-      setSelectedVariant(product.variants[0]);
+      setSelectedVariant(product.variants[0] ?? null);
     } else {
       setSelectedVariant(null);
     }
@@ -254,11 +254,11 @@ export function ProductDetailPage() {
       return toast.error(Object.values(newErrors)[0]);
     }
     if (!acceptedTerms) return toast.error("Veuillez accepter les conditions d'utilisation pour continuer.");
-    if (e.nativeEvent?.submitter?.value === "cart") {
+    if ((e.nativeEvent as SubmitEvent | undefined)?.submitter?.getAttribute("value") === "cart") {
       try {
         addCartItem(selection);
         toast.success("Article ajouté au panier");
-        navigate({ to: "/boutique/panier" });
+        navigate({ to: "/boutique/panier", search: {} as never });
       } catch { toast.error("Impossible de sauvegarder le panier sur cet appareil."); }
       return;
     }
@@ -654,14 +654,14 @@ export function ProductDetailPage() {
               </div>}
               <div className="text-sm text-muted-foreground space-y-2">
                 {!freeAmount && minQty > 1 && <p>Quantité minimum : {minQty}</p>}
-                {Number(product.extra?.minimum_order_usd) > 0 && <p>Montant minimum : {Number(product.extra.minimum_order_usd).toFixed(2)} {productCurrency(product.extra)}{!freeAmount && " (hors frais)"}</p>}
+                {Number(product.extra?.minimum_order_usd) > 0 && <p>Montant minimum : {Number(product.extra?.minimum_order_usd).toFixed(2)} {productCurrency(product.extra)}{!freeAmount && " (hors frais)"}</p>}
                 {product.extra?.order_notice && <p className="whitespace-pre-line">{product.extra.order_notice}</p>}
               </div>
               <OrderTermsCheckbox checked={acceptedTerms} onCheckedChange={setAcceptedTerms} />
               <Button type="submit" name="action" value="cart" size="lg" variant="outline" className="w-full h-12">
                 <ShoppingBag className="h-4 w-4 mr-2" /> Ajouter au panier
               </Button>
-              <Button asChild variant="ghost" className="w-full"><Link to="/boutique/panier">Voir mon panier</Link></Button>
+              <Button asChild variant="ghost" className="w-full"><Link to="/boutique/panier" search={{} as never}>Voir mon panier</Link></Button>
               <Button type="submit" size="lg" className="w-full h-12 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-sm">
                 Continuer vers le paiement <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
