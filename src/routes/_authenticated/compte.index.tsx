@@ -21,7 +21,6 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { formatDate } from "@/lib/labels";
 import { clientStore } from "@/lib/store";
 import { WalletTopupModal } from "@/components/WalletTopupModal";
-import { PushNotificationPrompt } from "@/components/PushNotificationPrompt";
 import type { OrderItem } from "@/lib/types-store";
 
 export const Route = createFileRoute("/_authenticated/compte/")({

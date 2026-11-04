@@ -231,7 +231,7 @@ function AppShellContent() {
       <PromoBanner />
       <SiteHeader />
       <RandomProductNotifier />
-      <PushNotificationPrompt />
+      <div className="mx-auto w-full max-w-6xl px-4 pt-3"><PushNotificationPrompt /></div>
       <main className="flex-1 overflow-x-hidden">
         <Outlet />
       </main>
