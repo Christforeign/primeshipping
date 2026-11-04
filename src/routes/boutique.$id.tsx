@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { isDirectVideo } from "@/lib/upload";
 import { orderTotalDisplay } from "@/lib/checkout-display";
 import { paymentSelectable } from '@/lib/payment-availability';

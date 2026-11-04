@@ -123,7 +123,7 @@ function AdminHubPage() {
     | "chats"
     | "emails"
     | "logs"
-  >("settings");
+  >("orders");
 
   // -------------------------------------------------------------
   // TAB 1: Global Company Settings & White Label State
