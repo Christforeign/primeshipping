@@ -390,11 +390,14 @@ export function ProductDetailPage() {
             {/* Gallery Viewer */}
             <div className="space-y-3">
               <div className="relative aspect-video sm:aspect-[4/3] w-full overflow-hidden rounded-3xl border bg-card shadow-md">
-                <img
-                  src={allMedia[activeMediaIndex] || allMedia[0]}
-                  alt={product.title}
-                  className="h-full w-full object-cover transition-all duration-300"
-                />
+                {(() => {
+                  const src = selectedVariant?.image_url || allMedia[activeMediaIndex] || allMedia[0];
+                  return src && isDirectVideo(src) ? (
+                    <video src={src} className="h-full w-full object-cover" controls playsInline muted autoPlay loop />
+                  ) : (
+                    <img src={src} alt={product.title} className="h-full w-full object-cover transition-all duration-300" />
+                  );
+                })()}
 
                 {/* Badge Kind */}
                 <div className="absolute top-4 left-4">

@@ -161,10 +161,10 @@ export function AdminProductModal({ product, isOpen, onClose, onSave }: Props) {
         {/* Modal Tabs Bar */}
         <div className="flex border-b px-6 bg-background gap-2 overflow-x-auto">
           {[
-            { id: "general", label: "Informations Générales" },
-            { id: "variants", label: `Variantes (${variants.length})` },
-            { id: "form", label: `Formulaire Dédié (${customFields.length})` },
-            { id: "media", label: `Galerie Photos & Vidéo (${mediaUrls.length})` },
+            { id: "general", label: "① Infos & prix" },
+            { id: "media", label: `② Photos & vidéo (${mediaUrls.length})` },
+            { id: "variants", label: `③ Variantes (${variants.length})` },
+            { id: "form", label: `④ Questions au client (${customFields.length})` },
           ].map((t) => (
             <button
               key={t.id}
@@ -370,6 +370,12 @@ export function AdminProductModal({ product, isOpen, onClose, onSave }: Props) {
                       className="p-4 rounded-2xl border bg-background flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs"
                     >
                       <div className="flex-1 grid gap-2 sm:grid-cols-4 w-full">
+                        <div className="sm:col-span-4 flex flex-wrap items-center gap-2">
+                          <Label className="text-[10px] font-bold text-muted-foreground">Photo ou vidéo de la variante</Label>
+                          {v.image_url && <span className="text-[10px] text-primary font-bold">✓ média ajouté</span>}
+                          <VariantMediaButton onUploaded={(url) => handleUpdateVariant(v.id, { image_url: url })} />
+                          {v.image_url && <button type="button" className="text-[10px] underline text-muted-foreground" onClick={() => handleUpdateVariant(v.id, { image_url: null })}>Retirer</button>}
+                        </div>
                         <div className="sm:col-span-2">
                           <Label className="text-[10px] font-bold text-muted-foreground">
                             Nom de la variante *
