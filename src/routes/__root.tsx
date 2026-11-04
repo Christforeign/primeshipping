@@ -28,6 +28,8 @@ import { Button } from "@/components/ui/button";
 import { OfflineScreen } from "@/components/OfflineScreen";
 import { registerOfflineSupport } from "@/lib/offline-registration";
 import { X } from "lucide-react";
+import { RandomProductNotifier } from "@/components/RandomProductNotifier";
+import { PushNotificationPrompt } from "@/components/PushNotificationPrompt";
 
 function NotFoundComponent() {
   return (
@@ -228,6 +230,8 @@ function AppShellContent() {
     >
       <PromoBanner />
       <SiteHeader />
+      <RandomProductNotifier />
+      <PushNotificationPrompt />
       <main className="flex-1 overflow-x-hidden">
         <Outlet />
       </main>
