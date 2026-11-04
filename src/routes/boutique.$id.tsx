@@ -392,7 +392,7 @@ export function ProductDetailPage() {
                 {(() => {
                   const src = selectedVariant?.image_url || allMedia[activeMediaIndex] || allMedia[0];
                   return src && isDirectVideo(src) ? (
-                    <video src={src} className="h-full w-full object-cover" controls playsInline muted autoPlay loop />
+                    <video src={src} className="h-full w-full object-cover pointer-events-none" playsInline muted autoPlay loop />
                   ) : (
                     <img src={src} alt={product.title} className="h-full w-full object-cover transition-all duration-300" />
                   );

@@ -29,5 +29,5 @@ export async function uploadVideo(folder: string, file: File): Promise<string> {
 }
 
 export function isDirectVideo(url: string): boolean {
-  return /\.(mp4|mov|webm|m4v|ogg)(\?|#|$)/i.test(url) || url.includes("/storage/v1/object/");
+  return /\.(mp4|mov|webm|m4v|ogg)(\?|#|$)/i.test(url);
 }

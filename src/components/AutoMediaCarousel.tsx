@@ -16,7 +16,7 @@ export function AutoMediaCarousel({ media, alt, interval = 3500 }: { media: stri
       {items.map((url, idx) => {
         const cls = `absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ${idx === i ? "opacity-100" : "opacity-0"}`;
         return isDirectVideo(url) ? (
-          <video key={url + idx} src={url} className={cls} muted loop playsInline autoPlay={idx === i} preload="metadata" />
+          <video key={url + idx} src={url} className={`${cls} pointer-events-none`} muted loop playsInline autoPlay disablePictureInPicture controls={false} preload="metadata" />
         ) : (
           <img key={url + idx} src={url} alt={alt} loading="lazy" className={cls} />
         );
