@@ -251,9 +251,9 @@ export function ProductDetailPage() {
     }
     if (Object.keys(newErrors).length > 0) {
       setFormErrors(newErrors);
-      return toast.error(Object.values(newErrors)[0]);
+      { toast.error(Object.values(newErrors)[0]); return; }
     }
-    if (!acceptedTerms) return toast.error("Veuillez accepter les conditions d'utilisation pour continuer.");
+    if (!acceptedTerms) { toast.error("Veuillez accepter les conditions d'utilisation pour continuer."); return; }
     if ((e.nativeEvent as SubmitEvent | undefined)?.submitter?.getAttribute("value") === "cart") {
       try {
         addCartItem(selection);
