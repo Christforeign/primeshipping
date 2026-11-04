@@ -12,6 +12,8 @@ import { formatNumber } from "@/lib/utils";
 import { PrimeStoreLogo } from "@/components/BrandLogos";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { AutoMediaCarousel } from "@/components/AutoMediaCarousel";
+import { isDirectVideo } from "@/lib/upload";
 
 export const Route = createFileRoute("/boutique/")({
   head: () => ({
