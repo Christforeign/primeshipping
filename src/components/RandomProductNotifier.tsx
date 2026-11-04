@@ -17,6 +17,7 @@ export function RandomProductNotifier() {
       if (!data?.length) return;
       const picks = [...data].sort(() => Math.random() - 0.5).slice(0, 3);
       const first = picks[0];
+      if (!first) return;
       const body = picks.length > 1
         ? `${picks.map((p) => p.title).join(" • ")} — disponibles maintenant.`
         : `${first.title} (${first.category}) est disponible.`;
