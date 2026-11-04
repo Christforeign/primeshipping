@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { VideoUploadButton } from "@/components/VideoUploadButton";
 import React, { useState } from "react";
+import { VariantMediaButton } from "@/components/VariantMediaButton";
+import { isDirectVideo } from "@/lib/upload";
 import type { ProductItem, ProductVariant, CustomFormField, ProductKind } from "@/lib/types-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -88,7 +90,7 @@ export function AdminProductModal({ product, isOpen, onClose, onSave }: Props) {
   };
 
   const handleUpdateVariant = (id: string, updates: Partial<ProductVariant>) => {
-    setVariants(variants.map((v) => (v.id === id ? { ...v, ...updates } : v)));
+    setVariants((prev) => prev.map((v) => (v.id === id ? { ...v, ...updates } : v)));
   };
 
   const handleDeleteVariant = (id: string) => {
@@ -372,7 +374,9 @@ export function AdminProductModal({ product, isOpen, onClose, onSave }: Props) {
                       <div className="flex-1 grid gap-2 sm:grid-cols-4 w-full">
                         <div className="sm:col-span-4 flex flex-wrap items-center gap-2">
                           <Label className="text-[10px] font-bold text-muted-foreground">Photo ou vidéo de la variante</Label>
-                          {v.image_url && <span className="text-[10px] text-primary font-bold">✓ média ajouté</span>}
+                          {v.image_url && (isDirectVideo(v.image_url)
+                            ? <video src={v.image_url} muted playsInline className="h-12 w-12 rounded-lg object-cover border" />
+                            : <img src={v.image_url} alt="" className="h-12 w-12 rounded-lg object-cover border" />)}
                           <VariantMediaButton onUploaded={(url) => handleUpdateVariant(v.id, { image_url: url })} />
                           {v.image_url && <button type="button" className="text-[10px] underline text-muted-foreground" onClick={() => handleUpdateVariant(v.id, { image_url: null })}>Retirer</button>}
                         </div>
