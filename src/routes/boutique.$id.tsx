@@ -236,12 +236,12 @@ export function ProductDetailPage() {
   };
 
   // Step 1: validate product options then go to the checkout page
-  const handleOrderSubmit = (e: React.FormEvent) => {
+  const handleOrderSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
-    if (freeAmount) { try { topupPrice(Number(requestedAmount), Number(product.extra?.product_rate_htg), Number(rate)); } catch { return toast.error("Saisissez un montant USD valide (deux décimales maximum)."); } }
+    if (freeAmount) { try { topupPrice(Number(requestedAmount), Number(product.extra?.product_rate_htg), Number(rate)); } catch { toast.error("Saisissez un montant USD valide (deux décimales maximum)."); return; } }
     const minimumError = orderMinimumError(product.extra, freeAmount ? 1 : quantity, freeAmount ? Number(requestedAmount) : subtotalUsd, freeAmount);
-    if (minimumError) return toast.error(minimumError);
-    const selection = { productId: product.id, variantId: freeAmount ? null : selectedVariant?.id || null, quantity: freeAmount ? 1 : quantity, formValues, requestedAmountUsd: freeAmount ? Number(requestedAmount) : undefined };
+    if (minimumError) { toast.error(minimumError); return; }
+    const selection = { productId: product.id, variantId: freeAmount ? null : selectedVariant?.id || null, quantity: freeAmount ? 1 : quantity, formValues, ...(freeAmount ? { requestedAmountUsd: Number(requestedAmount) } : {}) };
     const newErrors: Record<string, string> = {};
     for (const field of product.custom_fields || []) {
       const val = formValues[field.id];
