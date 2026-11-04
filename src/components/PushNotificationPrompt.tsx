@@ -19,7 +19,7 @@ export function PushNotificationPrompt({ className = "" }: { className?: string 
     setSupported(isPushSupported());
     setStatus(getPushPermissionStatus());
     try {
-      if (localStorage.getItem("prime_push_prompt_dismissed") === "true") setDismissed(true);
+      { const t = Number(localStorage.getItem("prime_push_prompt_dismissed_at") || 0); if (Date.now() - t < 3 * 86400000) setDismissed(true); }
     } catch { /* Safari may deny optional device storage. */ }
   }, []);
 
@@ -44,7 +44,7 @@ export function PushNotificationPrompt({ className = "" }: { className?: string 
 
   const handleDismiss = () => {
     setDismissed(true);
-    try { localStorage.setItem("prime_push_prompt_dismissed", "true"); } catch { /* dismissed for this visit */ }
+    try { localStorage.setItem("prime_push_prompt_dismissed_at", String(Date.now())); } catch { /* dismissed for this visit */ }
   };
 
   return (

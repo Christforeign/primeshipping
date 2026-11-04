@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { isDirectVideo } from "@/lib/upload";
 import { orderTotalDisplay } from "@/lib/checkout-display";
 import { paymentSelectable } from '@/lib/payment-availability';
@@ -142,7 +141,7 @@ export function ProductDetailPage() {
   // Set default variant on product change
   useEffect(() => {
     if (product && product.variants && product.variants.length > 0) {
-      setSelectedVariant(product.variants[0]);
+      setSelectedVariant(product.variants[0] ?? null);
     } else {
       setSelectedVariant(null);
     }
@@ -237,12 +236,12 @@ export function ProductDetailPage() {
   };
 
   // Step 1: validate product options then go to the checkout page
-  const handleOrderSubmit = (e: React.FormEvent) => {
+  const handleOrderSubmit = (e: React.FormEvent): void => {
     e.preventDefault();
-    if (freeAmount) { try { topupPrice(Number(requestedAmount), Number(product.extra?.product_rate_htg), Number(rate)); } catch { return toast.error("Saisissez un montant USD valide (deux décimales maximum)."); } }
+    if (freeAmount) { try { topupPrice(Number(requestedAmount), Number(product.extra?.product_rate_htg), Number(rate)); } catch { toast.error("Saisissez un montant USD valide (deux décimales maximum)."); return; } }
     const minimumError = orderMinimumError(product.extra, freeAmount ? 1 : quantity, freeAmount ? Number(requestedAmount) : subtotalUsd, freeAmount);
-    if (minimumError) return toast.error(minimumError);
-    const selection = { productId: product.id, variantId: freeAmount ? null : selectedVariant?.id || null, quantity: freeAmount ? 1 : quantity, formValues, requestedAmountUsd: freeAmount ? Number(requestedAmount) : undefined };
+    if (minimumError) { toast.error(minimumError); return; }
+    const selection = { productId: product.id, variantId: freeAmount ? null : selectedVariant?.id || null, quantity: freeAmount ? 1 : quantity, formValues, ...(freeAmount ? { requestedAmountUsd: Number(requestedAmount) } : {}) };
     const newErrors: Record<string, string> = {};
     for (const field of product.custom_fields || []) {
       const val = formValues[field.id];
@@ -252,14 +251,14 @@ export function ProductDetailPage() {
     }
     if (Object.keys(newErrors).length > 0) {
       setFormErrors(newErrors);
-      return toast.error(Object.values(newErrors)[0]);
+      { toast.error(Object.values(newErrors)[0]); return; }
     }
-    if (!acceptedTerms) return toast.error("Veuillez accepter les conditions d'utilisation pour continuer.");
-    if (e.nativeEvent?.submitter?.value === "cart") {
+    if (!acceptedTerms) { toast.error("Veuillez accepter les conditions d'utilisation pour continuer."); return; }
+    if ((e.nativeEvent as SubmitEvent | undefined)?.submitter?.getAttribute("value") === "cart") {
       try {
         addCartItem(selection);
         toast.success("Article ajouté au panier");
-        navigate({ to: "/boutique/panier" });
+        navigate({ to: "/boutique/panier", search: {} as never });
       } catch { toast.error("Impossible de sauvegarder le panier sur cet appareil."); }
       return;
     }
@@ -390,11 +389,14 @@ export function ProductDetailPage() {
             {/* Gallery Viewer */}
             <div className="space-y-3">
               <div className="relative aspect-video sm:aspect-[4/3] w-full overflow-hidden rounded-3xl border bg-card shadow-md">
-                <img
-                  src={allMedia[activeMediaIndex] || allMedia[0]}
-                  alt={product.title}
-                  className="h-full w-full object-cover transition-all duration-300"
-                />
+                {(() => {
+                  const src = selectedVariant?.image_url || allMedia[activeMediaIndex] || allMedia[0];
+                  return src && isDirectVideo(src) ? (
+                    <video src={src} className="h-full w-full object-cover" controls playsInline muted autoPlay loop />
+                  ) : (
+                    <img src={src} alt={product.title} className="h-full w-full object-cover transition-all duration-300" />
+                  );
+                })()}
 
                 {/* Badge Kind */}
                 <div className="absolute top-4 left-4">
@@ -652,14 +654,14 @@ export function ProductDetailPage() {
               </div>}
               <div className="text-sm text-muted-foreground space-y-2">
                 {!freeAmount && minQty > 1 && <p>Quantité minimum : {minQty}</p>}
-                {Number(product.extra?.minimum_order_usd) > 0 && <p>Montant minimum : {Number(product.extra.minimum_order_usd).toFixed(2)} {productCurrency(product.extra)}{!freeAmount && " (hors frais)"}</p>}
+                {Number(product.extra?.minimum_order_usd) > 0 && <p>Montant minimum : {Number(product.extra?.minimum_order_usd).toFixed(2)} {productCurrency(product.extra)}{!freeAmount && " (hors frais)"}</p>}
                 {product.extra?.order_notice && <p className="whitespace-pre-line">{product.extra.order_notice}</p>}
               </div>
               <OrderTermsCheckbox checked={acceptedTerms} onCheckedChange={setAcceptedTerms} />
               <Button type="submit" name="action" value="cart" size="lg" variant="outline" className="w-full h-12">
                 <ShoppingBag className="h-4 w-4 mr-2" /> Ajouter au panier
               </Button>
-              <Button asChild variant="ghost" className="w-full"><Link to="/boutique/panier">Voir mon panier</Link></Button>
+              <Button asChild variant="ghost" className="w-full"><Link to="/boutique/panier" search={{} as never}>Voir mon panier</Link></Button>
               <Button type="submit" size="lg" className="w-full h-12 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-sm">
                 Continuer vers le paiement <ArrowRight className="h-4 w-4 ml-2" />
               </Button>

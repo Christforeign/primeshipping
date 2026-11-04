@@ -39,9 +39,24 @@ function ManualSend() {
     } catch { toast.error("Envoi impossible. Vérifie ta connexion et le journal des erreurs."); }
     finally { setBusy(false); }
   };
+  const fillRandomProducts = async () => {
+    const { data, error } = await supabase.from("products").select("id,title,price_usd,extra").eq("is_active", true).limit(100);
+    if (error || !data?.length) { toast.error("Aucun produit disponible."); return; }
+    const picks = [...data].sort(() => Math.random() - 0.5).slice(0, 5);
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://www.primeshipping.net";
+    setAudience("all"); setConfirmed(false); setEventId(null);
+    setSubject("🛍️ Nouveautés disponibles sur Prime Store");
+    setDetails(`Bonjour,\n\nVoici une sélection de produits disponibles maintenant sur Prime Store :\n\n${picks.map((p) => {
+      const cur = (p.extra as { price_currency?: string } | null)?.price_currency === "HTG" ? "GDS" : "USD";
+      const free = (p.extra as { amount_mode?: string } | null)?.amount_mode === "custom_usd";
+      return `• ${p.title} — ${free ? "montant libre" : `${p.price_usd} ${cur}`}\n  ${origin}/boutique/${p.id}`;
+    }).join("\n\n")}\n\nÀ bientôt,\nPrime Express Shipping`);
+    toast.success("Sélection aléatoire prête. Relis puis confirme l'envoi.");
+  };
   const inp = "w-full rounded-md border border-border bg-background px-3 py-2 text-sm";
   return <section className="space-y-3 border-y border-border py-5">
     <h3 className="text-lg font-bold">Envoyer un e-mail manuel</h3>
+    <Button type="button" variant="outline" size="sm" disabled={busy} onClick={fillRandomProducts}>🎲 Préparer un e-mail de produits aléatoires</Button>
     <select aria-label="Destinataires" className={inp} disabled={busy} value={audience} onChange={(e) => { setAudience(e.target.value as "client" | "all"); setConfirmed(false); setEventId(null); }}>
       <option value="client">Un client</option><option value="all">Tous les comptes, administrateurs inclus</option>
     </select>
