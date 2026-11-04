@@ -223,6 +223,7 @@ function AdminHubPage() {
 
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!window.confirm("Voulez-vous continuer ? Ces changements modifient la configuration globale du site.")) return;
     setIsSavingSettings(true);
     const settingsPayload = {
       usd_to_htg: rateHtg,
