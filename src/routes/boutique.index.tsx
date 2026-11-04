@@ -182,10 +182,9 @@ function BoutiquePage() {
                   params={{ id: prod.id }}
                   className="block relative aspect-square w-full overflow-hidden bg-muted group/img"
                 >
-                  <img
-                    src={coverImg}
+                  <AutoMediaCarousel
+                    media={[...(prod.media_urls?.length ? prod.media_urls : [coverImg]), ...(prod.video_url && isDirectVideo(prod.video_url) ? [prod.video_url] : [])]}
                     alt={prod.title}
-                    className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-2 left-2 flex flex-col gap-1.5">
                     <span className="rounded-full liquid text-foreground text-[10px] font-black px-2.5 py-1 backdrop-blur-sm">
