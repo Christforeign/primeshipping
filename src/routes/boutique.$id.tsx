@@ -98,6 +98,9 @@ export function ProductDetailPage() {
   // Selected Variant
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
 
+  // Photo shown only after the shopper taps a variant; never overrides the gallery
+  const [variantPreview, setVariantPreview] = useState<string | null>(null);
+
   // Quantity
   const [quantity, setQuantity] = useState(1);
   const [requestedAmount, setRequestedAmount] = useState("");
@@ -145,6 +148,7 @@ export function ProductDetailPage() {
     } else {
       setSelectedVariant(null);
     }
+    setVariantPreview(null);
   }, [product]);
   useEffect(() => {
     if (product) setQuantity(minimumQuantity(product.extra));
@@ -390,7 +394,7 @@ export function ProductDetailPage() {
             <div className="space-y-3">
               <div className="relative aspect-video sm:aspect-[4/3] w-full overflow-hidden rounded-3xl border bg-card shadow-md">
                 {(() => {
-                  const src = selectedVariant?.image_url || allMedia[activeMediaIndex] || allMedia[0];
+                  const src = variantPreview || allMedia[activeMediaIndex] || allMedia[0];
                   return src && isDirectVideo(src) ? (
                     <video src={src} className="h-full w-full object-cover pointer-events-none" playsInline muted autoPlay loop />
                   ) : (
@@ -428,7 +432,10 @@ export function ProductDetailPage() {
                     <button
                       key={idx}
                       type="button"
-                      onClick={() => setActiveMediaIndex(idx)}
+                      onClick={() => {
+                        setActiveMediaIndex(idx);
+                        setVariantPreview(null);
+                      }}
                       className={`relative h-18 w-24 flex-shrink-0 overflow-hidden rounded-2xl border-2 transition-all ${
                         activeMediaIndex === idx
                           ? "border-amber-500 shadow-md scale-105"
@@ -561,7 +568,10 @@ export function ProductDetailPage() {
                         <button
                           key={v.id}
                           type="button"
-                          onClick={() => setSelectedVariant(v)}
+                          onClick={() => {
+                            setSelectedVariant(v);
+                            setVariantPreview(v.image_url || null);
+                          }}
                           className={`flex items-center justify-between p-3 rounded-2xl border text-left text-xs transition-all ${
                             isSelected
                               ? "border-amber-500 bg-amber-500/10 shadow-sm"
