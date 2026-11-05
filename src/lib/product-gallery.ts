@@ -9,7 +9,7 @@ export function resolveProductPhoto(
   mediaUrls: string[],
   activeIndex: number,
   variantPreview: string | null,
-): string | null {
+): string | undefined {
   if (variantPreview) return variantPreview;
-  return mediaUrls[activeIndex] || mediaUrls[0] || null;
+  return mediaUrls[activeIndex] || mediaUrls[0];
 }

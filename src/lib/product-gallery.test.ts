@@ -25,7 +25,7 @@ describe("resolveProductPhoto", () => {
     expect(resolveProductPhoto(PHOTOS, 9, null)).toBe(PHOTOS[0]);
   });
 
-  it("returns null when the product has no photo at all", () => {
-    expect(resolveProductPhoto([], 0, null)).toBeNull();
+  it("returns nothing when the product has no photo at all", () => {
+    expect(resolveProductPhoto([], 0, null)).toBeUndefined();
   });
 });
