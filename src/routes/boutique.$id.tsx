@@ -1,4 +1,5 @@
 import { isDirectVideo } from "@/lib/upload";
+import { resolveProductPhoto } from "@/lib/product-gallery";
 import { orderTotalDisplay } from "@/lib/checkout-display";
 import { paymentSelectable } from '@/lib/payment-availability';
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
@@ -394,7 +395,7 @@ export function ProductDetailPage() {
             <div className="space-y-3">
               <div className="relative aspect-video sm:aspect-[4/3] w-full overflow-hidden rounded-3xl border bg-card shadow-md">
                 {(() => {
-                  const src = variantPreview || allMedia[activeMediaIndex] || allMedia[0];
+                  const src = resolveProductPhoto(allMedia, activeMediaIndex, variantPreview);
                   return src && isDirectVideo(src) ? (
                     <video src={src} className="h-full w-full object-cover pointer-events-none" playsInline muted autoPlay loop />
                   ) : (
