@@ -66,3 +66,4 @@
 - [x] Écran hors connexion avec logo et support administrable ; coupure/reconnexion vérifiées, PWA réservé au site redéployé après première visite en ligne
 - [x] Vérifier les erreurs de pages et les parcours connectés : écart de chargement des réglages reproduit et corrigé, aucun plantage au dernier parcours
 - [ ] Réception e-mail manuel et suppression réelle : aucun message envoyé aux clients ; création de commande temporaire refusée par les protections existantes, aucune vraie commande supprimée
+- [x] Fiche produit : les photos du produit se parcourent de nouveau quand une variante a sa propre photo ; la photo de variante n’apparaît qu’après un clic sur cette variante. 6 tests ajoutés, parcours vérifié dans le navigateur
