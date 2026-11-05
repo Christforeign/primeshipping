@@ -1,5 +1,7 @@
 // @ts-nocheck — legacy pages pending migration to real tables
 import { VideoUploadButton } from "@/components/VideoUploadButton";
+import { VariantMediaButton } from "@/components/VariantMediaButton";
+import { isDirectVideo as isVariantVideo } from "@/lib/upload";
 import { PaymentSmsInbox } from '@/components/PaymentSmsInbox';
 import { mergePaymentConfigs, isAutomaticPayment } from '@/lib/payment-availability';
 import { orderTotalDisplay } from "@/lib/checkout-display";
@@ -1774,6 +1776,14 @@ function AdminHubPage() {
                         className="rounded-2xl border bg-muted/30 p-3 flex flex-col sm:flex-row items-center gap-2 text-xs"
                       >
                         <div className="flex-1 w-full grid sm:grid-cols-4 gap-2">
+                          <div className="sm:col-span-4 flex flex-wrap items-center gap-2">
+                            <span className="text-[11px] font-bold text-muted-foreground">Photo ou vidéo de la variante</span>
+                            {v.image_url && (isVariantVideo(v.image_url)
+                              ? <video src={v.image_url} muted playsInline className="h-12 w-12 rounded-lg object-cover border" />
+                              : <img src={v.image_url} alt="" className="h-12 w-12 rounded-lg object-cover border" />)}
+                            <VariantMediaButton onUploaded={(url) => handleUpdateVariant(vIdx, { image_url: url })} />
+                            {v.image_url && <button type="button" className="text-[11px] underline text-muted-foreground" onClick={() => handleUpdateVariant(vIdx, { image_url: null })}>Retirer</button>}
+                          </div>
                           <Input
                             placeholder="Nom de l'option (ex : 530 Diamonds)"
                             value={v.name}
