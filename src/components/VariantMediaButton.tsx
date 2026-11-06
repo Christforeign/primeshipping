@@ -17,8 +17,7 @@ export function VariantMediaButton({ onUploaded }: { onUploaded: (url: string) =
         if (!file) return;
         setBusy(true);
         try {
-          const { data } = await supabase.auth.getUser();
-          const folder = data.user?.id ?? "public";
+          const folder = "products/variants";
           const url = file.type.startsWith("video/") ? await uploadVideo(folder, file) : await uploadImage(folder, file);
           onUploaded(url);
           toast.success("Média de la variante ajouté.");
