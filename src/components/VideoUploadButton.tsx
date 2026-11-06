@@ -3,7 +3,6 @@ import { toast } from "sonner";
 import { Film, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { uploadVideo } from "@/lib/upload";
-import { supabase } from "@/integrations/supabase/client";
 
 export function VideoUploadButton({ onUploaded }: { onUploaded: (url: string) => void }) {
   const ref = useRef<HTMLInputElement>(null);
@@ -21,8 +20,7 @@ export function VideoUploadButton({ onUploaded }: { onUploaded: (url: string) =>
           if (!file) return;
           setBusy(true);
           try {
-            const { data } = await supabase.auth.getUser();
-            const url = await uploadVideo(data.user?.id ?? "public", file);
+            const url = await uploadVideo("products/videos", file);
             onUploaded(url);
             toast.success("Vidéo ajoutée.");
           } catch (err) {
