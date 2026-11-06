@@ -3,7 +3,6 @@ import { toast } from "sonner";
 import { ImagePlus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { uploadImage, uploadVideo } from "@/lib/upload";
-import { supabase } from "@/integrations/supabase/client";
 
 /** Pick a photo or video from the gallery for one product variant. */
 export function VariantMediaButton({ onUploaded }: { onUploaded: (url: string) => void }) {

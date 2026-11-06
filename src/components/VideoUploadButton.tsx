@@ -21,8 +21,7 @@ export function VideoUploadButton({ onUploaded }: { onUploaded: (url: string) =>
           if (!file) return;
           setBusy(true);
           try {
-            const { data } = await supabase.auth.getUser();
-            const url = await uploadVideo(data.user?.id ?? "public", file);
+            const url = await uploadVideo("products/videos", file);
             onUploaded(url);
             toast.success("Vidéo ajoutée.");
           } catch (err) {
