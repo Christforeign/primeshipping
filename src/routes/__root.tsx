@@ -30,6 +30,7 @@ import { registerOfflineSupport } from "@/lib/offline-registration";
 import { X } from "lucide-react";
 import { RandomProductNotifier } from "@/components/RandomProductNotifier";
 import { PushNotificationPrompt } from "@/components/PushNotificationPrompt";
+import { FestiveIntro, FestiveSnow, FestiveTicker } from "@/components/FestiveTheme";
 
 function NotFoundComponent() {
   return (
@@ -228,6 +229,8 @@ function AppShellContent() {
       className="flex min-h-screen flex-col transition-colors duration-300"
       style={getBackgroundStyle()}
     >
+      <FestiveSnow />
+      <FestiveTicker />
       <PromoBanner />
       <SiteHeader />
       <RandomProductNotifier />
@@ -241,6 +244,7 @@ function AppShellContent() {
       <MobileBottomNav />
       <InteractiveTutorial />
       <WhatsAppSupportButton />
+      <FestiveIntro />
     </div>
   );
 }

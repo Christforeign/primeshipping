@@ -283,3 +283,76 @@ table { max-width: 100%; }
   border: 1px solid color-mix(in oklab, #ffffff 65%, transparent);
   box-shadow: inset 0 1px 1px color-mix(in oklab, #ffffff 85%, transparent), 0 6px 18px -6px color-mix(in oklab, var(--primary) 60%, transparent);
 }
+
+/* ---------- Thème des fêtes « Hiver givré & cristallin » ---------- */
+:root {
+  --festive-ice: #DCEBFF;
+  --festive-frost: rgba(220, 235, 255, 0.62);
+  --festive-frost-edge: rgba(255, 255, 255, 0.85);
+  --festive-ink: #1E3A5F;
+  --festive-glow: rgba(150, 195, 255, 0.55);
+  --festive-flake: rgba(255, 255, 255, 0.95);
+}
+.dark {
+  --festive-frost: rgba(30, 50, 80, 0.62);
+  --festive-frost-edge: rgba(190, 220, 255, 0.35);
+  --festive-ink: #E6F0FF;
+  --festive-glow: rgba(120, 170, 255, 0.4);
+}
+.festive-snow { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.festive-flake {
+  position: absolute; top: -20px; border-radius: 9999px;
+  background: radial-gradient(circle, var(--festive-flake) 0%, color-mix(in oklab, var(--festive-ice) 70%, transparent) 55%, transparent 72%);
+  box-shadow: 0 0 6px var(--festive-glow);
+  animation-name: festive-fall; animation-timing-function: linear; animation-iteration-count: infinite;
+}
+@keyframes festive-fall {
+  from { transform: translate3d(0, -20px, 0); }
+  to { transform: translate3d(var(--drift, 0px), 110vh, 0); }
+}
+.festive-ticker {
+  position: relative; overflow: hidden; pointer-events: auto;
+  background: linear-gradient(90deg, var(--festive-frost), color-mix(in oklab, var(--festive-ice) 40%, transparent), var(--festive-frost));
+  backdrop-filter: blur(18px) saturate(180%);
+  border-bottom: 1px solid var(--festive-frost-edge);
+  color: var(--festive-ink); font-size: 0.8rem; font-weight: 700;
+}
+.festive-ticker-track { display: flex; width: max-content; animation: festive-marquee 38s linear infinite; }
+.festive-ticker:hover .festive-ticker-track, .festive-ticker:active .festive-ticker-track { animation-play-state: paused; }
+.festive-ticker-item { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 2.5rem; white-space: nowrap; }
+@keyframes festive-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.festive-frost {
+  box-shadow: var(--shadow-glass), 0 0 0 1px var(--festive-frost-edge), 0 8px 28px -12px var(--festive-glow);
+}
+.festive-badge {
+  position: absolute; left: 0.5rem; bottom: -0.6rem; z-index: 10; pointer-events: none;
+  display: grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 9999px;
+  color: var(--festive-ink); background: var(--festive-frost); border: 1px solid var(--festive-frost-edge);
+  box-shadow: 0 0 12px var(--festive-glow); animation: festive-twinkle 3.2s ease-in-out infinite;
+}
+@keyframes festive-twinkle { 0%, 100% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(25deg) scale(1.08); } }
+.festive-intro {
+  position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; padding: 1rem;
+  background: color-mix(in oklab, var(--festive-ink) 22%, transparent); backdrop-filter: blur(6px);
+  animation: festive-fade 0.35s ease-out;
+}
+.festive-intro-card {
+  position: relative; display: flex; width: 100%; max-width: 24rem; flex-direction: column; align-items: center; gap: 0.75rem;
+  border-radius: 1.75rem; padding: 2rem 1.5rem 1.5rem; text-align: center;
+  box-shadow: 0 0 0 1px var(--festive-frost-edge), 0 20px 60px -20px var(--festive-glow);
+  animation: festive-pop 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+.festive-intro-spark {
+  display: grid; place-items: center; width: 4.5rem; height: 4.5rem; border-radius: 9999px;
+  color: var(--festive-ink); background: var(--festive-frost); border: 1px solid var(--festive-frost-edge);
+  box-shadow: 0 0 30px var(--festive-glow); animation: festive-twinkle 2.4s ease-in-out infinite;
+}
+@keyframes festive-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes festive-pop { from { opacity: 0; transform: scale(0.85) translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .festive-snow { display: none; }
+  .festive-ticker-track { animation: none; width: auto; }
+  .festive-ticker-track > :last-child { display: none; }
+  .festive-ticker-item { white-space: normal; justify-content: center; }
+  .festive-badge, .festive-intro-spark, .festive-intro, .festive-intro-card { animation: none; }
+}

@@ -4,11 +4,13 @@ import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/compone
 import { Button } from "@/components/ui/button";
 import { useSettings } from "@/lib/settings";
 import { readAnnouncement, shouldShowAnnouncement } from "@/lib/site-announcement";
+import { useFestiveIntroOpen } from "@/components/FestiveTheme";
 
 export function SiteAnnouncement() {
   const settings = useSettings();
   const announcement = readAnnouncement((settings as unknown as Record<string, unknown> | null)?.["site_announcement"]);
   const [open, setOpen] = useState(false);
+  const festiveIntroOpen = useFestiveIntroOpen();
   const version = announcement?.version;
   const enabled = announcement?.enabled;
   const frequency = announcement?.frequency;
@@ -22,7 +24,7 @@ export function SiteAnnouncement() {
     setOpen(false);
     try { sessionStorage.setItem("prime-announcement-dismissed", announcement.version); } catch { /* optional storage */ }
   };
-  return <Dialog open={open} onOpenChange={(value) => { if (!value) close(); }}>
+  return <Dialog open={open && !festiveIntroOpen} onOpenChange={(value) => { if (!value) close(); }}>
     <DialogContent showCloseButton={false} className={`max-h-[90dvh] overflow-y-auto p-0 ${announcement.size === "compact" ? "sm:max-w-sm" : "sm:max-w-xl"}`}>
       <Button variant="secondary" size="icon" className="sticky top-2 z-10 ml-auto mr-2 mt-2 shrink-0 border border-border" aria-label="Fermer l’annonce" onClick={close}><X className="h-5 w-5" /></Button>
       <div className="px-4 pb-4 space-y-3">

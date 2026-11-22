@@ -19,6 +19,7 @@ import { triggerTutorial } from "@/components/InteractiveTutorial";
 import { NotificationBell } from "@/components/NotificationBell";
 import { PushNotificationButton } from "@/components/PushNotificationPrompt";
 import halloweenPumpkin from "@/assets/halloween-pumpkin.png";
+import { FestiveLogoBadge, useFestiveTheme } from "@/components/FestiveTheme";
 
 const NAV = [
   { to: "/", label: "Accueil" },
@@ -40,6 +41,8 @@ export function SiteHeader() {
   const qc = useQueryClient();
   const navigate = useNavigate();
   const name = s?.company_name ?? "Prime Shipping";
+  const festive = useFestiveTheme();
+  const festiveOn = !!festive?.enabled;
 
   const logout = async () => {
     await signOut(() => qc.clear());
@@ -48,8 +51,8 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-2 z-40 mx-auto w-full max-w-7xl px-2 text-foreground sm:px-4">
-      <div className="glass-strong relative rounded-2xl">
-      <img src={halloweenPumpkin} alt="" aria-hidden="true" width={816} height={816} loading="lazy" className="pointer-events-none absolute -bottom-4 left-3 z-10 h-11 w-11 select-none object-contain" />
+      <div className={`glass-strong relative rounded-2xl${festiveOn ? " festive-frost" : ""}`}>
+      {festiveOn ? <FestiveLogoBadge /> : <img src={halloweenPumpkin} alt="" aria-hidden="true" width={816} height={816} loading="lazy" className="pointer-events-none absolute -bottom-4 left-3 z-10 h-11 w-11 select-none object-contain" />}
       <div className="flex h-16 items-center justify-between gap-4 px-4">
         {/* Brand Logo & Name */}
         <Link

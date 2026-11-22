@@ -63,6 +63,7 @@ import { AdminInvoiceBuilder } from "@/components/AdminInvoiceBuilder";
 import { AdminWalletAdjust } from "@/components/AdminWalletAdjust";
 import { OrderDeleteButton } from "@/components/OrderDeleteButton";
 import { AdminEmailTemplates } from "@/components/AdminEmailTemplates";
+import { FestiveThemeSettings } from "@/components/FestiveThemeSettings";
 import { AdminErrorLogs } from "@/components/AdminErrorLogs";
 import { AdminWhatsAppContacts } from "@/components/AdminWhatsAppContacts";
 import { AdminSiteLinks } from "@/components/AdminSiteLinks";
@@ -890,6 +891,7 @@ function AdminHubPage() {
       {/* ================================================================= */}
       {/* TAB 1: GLOBAL CONFIGURATION & WHITE LABEL */}
       {/* ================================================================= */}
+      {tab === "settings" && <div className="mb-6"><FestiveThemeSettings /></div>}
       {tab === "settings" && (
         <form onSubmit={handleSaveSettings} className="space-y-6">
           {/* Card: Exchange rate & Taxes */}
