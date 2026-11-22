@@ -351,8 +351,36 @@ table { max-width: 100%; }
 @keyframes festive-pop { from { opacity: 0; transform: scale(0.85) translateY(10px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
   .festive-snow { display: none; }
+  .festive-light { animation: none; }
   .festive-ticker-track { animation: none; width: auto; }
   .festive-ticker-track > :last-child { display: none; }
   .festive-ticker-item { white-space: normal; justify-content: center; }
   .festive-badge, .festive-intro-spark, .festive-intro, .festive-intro-card { animation: none; }
 }
+
+:root {
+  --festive-tree: #1F7A4D;
+  --festive-tree-dark: #155C39;
+  --festive-trunk: #7A4A24;
+  --festive-star: #F5C542;
+  --festive-light-a: #FF4D4D;
+  --festive-light-b: #FFD447;
+  --festive-light-c: #5CC8FF;
+  --festive-light-d: #FF8FD8;
+}
+.festive-tree {
+  position: fixed; left: max(0.25rem, 1vw); bottom: 4.5rem; z-index: -1; pointer-events: none;
+  width: clamp(130px, 22vw, 260px); height: clamp(195px, 33vw, 390px);
+  filter: drop-shadow(0 10px 24px var(--festive-glow));
+}
+@media (min-width: 1024px) { .festive-tree { bottom: 1rem; } }
+.festive-tree-leaf { fill: var(--festive-tree); stroke: var(--festive-flake); stroke-width: 1.5; stroke-opacity: 0.5; }
+.festive-tree-leaf-dark { fill: var(--festive-tree-dark); }
+.festive-tree-trunk { fill: var(--festive-trunk); }
+.festive-tree-star { fill: var(--festive-star); filter: drop-shadow(0 0 6px var(--festive-star)); animation: festive-blink 2s ease-in-out infinite; }
+.festive-light { animation: festive-blink 1.6s ease-in-out infinite; }
+.festive-light-0 { fill: var(--festive-light-a); filter: drop-shadow(0 0 4px var(--festive-light-a)); }
+.festive-light-1 { fill: var(--festive-light-b); filter: drop-shadow(0 0 4px var(--festive-light-b)); }
+.festive-light-2 { fill: var(--festive-light-c); filter: drop-shadow(0 0 4px var(--festive-light-c)); }
+.festive-light-3 { fill: var(--festive-light-d); filter: drop-shadow(0 0 4px var(--festive-light-d)); }
+@keyframes festive-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }

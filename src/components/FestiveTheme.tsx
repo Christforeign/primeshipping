@@ -105,3 +105,29 @@ export function FestiveIntro() {
 export function FestiveLogoBadge() {
   return <span className="festive-badge" aria-hidden="true"><Snowflake className="h-5 w-5" /></span>;
 }
+
+const TREE_LIGHTS = [
+  [100, 62], [86, 92], [114, 104], [74, 128], [100, 136], [128, 132], [62, 168], [90, 176],
+  [118, 172], [142, 164], [52, 206], [80, 214], [110, 218], [138, 210], [156, 200], [44, 246],
+  [72, 254], [102, 258], [132, 252], [160, 244],
+];
+
+/** Big decorative tree fixed in a corner, behind the page content so it never blocks anything. */
+export function FestiveTree() {
+  const theme = useFestiveTheme();
+  if (!theme || !theme.enabled) return null;
+  return (
+    <div className="festive-tree" aria-hidden="true">
+      <svg viewBox="0 0 200 300" width="100%" height="100%">
+        <polygon points="100,40 140,110 60,110" className="festive-tree-leaf" />
+        <polygon points="100,80 160,180 40,180" className="festive-tree-leaf" />
+        <polygon points="100,130 180,270 20,270" className="festive-tree-leaf festive-tree-leaf-dark" />
+        <rect x="88" y="270" width="24" height="26" rx="3" className="festive-tree-trunk" />
+        <polygon points="100,14 106,30 123,30 109,40 114,56 100,46 86,56 91,40 77,30 94,30" className="festive-tree-star" />
+        {TREE_LIGHTS.map(([x, y], i) => (
+          <circle key={i} cx={x} cy={y} r="4.5" className={`festive-light festive-light-${i % 4}`} style={{ animationDelay: `${(i % 5) * 0.35}s` }} />
+        ))}
+      </svg>
+    </div>
+  );
+}
