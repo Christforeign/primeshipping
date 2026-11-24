@@ -1,5 +1,5 @@
-import { BulkProductImport } from "@/components/BulkProductImport";
 // @ts-nocheck — legacy pages pending migration to real tables
+import { BulkProductImport } from "@/components/BulkProductImport";
 import { VideoUploadButton } from "@/components/VideoUploadButton";
 import { VariantMediaButton } from "@/components/VariantMediaButton";
 import { isDirectVideo as isVariantVideo } from "@/lib/upload";
