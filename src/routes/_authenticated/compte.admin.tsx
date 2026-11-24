@@ -1,3 +1,4 @@
+import { BulkProductImport } from "@/components/BulkProductImport";
 // @ts-nocheck — legacy pages pending migration to real tables
 import { VideoUploadButton } from "@/components/VideoUploadButton";
 import { VariantMediaButton } from "@/components/VariantMediaButton";
@@ -1461,6 +1462,7 @@ function AdminHubPage() {
                 >
                   <Plus className="h-4 w-4 mr-1.5" /> Créer un formulaire / produit
                 </Button>
+                <BulkProductImport categories={[...new Set((productsQuery.data ?? []).map((p) => p.category).filter(Boolean))]} />
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
