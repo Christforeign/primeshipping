@@ -49,6 +49,8 @@
 - [x] Case « conditions d'utilisation » obligatoire avant commande et paiement (lien cliquable vers /conditions), conditions simplifiées (numérique non remboursable, infos erronées non remboursées, dommage physique sous 24 h, retards possibles, fraude = compte supprimé) ; note spéciale par produit conservée et facultative dans l'admin ; parcours mobile vérifié connecté sans achat réel
 
 ## Intervention en cours
+- [ ] Alertes produits site fermé : connexion Firebase refusée ; abonnement des appareils et diffusion planifiée attendent cette connexion.
+- [ ] Conserver le domaine Vercel pendant l’analyse IA des photos, invitation installation iPhone/Android et détection des permissions, offres locales avec photos.
 - [x] Annonce photo tarifs activée depuis les réglages : X et fermeture persistante vérifiés sur ordinateur/téléphone, taille/texte/photo/fréquence et retrait complet administrables dans E-mails Brevo ; envoi privé avec image à tous les comptes, administrateurs inclus.
 - [ ] Annonce tarifs : vérifier les commandes admin connecté et envoyer réellement l’e-mail collectif ; compte du demandeur absent pour la session de test, aucun e-mail envoyé pendant cette intervention.
 - [x] Configurer « C’est ton colis ? » : cinq réceptions réelles affichées, cinq derniers caractères et transporteur identifiable seulement ; sélection admin pour annonce et lien vers déclaration complète. 14 tests réussis, projection publique et navigation vérifiées ; poids déjà facultatif. Aucun envoi collectif réel effectué.
