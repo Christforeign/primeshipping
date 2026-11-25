@@ -20,7 +20,7 @@ export const analyzeProductImage = createServerFn({ method: "POST" })
 Ne crée jamais de nouvelle catégorie. Pas de prix.`;
     try {
       const res = await generateChatCompletion({
-        model: "openai/gpt-6-astra",
+        model: "google/gemini-3-flash-preview",
         messages: [{ role: "user", content: [{ type: "text", text: prompt }, { type: "image_url", image_url: { url: data.imageUrl } }] }],
       });
       const raw = res.choices?.[0]?.message?.content || "";
@@ -38,7 +38,7 @@ Ne crée jamais de nouvelle catégorie. Pas de prix.`;
       };
     } catch (e) {
       console.error("analyzeProductImage", e instanceof GatewayError ? e.code : e);
-      const msg = e instanceof GatewayError && e.code === "payment_required" ? "Crédits IA épuisés." : "L'IA n'a pas pu lire cette photo.";
+      const msg = e instanceof GatewayError && e.code === "payment_required" ? "Crédits IA épuisés." : `L'IA n'a pas pu lire cette photo (${e instanceof GatewayError ? e.code : "erreur"}).`;
       return { ok: false as const, error: msg };
     }
   });
